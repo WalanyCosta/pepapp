@@ -21,13 +21,13 @@
   - nativeshaidcn
   - typescript
   
-- [ ] configurar themes
+- [x] configurar themes
   
   - add fonts
   - add colors
   - add images
   
-- [ ] estruturar as rotas
+- [x] estruturar as rotas
 
 #### Interfaces
 

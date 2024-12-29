@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Slot, SplashScreen } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Stack } from "expo-router";
 import {
 	useFonts,
 	Inter_600SemiBold,
@@ -32,7 +33,16 @@ export default function Layout() {
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
 			<StatusBar style="light" />
-			<Slot />
+			<Stack
+				screenOptions={{
+					headerShown: false,
+				}}
+			>
+				<Stack.Screen name="index" />
+				<Stack.Screen name="signup" />
+				<Stack.Screen name="(employee)/home" />
+				<Stack.Screen name="(manager)/home" />
+			</Stack>
 		</GestureHandlerRootView>
 	);
 }
