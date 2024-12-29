@@ -9,11 +9,11 @@
 
 ### Lista de tarefas
 
-- [ ] projectar as tabelas e funcionalidades e propriedades
+- [x] projectar as tabelas e funcionalidades e propriedades
 
 #### configurações do projectos
 
-- [ ] Adicionar libs
+- [x] Adicionar libs
   - expo router
   - nativewind
   - biomejs
