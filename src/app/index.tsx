@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/Button";
-import { View, Text, Image, ScrollView } from "react-native";
+import { View, Text, Image } from "react-native";
 import { router } from "expo-router";
 import { Container } from "@/components/layout/container";
 
@@ -23,6 +23,7 @@ export default function Home() {
 			</View>
 
 			<Button
+				isLoading={false}
 				className="mt-16 mb-12"
 				label="Começar"
 				size={"default"}

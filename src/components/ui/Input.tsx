@@ -14,10 +14,8 @@ const Input = forwardRef<React.ElementRef<typeof TextInput>, InputProps>(
 		<View className={cn("flex flex-col gap-1.5", className)}>
 			{label && <Text className={cn("text-base", labelClasses)}>{label}</Text>}
 			<TextInput
-				className={cn(
-					inputClasses,
-					"border py-2.5 px-4 rounded-lg",
-				)}
+				className={cn(inputClasses, "border py-2.5 px-4 rounded-lg")}
+				ref={ref}
 				{...props}
 			/>
 		</View>
