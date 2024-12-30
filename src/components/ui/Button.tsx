@@ -1,14 +1,14 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import { Text, TouchableOpacity } from "react-native";
 
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 const buttonVariants = cva(
 	"flex flex-row items-center justify-center rounded-md",
 	{
 		variants: {
 			variant: {
-				default: "bg-violet-600",
+				default: "bg-primary",
 				secondary: "bg-secondary",
 				destructive: "bg-destructive",
 				ghost: "bg-slate-700",
@@ -30,7 +30,7 @@ const buttonVariants = cva(
 const buttonTextVariants = cva("text-center font-medium", {
 	variants: {
 		variant: {
-			default: "text-white",
+			default: "text-primary-foreground",
 			secondary: "text-secondary-foreground",
 			destructive: "text-destructive-foreground",
 			ghost: "text-primary-foreground",

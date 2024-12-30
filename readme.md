@@ -31,10 +31,10 @@
 
 #### Interfaces
 
+- [x] criar a interface onboarding
+- [x] criar interface de login e funcionalidade de logar
 - [ ] criar a interface principal
-- [ ] criar a interface onboarding
 - [ ] criar a interface de loading
-- [ ] criar interface de login e funcionalidade de logar
 
 #### Modulos funcionário
 
@@ -43,4 +43,4 @@
 - [ ] Criar a interface de ver solicitação e as suas funcionalidade(cancelar, editar, reenviar)
 - [ ] criar a interface de profile e as suas funcionalidades(logout, mudar de theme, adicionar imagem)
 
- 
+31acljDBGPHFYMU1

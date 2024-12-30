@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/Button";
 import { View, Text, Image, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { Container } from "@/components/layout/container";
@@ -27,7 +27,7 @@ export default function Home() {
 				label="Começar"
 				size={"default"}
 				variant={"default"}
-				onPress={() => router.replace("/signup")}
+				onPress={() => router.replace("/signin")}
 			/>
 		</Container>
 	);
