@@ -14,7 +14,7 @@
 #### configurações do projectos
 
 - [x] Adicionar libs
-  - expo router
+  - expo-router
   - nativewind
   - biomejs
   - maestrojs
@@ -36,11 +36,15 @@
 - [ ] criar a interface principal
 - [ ] criar a interface de loading
 
-#### Modulos funcionário
+#### Modulo funcionário
 
 - [ ] criar a interface home e as suas funcionalidade(listar itens, listar items com base as categorias) 
 - [ ] criar a interface solicitação e as suas funcionalidade
 - [ ] Criar a interface de ver solicitação e as suas funcionalidade(cancelar, editar, reenviar)
 - [ ] criar a interface de profile e as suas funcionalidades(logout, mudar de theme, adicionar imagem)
+
+#### Modulo gestor
+
+4B5563
 
 31acljDBGPHFYMU1
