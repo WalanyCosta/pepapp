@@ -74,7 +74,7 @@ export default function Home() {
 						<CaretRight color="#4B5563" size={16} />
 					</TouchableOpacity>
 
-					<TouchableOpacity className="flex-row item-center justify-between">
+					<View className="flex-row item-center justify-between">
 						<View className="flex-row gap-2 items-center">
 							<PaintRoller color="#4B5563" size={20} />
 							<Text className="text-xs text-gray-600">
@@ -83,7 +83,7 @@ export default function Home() {
 						</View>
 
 						<Switch onValueChange={setIsEnabled} value={isEnabled} />
-					</TouchableOpacity>
+					</View>
 				</View>
 
 				<TouchableOpacity className="flex-row item-center justify-between mt-5 py-2 border border-input rounded-md">

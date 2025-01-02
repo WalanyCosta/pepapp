@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import * as z from "zod";
 import { router } from "expo-router";
+import { CardItem } from "@/components/layout/card-item";
 
 const loginUserFormSchema = z.object({
 	descriptionSize: z.string({ required_error: "" }),
@@ -54,40 +55,19 @@ export default function Order() {
 			</View>
 
 			<View className="gap-2">
-				<View className="flex-row gap-4 px-2 py-3 border border-input rounded-md">
-					<Image
-						className="w-16 h-16"
-						source={require("@/assets/ilustration.png")}
-					/>
-					<View className="gap-1 w-64">
-						<Text className="text-base font-heading">T-shirt padrão</Text>
-						<Text className="text-xs text-wrap">
-							Lorem ipsum dolor sit amet consectetur adipisicing elit
-						</Text>
-					</View>
+				<CardItem
+					source={require("@/assets/fotos-uniformes.jpg")}
+					title="T-shirt padrão"
+					description="Lorem ipsums dolor sit amet consectetur adipisicing elit"
+					isOption={true}
+				/>
 
-					<TouchableOpacity className="absolute right-2 top-1/2 opacity-75">
-						<Trash color="#4B5563" size={20} />
-					</TouchableOpacity>
-				</View>
-
-				<View className="flex-row gap-4 px-2 py-3 border relative border-input rounded-md">
-					<Image
-						className="w-16 h-16 bg-red-700"
-						source={require("@/assets/fotos-uniformes.jpg")}
-					/>
-
-					<View className="gap-1 w-64">
-						<Text className="text-base font-heading">T-shirt padrão</Text>
-						<Text className="text-xs text-wrap">
-							Lorem ipsum dolor sit amet consectetur adipisicing elit
-						</Text>
-					</View>
-
-					<TouchableOpacity className="absolute right-2 top-1/2 opacity-75">
-						<Trash color="#4B5563" size={20} />
-					</TouchableOpacity>
-				</View>
+				<CardItem
+					source={require("@/assets/fotos-uniformes.jpg")}
+					title="T-shirt padrão"
+					description="Lorem ipsums dolor sit amet consectetur adipisicing elit"
+					isOption={true}
+				/>
 			</View>
 
 			<View className="my-5 h-[1px] bg-gray-200" />
