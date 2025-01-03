@@ -1,7 +1,6 @@
 import { Container, Form, InputControl } from "@/components/layout";
 import { Button } from "@/components/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trash } from "phosphor-react-native";
 import { ArrowLeft } from "phosphor-react-native";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";

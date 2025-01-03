@@ -14,6 +14,7 @@ import { router } from "expo-router";
 
 import { AuthProvider, useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
+import { LoadingComponent } from "@/components/layout/loading";
 
 export default function RootLayout() {
 	const [fontsLoaded, error] = useFonts({
@@ -22,14 +23,14 @@ export default function RootLayout() {
 		Inter_500Medium,
 	});
 
-	useEffect(() => {
-		if (fontsLoaded || error) {
-			SplashScreen.hideAsync();
-		}
-	}, [fontsLoaded, error]);
+	// useEffect(() => {
+	// 	if (fontsLoaded || error) {
+	// 		SplashScreen.hideAsync();
+	// 	}
+	// }, [fontsLoaded, error]);
 
-	if (!fontsLoaded && !error) {
-		return null;
+	if (!fontsLoaded) {
+		return <LoadingComponent />;
 	}
 
 	return (
@@ -46,11 +47,11 @@ export function MainLayout() {
 		supabase.auth.onAuthStateChange((_event, session) => {
 			if (session) {
 				setAuth(session.user);
-				router.replace("/(employee)/home");
+				router.replace("/(employee)/home/home");
 				return;
 			}
 			setAuth(null);
-			router.replace("/");
+			router.replace("/(initial-screen)");
 		});
 	}, []);
 
@@ -63,8 +64,9 @@ export function MainLayout() {
 				}}
 			>
 				<Stack.Screen name="index" />
-				<Stack.Screen name="signin" />
-				<Stack.Screen name="(employee)/home" />
+				<Stack.Screen name="(initial-screen)/" />
+				<Stack.Screen name="(initial-screen)/signin" />
+				<Stack.Screen name="(employee)/home/home" />
 				<Stack.Screen name="(manager)/home" />
 			</Stack>
 		</GestureHandlerRootView>

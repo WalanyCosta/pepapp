@@ -2,12 +2,7 @@ import { Container } from "@/components/layout";
 import { useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
 import { View, Text, Image } from "react-native";
-import {
-	ShirtFolded,
-	Boot,
-	HardHat,
-	ArrowsInCardinal,
-} from "phosphor-react-native";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { CardItem } from "@/components/layout/card-item";
 import { CategoryItem } from "@/components/layout/category-item";
 import { useState } from "react";
@@ -30,10 +25,12 @@ export default function Home() {
 			<View className="gap-1 mb-12 justify-center">
 				<View className="flex-row justify-between items-center">
 					<Text className="font-heading text-2xl">Olá Marcos 👋</Text>
-					<View className="bg-gray-400 rounded-md size-10 items-center justify-center">
-						<Text className="text-base text-center text-white font-heading">
-							MA
-						</Text>
+					<View className="rounded-md size-10 items-center justify-center">
+						<Avatar className="rounded-md w-10 h-10 border border-input">
+							<AvatarFallback className="rounded-md w-14 h-14 border border-input">
+								MA
+							</AvatarFallback>
+						</Avatar>
 					</View>
 				</View>
 				<Text className="text-sm text-gray-500">
