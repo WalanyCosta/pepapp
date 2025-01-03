@@ -1,20 +1,15 @@
 import { Container } from "@/components/layout";
-import { useAuth } from "@/context/auth-context";
-import { supabase } from "@/lib/supabase";
+import { router } from "expo-router";
 import { View, Text, Image } from "react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { CardItem } from "@/components/layout/card-item";
 import { CategoryItem } from "@/components/layout/category-item";
 import { useState } from "react";
+import { Tab, TabScreen } from "@/components/layout/tab";
 
 export default function Home() {
-	const { setAuth } = useAuth();
 	const [isActive, setIsActive] = useState("Todos");
-
-	async function signOut() {
-		await supabase.auth.signOut();
-		setAuth(null);
-	}
+	const [isActiveTab, setIsActiveTab] = useState("House");
 
 	return (
 		<Container>
@@ -27,7 +22,7 @@ export default function Home() {
 					<Text className="font-heading text-2xl">Olá Marcos 👋</Text>
 					<View className="rounded-md size-10 items-center justify-center">
 						<Avatar className="rounded-md w-10 h-10 border border-input">
-							<AvatarFallback className="w-full h-full rounded-md">
+							<AvatarFallback className="w-full h-full rounded-md text-xs">
 								MA
 							</AvatarFallback>
 						</Avatar>
@@ -78,6 +73,39 @@ export default function Home() {
 					description="Lorem ipsums dolor sit amet consectetur adipisicing elit"
 				/>
 			</View>
+
+			<Tab>
+				<TabScreen
+					icon="House"
+					active={isActiveTab}
+					setActive={setIsActiveTab}
+					onPress={() => {}}
+				/>
+				<TabScreen
+					icon="ListPlus"
+					active={isActiveTab}
+					setActive={setIsActiveTab}
+					onPress={() => {
+						router.replace("/(employee)/order");
+					}}
+				/>
+				<TabScreen
+					icon="CalendarCheck"
+					active={isActiveTab}
+					setActive={setIsActiveTab}
+					onPress={() => {
+						router.replace("/(employee)/schedule");
+					}}
+				/>
+				<TabScreen
+					icon="GearSix"
+					active={isActiveTab}
+					setActive={setIsActiveTab}
+					onPress={() => {
+						router.replace("/(employee)/settings");
+					}}
+				/>
+			</Tab>
 		</Container>
 	);
 }

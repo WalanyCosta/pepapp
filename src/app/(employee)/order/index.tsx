@@ -36,7 +36,7 @@ export default function Order() {
 	});
 
 	function handleBack() {
-		router.back();
+		router.replace("/(employee)/home");
 	}
 
 	return (

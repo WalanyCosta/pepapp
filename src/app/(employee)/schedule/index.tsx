@@ -18,7 +18,7 @@ export default function Schedule() {
 	}
 
 	function handleBack() {
-		router.back();
+		router.replace("/(employee)/home");
 	}
 
 	return (

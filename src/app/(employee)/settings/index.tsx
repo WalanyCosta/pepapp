@@ -25,7 +25,7 @@ export default function Home() {
 	}
 
 	function handleBack() {
-		router.back();
+		router.replace("/(employee)/home");
 	}
 
 	return (
