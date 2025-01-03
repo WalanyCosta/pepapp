@@ -86,7 +86,10 @@ export default function Home() {
 					</View>
 				</View>
 
-				<TouchableOpacity className="flex-row item-center justify-between mt-5 py-2 border border-input rounded-md">
+				<TouchableOpacity
+					onPress={signOut}
+					className="flex-row item-center justify-between mt-5 py-2 border border-input rounded-md"
+				>
 					<View className="flex-row gap-2 items-center ml-5">
 						<SignOut color="#4B5563" size={20} />
 						<Text className="text-xs text-gray-600">Logout</Text>

@@ -47,7 +47,7 @@ export function MainLayout() {
 		supabase.auth.onAuthStateChange((_event, session) => {
 			if (session) {
 				setAuth(session.user);
-				router.replace("/(employee)/home/home");
+				router.replace("/(employee)/home");
 				return;
 			}
 			setAuth(null);
