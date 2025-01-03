@@ -27,7 +27,7 @@ export default function Home() {
 					<Text className="font-heading text-2xl">Olá Marcos 👋</Text>
 					<View className="rounded-md size-10 items-center justify-center">
 						<Avatar className="rounded-md w-10 h-10 border border-input">
-							<AvatarFallback className="rounded-md w-14 h-14 border border-input">
+							<AvatarFallback className="w-full h-full rounded-md">
 								MA
 							</AvatarFallback>
 						</Avatar>
