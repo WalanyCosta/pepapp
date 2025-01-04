@@ -7,7 +7,7 @@ import {
 } from "phosphor-react-native";
 import { useState } from "react";
 
-type IconProps = "all" | "Boot" | "HardHat" | "ShirtFolded";
+export type IconProps = "all" | "Boot" | "HardHat" | "ShirtFolded";
 
 function CategoryItemIcon({ icon, active }: { icon: string; active: boolean }) {
 	if (icon === "ShirtFolded") {
@@ -29,25 +29,17 @@ type Props = {
 	name: string;
 	isActive: string;
 	setIsActive: (active: string) => void;
-	onPress: () => void;
 };
 
-export function CategoryItem({
-	icon,
-	name,
-	isActive,
-	setIsActive,
-	onPress,
-}: Props) {
+export function CategoryItem({ icon, name, isActive, setIsActive }: Props) {
 	function handleCategoryItem() {
 		setIsActive(name);
-		onPress();
 	}
 
 	return (
 		<TouchableOpacity
 			onPress={handleCategoryItem}
-			className={`gap-2 px-3 py-2 ${isActive === name ? "bg-violet-600" : "border border-input"} flex-row rounded-md justify-center items-center`}
+			className={`mr-2 px-3 py-2 flex-row gap-2 rounded-md justify-center items-center ${isActive === name ? "bg-violet-600" : "border border-input"} `}
 		>
 			<CategoryItemIcon icon={icon ?? "all"} active={isActive === name} />
 			<Text

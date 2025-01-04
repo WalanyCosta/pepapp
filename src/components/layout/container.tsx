@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export function Container({ children }: { children: ReactNode }) {
 	return (
-		<SafeAreaView className="flex-1 bg-white font-body text-gray-800">
+		<SafeAreaView className="flex-1 bg-white font-body text-gray-800 relative">
 			<ScrollView>
 				<View className="mx-7">{children}</View>
 			</ScrollView>

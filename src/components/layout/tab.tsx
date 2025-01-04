@@ -4,7 +4,7 @@ import { type IconName, IconSystem } from "./icon-system";
 
 function Tab({ children }: { children: React.ReactNode }) {
 	return (
-		<View className="fixed -bottom-[38%] gap-6 bg-violet-600 mx-2 py-1 px-2 flex-row items-center justify-center z-50 rounded-md">
+		<View className="fixed bottom-24 gap-6 bg-violet-600 py-1 px-2 flex-row items-center justify-center z-50 rounded-md">
 			{children}
 		</View>
 	);

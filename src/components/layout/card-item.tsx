@@ -23,7 +23,7 @@ export function CardItem({
 	onPress,
 }: Props) {
 	return (
-		<View className="flex-row gap-4 px-2 py-3 border border-input rounded-md">
+		<View className="flex-row gap-4 mb-2 px-2 py-3 border border-input rounded-md">
 			<Image className="w-14 h-14" source={source} />
 			<View className="gap-1 w-64">
 				<Text className="text-base font-heading">{title}</Text>
