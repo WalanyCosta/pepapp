@@ -1,48 +1,26 @@
 import { Container } from "@/components/layout";
 import { router } from "expo-router";
-import { View, Text, Image, FlatList, Alert } from "react-native";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
-import { CardItem } from "@/components/layout/card-item";
-import {
-	CategoryItem,
-	type IconProps,
-} from "@/components/layout/category-item";
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { View, Text, Image, Alert } from "react-native";
+import { Avatar, AvatarFallback } from "@/components/ui/Avatar";
+import { useEffect, useState } from "react";
 import { Tab, TabScreen } from "@/components/layout/tab";
 import { supabase } from "@/lib/supabase";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { CardItemEmpty } from "@/components/layout/card-item-empty";
+import type { Item } from "@/models/item";
+import { Items } from "@/components/screen/items";
+import type { Category } from "@/models/category";
+import { Categories } from "@/components/screen/categories";
 
-type CategoryProps = {
-	id: string;
-	icon: string;
-	name: string;
-	description?: string;
-	createdAt: Date;
-};
-
-type ItemProps = {
-	id: string;
-	name: string;
-	image: string;
-	description: string;
-	categoryId: string;
-	createdAt: Date;
-};
-
-const categoryDefault: CategoryProps = {
+const categoryDefault = {
 	id: "any_id",
 	icon: "all",
 	name: "Todos",
 	description: "any_description",
-};
+} as Category;
 
 export default function Home() {
-	const [categories, setCategories] = useState<CategoryProps[]>([
-		categoryDefault,
-	]);
+	const [categories, setCategories] = useState<Category[]>([categoryDefault]);
 
-	const [items, setItems] = useState<ItemProps[]>([]);
+	const [items, setItems] = useState<Item[]>([]);
 	const [isLoadingItem, setIsLoadingItem] = useState(false);
 	const [isLoadingCategory, setIsLoadingCategory] = useState(false);
 	const [isActive, setIsActive] = useState("Todos");
@@ -63,28 +41,27 @@ export default function Home() {
 		setIsLoadingCategory(false);
 	};
 
-	const getAllItems = async () => {
-		const { data, error } = await supabase.from("items").select("*");
-		if (error) {
-			Alert.alert("Error do sistema", error.message);
-			return [];
+	const fetchItems = async () => {
+		let response: any;
+		setIsLoadingItem(true);
+
+		if (isActive === "Todos") {
+			response = await supabase.from("items").select("*");
+		} else {
+			response = await supabase
+				.from("items")
+				.select("*, categories!inner(name)")
+				.eq("categories.name", isActive);
 		}
 
-		return data === null ? [] : (data as ItemProps[]);
-	};
-
-	const getItemsByCategory = async () => {
-		const { data, error } = await supabase
-			.from("items")
-			.select("*, categories!inner(name)")
-			.eq("categories.name", isActive);
-		if (error) {
+		if (response.error) {
 			setIsLoadingItem(false);
-			Alert.alert("Error do sistema", error.message);
-			return [];
+			Alert.alert("Error do sistema", response.error.message);
+			return;
 		}
 
-		return data === null ? [] : (data as ItemProps[]);
+		setItems(response.data);
+		setIsLoadingItem(false);
 	};
 
 	useEffect(() => {
@@ -92,19 +69,7 @@ export default function Home() {
 	}, []);
 
 	useEffect(() => {
-		setIsLoadingItem(true);
-
-		if (isActive === "Todos") {
-			getAllItems().then((data) => {
-				setItems(data);
-				setIsLoadingItem(false);
-			});
-		} else {
-			getItemsByCategory().then((data) => {
-				setItems(data);
-				setIsLoadingItem(false);
-			});
-		}
+		fetchItems();
 	}, [isActive, isLoadingCategory]);
 
 	return (
@@ -128,57 +93,16 @@ export default function Home() {
 					Lorem ipsum is simply dummy text of te printing
 				</Text>
 			</View>
-			{isLoadingCategory ? (
-				<View className="gap-2 mb-8 flex-row">
-					<Skeleton className="w-24 h-10 rounded-md" />
-					<Skeleton className="w-24 h-10 rounded-md" />
-					<Skeleton className="w-24 h-10 rounded-md" />
-					<Skeleton className="w-24 h-10 rounded-md" />
-				</View>
-			) : (
-				<FlatList
-					className="mb-8"
-					data={categories}
-					keyExtractor={(item) => item.id}
-					renderItem={({ item }) => (
-						<CategoryItem
-							name={item.name}
-							icon={item.icon as IconProps}
-							isActive={isActive}
-							setIsActive={setIsActive}
-						/>
-					)}
-					showsHorizontalScrollIndicator={false}
-					horizontal={true}
-				/>
-			)}
 
-			{isLoadingItem && <CardItemEmpty />}
+			<Categories
+				isLoadingCategory={isLoadingCategory}
+				categories={categories}
+				isActive={isActive}
+				setIsActive={setIsActive}
+			/>
 
-			{!isLoadingItem && items.length > 0 && (
-				<FlatList
-					className="gap-2 h-[322px]"
-					keyExtractor={(item) => item.id}
-					data={items}
-					renderItem={({ item }) => (
-						<CardItem
-							source={require("@/assets/fotos-uniformes.jpg")}
-							title={item.name}
-							description={item.description}
-						/>
-					)}
-					contentContainerStyle={{ paddingBottom: 100 }}
-					showsVerticalScrollIndicator={false}
-					style={{ flex: 1 }}
-				/>
-			)}
-			{!isLoadingItem && items.length === 0 && (
-				<View className="gap-2 h-[322px] pb-[100px] items-center justify-center">
-					<Text className="text-gray-400 text-sm">
-						Não existe items cadastrados
-					</Text>
-				</View>
-			)}
+			<Items items={items} isLoadingItem={isLoadingItem} />
+
 			<Tab>
 				<TabScreen
 					icon="House"
