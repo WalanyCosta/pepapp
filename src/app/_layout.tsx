@@ -1,7 +1,7 @@
+import "punycode/";
 import "@/styles/global.css";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SplashScreen } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
 import {
