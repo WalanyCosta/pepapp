@@ -11,28 +11,38 @@ import {
 	Text,
 	type TextInput,
 	FlatList,
+	Alert,
 } from "react-native";
 import * as z from "zod";
 import { router } from "expo-router";
 import { CardItem } from "@/components/layout/card-item";
 import { useItem } from "@/context/item-context";
-import {
-	Dialog,
-	DialogContent,
-	DialogTrigger,
-	useDialog,
-} from "@/components/ui/Dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
 import { PopoverDualButton } from "@/components/layout/popovers/dual-button";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/context/auth-context";
+import { OrderStatus } from "@/models/order";
 
 const loginUserFormSchema = z.object({
-	descriptionSize: z.string({ required_error: "" }),
-	ranson: z.string({ required_error: "Campo password é obrigatório" }),
+	ranson: z
+		.string({ required_error: "Campo motivação é obrigatório" })
+		.min(10, {
+			message: "No minimo o campo descrição do tamanho só permite 10",
+		})
+		.max(250, {
+			message: "No máximo o campo descrição do tamanho só permite 250",
+		}),
+	descriptionSize: z
+		.string()
+		.max(200, "No máximo o campo descrição do tamanho só permite 200")
+		.optional(),
 });
 
 type LoginUserFormData = z.infer<typeof loginUserFormSchema>;
 
 export default function Order() {
-	const { items, deleteItem, clearItems } = useItem();
+	const { user } = useAuth();
+	const { items, deleteItem, clearItems, getItemSize } = useItem();
 	const [loading, setLoading] = useState(false);
 	const ransonRef = useRef<TextInput>(null);
 
@@ -48,6 +58,50 @@ export default function Order() {
 	function handleCancel() {
 		clearItems();
 		router.replace("/(employee)/home");
+	}
+
+	async function handleAddOrders(data: any) {
+		if (getItemSize() <= 0) {
+			Alert.alert("Error", "Selecione items para fazer pedido");
+			return;
+		}
+
+		setLoading(true);
+
+		try {
+			const date = new Date().toISOString();
+
+			await supabase.from("orders").insert({
+				ranson: data.ranson,
+				sizeDescription: data.descriptionSize,
+				date,
+				userId: user?.id,
+				status: OrderStatus.PENDING,
+			});
+
+			const { data: order } = await supabase
+				.from("orders")
+				.select("*")
+				.eq("userId", user?.id)
+				.eq("date", date)
+				.single();
+
+			const values = items.map((item) => ({
+				itemId: item.id,
+				orderId: order?.id,
+			}));
+
+			await supabase.from("order_items").insert(values);
+
+			setLoading(false);
+			Alert.alert("Feito com successo", "O seu pedido foi feito com sucesso");
+			clearItems();
+			router.replace("/(employee)/schedule");
+		} catch (error: any) {
+			Alert.alert("Error", error?.message);
+			setLoading(false);
+			return;
+		}
 	}
 
 	return (
@@ -140,7 +194,7 @@ export default function Order() {
 					isLoading={loading}
 					size={"default"}
 					variant={"default"}
-					onPress={handleSubmit((data) => {})}
+					onPress={handleSubmit(handleAddOrders)}
 				/>
 				<Dialog>
 					<DialogTrigger>
