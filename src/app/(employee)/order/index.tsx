@@ -10,10 +10,19 @@ import {
 	Image,
 	Text,
 	type TextInput,
+	FlatList,
 } from "react-native";
 import * as z from "zod";
 import { router } from "expo-router";
 import { CardItem } from "@/components/layout/card-item";
+import { useItem } from "@/context/item-context";
+import {
+	Dialog,
+	DialogContent,
+	DialogTrigger,
+	useDialog,
+} from "@/components/ui/Dialog";
+import { PopoverDualButton } from "@/components/layout/popovers/dual-button";
 
 const loginUserFormSchema = z.object({
 	descriptionSize: z.string({ required_error: "" }),
@@ -23,6 +32,7 @@ const loginUserFormSchema = z.object({
 type LoginUserFormData = z.infer<typeof loginUserFormSchema>;
 
 export default function Order() {
+	const { items, deleteItem, clearItems } = useItem();
 	const [loading, setLoading] = useState(false);
 	const ransonRef = useRef<TextInput>(null);
 
@@ -35,14 +45,17 @@ export default function Order() {
 		resolver: zodResolver(loginUserFormSchema),
 	});
 
-	function handleBack() {
+	function handleCancel() {
+		clearItems();
 		router.replace("/(employee)/home");
 	}
 
 	return (
 		<Container>
 			<TouchableOpacity
-				onPress={handleBack}
+				onPress={() => {
+					router.replace("/(employee)/home");
+				}}
 				className="w-8 h-8 mt-3 mb-5 justify-center items-start"
 			>
 				<ArrowLeft color="#4B5563" size={24} />
@@ -53,21 +66,32 @@ export default function Order() {
 				<Text className="font-heading text-xl">Items Solicitados</Text>
 			</View>
 
-			<View className="gap-2">
-				<CardItem
-					source={require("@/assets/fotos-uniformes.jpg")}
-					title="T-shirt padrão"
-					description="Lorem ipsums dolor sit amet consectetur adipisicing elit"
-					isOption={true}
+			{items.length > 0 && (
+				<FlatList
+					className="gap-2 h-60"
+					keyExtractor={(item) => item.id}
+					data={items}
+					renderItem={({ item }) => (
+						<CardItem
+							source={require("@/assets/fotos-uniformes.jpg")}
+							title={item.name}
+							isOption={true}
+							description={item.description}
+							onPressDelete={() => deleteItem(item.id)}
+						/>
+					)}
+					contentContainerStyle={{ paddingBottom: 100 }}
+					showsVerticalScrollIndicator={false}
+					style={{ flex: 1 }}
 				/>
-
-				<CardItem
-					source={require("@/assets/fotos-uniformes.jpg")}
-					title="T-shirt padrão"
-					description="Lorem ipsums dolor sit amet consectetur adipisicing elit"
-					isOption={true}
-				/>
-			</View>
+			)}
+			{items.length === 0 && (
+				<View className="gap-2 h-[322px] pb-[100px] items-center justify-center">
+					<Text className="text-gray-400 text-sm">
+						Não existe items cadastrados
+					</Text>
+				</View>
+			)}
 
 			<View className="my-5 h-[1px] bg-gray-200" />
 
@@ -112,19 +136,25 @@ export default function Order() {
 
 			<View className="mt-24 mb-12 gap-3">
 				<Button
-					label="Concluir solicitaçao"
+					label="Concluir pedido"
 					isLoading={loading}
 					size={"default"}
 					variant={"default"}
 					onPress={handleSubmit((data) => {})}
 				/>
-				<Button
-					label="Voltar para Home"
-					isLoading={false}
-					size={"default"}
-					variant={"secondary"}
-					onPress={handleBack}
-				/>
+				<Dialog>
+					<DialogTrigger>
+						<Button
+							label="cancelar pedido"
+							isLoading={false}
+							size={"default"}
+							variant={"secondary"}
+						/>
+					</DialogTrigger>
+					<DialogContent>
+						<PopoverDualButton confirm={handleCancel} />
+					</DialogContent>
+				</Dialog>
 			</View>
 		</Container>
 	);

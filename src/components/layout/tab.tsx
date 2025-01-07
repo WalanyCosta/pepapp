@@ -1,5 +1,4 @@
-import { View, TouchableOpacity } from "react-native";
-import { House, ListPlus, CalendarCheck, GearSix } from "phosphor-react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import { type IconName, IconSystem } from "./icon-system";
 
 function Tab({ children }: { children: React.ReactNode }) {
@@ -12,6 +11,9 @@ function Tab({ children }: { children: React.ReactNode }) {
 
 type TabScreenProps = {
 	icon: IconName;
+	badge?: boolean;
+	badgeNumber?: number;
+	textBadge?: string;
 	onPress: () => void;
 	active: string;
 	setActive: (active: string) => void;
@@ -20,6 +22,9 @@ type TabScreenProps = {
 function TabScreen({
 	icon,
 	active = "House",
+	badge = false,
+	badgeNumber = 0,
+	textBadge,
 	setActive,
 	onPress,
 }: TabScreenProps) {
@@ -31,8 +36,19 @@ function TabScreen({
 	return (
 		<TouchableOpacity
 			onPress={handlePress}
-			className={`w-12 h-12 items-center justify-center ${active === icon && "bg-white rounded-full"}`}
+			className={`w-12 h-12 relative items-center justify-center ${active === icon && "bg-white rounded-full"}`}
 		>
+			{badge && badgeNumber > 0 && (
+				<View className="bg-white w-7 h-7 py-2 overflow-hidden flex-row justify-center items-center absolute rounded-full -top-1 left-6 z-10">
+					<View className="mx-auto  flex-row justify-center items-center">
+						<Text className="text-xs text-violet-600 self-center">
+							{badgeNumber}
+						</Text>
+						<Text className="text-xs text-violet-600">{textBadge}</Text>
+					</View>
+				</View>
+			)}
+
 			<IconSystem
 				icon={icon}
 				size={24}

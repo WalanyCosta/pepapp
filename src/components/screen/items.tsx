@@ -4,6 +4,7 @@ import { CardItemEmpty } from "../layout/card-item-empty";
 import { CardItem } from "../layout/card-item";
 import { FlatList } from "react-native-gesture-handler";
 import { View, Text } from "react-native";
+import { useItem } from "@/context/item-context";
 
 type Props = {
 	items: Item[];
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export function Items({ items, isLoadingItem }: Props) {
+	const { addItem } = useItem();
 	return (
 		<Fragment>
 			{isLoadingItem && <CardItemEmpty />}
@@ -25,6 +27,7 @@ export function Items({ items, isLoadingItem }: Props) {
 							source={require("@/assets/fotos-uniformes.jpg")}
 							title={item.name}
 							description={item.description}
+							onPress={() => addItem(item)}
 						/>
 					)}
 					contentContainerStyle={{ paddingBottom: 100 }}

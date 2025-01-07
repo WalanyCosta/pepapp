@@ -13,6 +13,7 @@ type Props = {
 	description: string;
 	isOption?: boolean;
 	onPress?: () => void;
+	onPressDelete?: () => void;
 };
 
 export function CardItem({
@@ -21,9 +22,13 @@ export function CardItem({
 	description,
 	isOption = false,
 	onPress,
+	onPressDelete,
 }: Props) {
 	return (
-		<View className="flex-row gap-4 mb-2 px-2 py-3 border border-input rounded-md">
+		<TouchableOpacity
+			onPress={onPress}
+			className="flex-row gap-4 mb-2 px-2 py-3 border border-input rounded-md"
+		>
 			<Image className="w-14 h-14" source={source} />
 			<View className="gap-1 w-64">
 				<Text className="text-base font-heading">{title}</Text>
@@ -31,12 +36,12 @@ export function CardItem({
 			</View>
 			{isOption && (
 				<TouchableOpacity
-					onPress={onPress}
+					onPress={onPressDelete}
 					className="absolute right-2 top-1/2 opacity-75"
 				>
 					<Trash color="#4B5563" size={20} />
 				</TouchableOpacity>
 			)}
-		</View>
+		</TouchableOpacity>
 	);
 }

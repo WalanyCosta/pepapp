@@ -1,6 +1,19 @@
-import { House, ListPlus, CalendarCheck, GearSix } from "phosphor-react-native";
+import {
+	House,
+	ListPlus,
+	CalendarCheck,
+	GearSix,
+	Archive,
+	BagSimple,
+} from "phosphor-react-native";
 
-export type IconName = "House" | "ListPlus" | "CalendarCheck" | "GearSix";
+export type IconName =
+	| "House"
+	| "ListPlus"
+	| "CalendarCheck"
+	| "GearSix"
+	| "Archive"
+	| "BagSimple";
 
 type IconSystemProps = {
 	icon: string;
@@ -26,6 +39,18 @@ export function IconSystem({
 	if (icon === "ListPlus") {
 		return (
 			<ListPlus color={active === icon ? colorActive : color} size={size} />
+		);
+	}
+
+	if (icon === "BagSimple") {
+		return (
+			<BagSimple color={active === icon ? colorActive : color} size={size} />
+		);
+	}
+
+	if (icon === "Archive") {
+		return (
+			<Archive color={active === icon ? colorActive : color} size={size} />
 		);
 	}
 

@@ -9,6 +9,7 @@ import type { Item } from "@/models/item";
 import { Items } from "@/components/screen/items";
 import type { Category } from "@/models/category";
 import { Categories } from "@/components/screen/categories";
+import { useItem } from "@/context/item-context";
 
 const categoryDefault = {
 	id: "any_id",
@@ -18,13 +19,23 @@ const categoryDefault = {
 } as Category;
 
 export default function Home() {
-	const [categories, setCategories] = useState<Category[]>([categoryDefault]);
+	const [categories, setCategories] = useState<Category[]>([]);
 
 	const [items, setItems] = useState<Item[]>([]);
 	const [isLoadingItem, setIsLoadingItem] = useState(false);
 	const [isLoadingCategory, setIsLoadingCategory] = useState(false);
 	const [isActive, setIsActive] = useState("Todos");
 	const [isActiveTab, setIsActiveTab] = useState("House");
+	const { getItemSize } = useItem();
+
+	function handleChangeScreenToOrder() {
+		if (getItemSize() <= 0) {
+			Alert.alert("Info", "Selecione um item para poder fazer pedido");
+			setIsActiveTab("House");
+			return;
+		}
+		router.replace("/(employee)/order");
+	}
 
 	const fetchCategory = async () => {
 		setIsLoadingCategory(true);
@@ -111,15 +122,15 @@ export default function Home() {
 					onPress={() => {}}
 				/>
 				<TabScreen
-					icon="ListPlus"
+					icon="BagSimple"
 					active={isActiveTab}
+					badge={true}
+					badgeNumber={getItemSize()}
 					setActive={setIsActiveTab}
-					onPress={() => {
-						router.replace("/(employee)/order");
-					}}
+					onPress={handleChangeScreenToOrder}
 				/>
 				<TabScreen
-					icon="CalendarCheck"
+					icon="Archive"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
 					onPress={() => {
