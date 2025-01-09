@@ -2,24 +2,74 @@ import { TouchableOpacity, View, Text, Image } from "react-native";
 import { Container } from "@/components/layout";
 import { useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, Clock } from "phosphor-react-native";
-import { useState } from "react";
+import { ArrowLeft } from "phosphor-react-native";
+import { Fragment, useEffect, useState } from "react";
 import { Calendar } from "@/components/layout/calendar";
 import { router } from "expo-router";
 import { CardSchedule } from "@/components/screen/schedules/card-schedule";
+import { OrderStatus, type Order } from "@/models/order";
+import { FlatList } from "react-native-gesture-handler";
+import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
+import { Alert } from "react-native";
 
 export default function Schedule() {
-	const { setAuth } = useAuth();
+	const { user } = useAuth();
+	const [refresh, setRefresh] = useState(false);
+	const [orders, setOrders] = useState<Order[]>([]);
+	const [loading, setLoading] = useState(false);
 	const [saveDate, setSaveDate] = useState<Date | null>(null);
-
-	async function signOut() {
-		await supabase.auth.signOut();
-		setAuth(null);
-	}
 
 	function handleBack() {
 		router.replace("/(employee)/home");
 	}
+
+	const fetchItems = async () => {
+		let response: any;
+		setLoading(true);
+
+		if (saveDate === null) {
+			response = await supabase
+				.from("orders")
+				.select("*, order_items!inner(*, items(*))")
+				.eq("userId", user?.id);
+		} else {
+			response = await supabase
+				.from("orders")
+				.select("*, order_items!inner(*, items!inner(*))")
+				.eq("userId", user?.id)
+				.eq("date", saveDate);
+		}
+
+		if (response.error) {
+			setLoading(false);
+			Alert.alert("Error do sistema", response.error.message);
+			return;
+		}
+
+		setOrders(response.data);
+		setLoading(false);
+	};
+
+	async function handleCancelOrder(order: Order) {
+		if (order.status === OrderStatus.CANCEL) {
+			return;
+		}
+
+		const { error } = await supabase
+			.from("orders")
+			.update({ status: OrderStatus.CANCEL })
+			.eq("id", order.id);
+
+		if (error) {
+			Alert.alert("Error", "Ocorreu um error no servidor");
+			return;
+		}
+		setRefresh(!refresh);
+	}
+
+	useEffect(() => {
+		fetchItems();
+	}, [saveDate, refresh]);
 
 	return (
 		<Container>
@@ -38,30 +88,33 @@ export default function Schedule() {
 			<Calendar saveDate={saveDate} setSaveDate={setSaveDate} />
 
 			<View>
-				<CardSchedule />
-				<CardSchedule />
-				<View className="justify-center gap-4 mb-3 p-3 border border-input rounded-md">
-					<View className="flex-row justify-between items-start pr-3">
-						<View>
-							<Text className="font-heading text-base mb-2">
-								Data: 07/03/2024
-							</Text>
-							<Text className="text-sm text-gray-400">
-								As solitações foram: botas, t-shirt, e capacete.
-							</Text>
-						</View>
-					</View>
+				<View className="h-[322px]">
+					{loading && <CardScheduleEmpty />}
 
-					<View className="bg-violet-200 rounded-md border-l-2 border-violet-600 flex-row items-center justify-between p-2">
-						<View className="flex-row gap-1 items-center">
-							<Clock color="#4B5563" size={16} />
-							<Text className="text-sm text-gray-600">10:00 AM</Text>
+					{!loading && orders.length > 0 && (
+						<FlatList
+							className="gap-2 flex-1 h-[322px]"
+							keyExtractor={(item) => item.id}
+							data={orders}
+							renderItem={({ item }) => (
+								<CardSchedule
+									order={item}
+									orderItems={item.order_items}
+									onRemove={() => handleCancelOrder(item)}
+								/>
+							)}
+							contentContainerStyle={{ paddingBottom: 100 }}
+							showsVerticalScrollIndicator={false}
+							style={{ flex: 1 }}
+						/>
+					)}
+					{!loading && orders.length === 0 && (
+						<View className="gap-2 h-[322px] pb-[100px] items-center justify-center">
+							<Text className="text-gray-400 text-sm">
+								Não existe nenhum pedido feitos
+							</Text>
 						</View>
-
-						<View className="bg-green-50 p-1 flex-row rounded-md border border-green-500">
-							<Text className="text-xs text-green-500">Aceite de sucesso</Text>
-						</View>
-					</View>
+					)}
 				</View>
 			</View>
 		</Container>

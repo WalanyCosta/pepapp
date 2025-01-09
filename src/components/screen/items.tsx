@@ -14,12 +14,12 @@ type Props = {
 export function Items({ items, isLoadingItem }: Props) {
 	const { addItem } = useItem();
 	return (
-		<Fragment>
+		<View className="h-[322px]">
 			{isLoadingItem && <CardItemEmpty />}
 
 			{!isLoadingItem && items.length > 0 && (
 				<FlatList
-					className="gap-2 h-[322px]"
+					className="gap-2"
 					keyExtractor={(item) => item.id}
 					data={items}
 					renderItem={({ item }) => (
@@ -42,6 +42,6 @@ export function Items({ items, isLoadingItem }: Props) {
 					</Text>
 				</View>
 			)}
-		</Fragment>
+		</View>
 	);
 }

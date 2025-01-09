@@ -2,33 +2,59 @@ import { View, Text } from "react-native";
 import { Clock } from "phosphor-react-native";
 import { OptionDelete, OptionRoot } from "@/components/layout/options/Option";
 import { OptionViewSchedule } from "@/components/screen/schedules/option-view";
+import type { OrderItem } from "@/models/order-item";
+import { useMemo } from "react";
+import { Badge, type VariantsProps } from "@/components/ui/badge";
+import type { Order } from "@/models/order";
+import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
+import { formatTime } from "@/utils/format-time";
 
-export function CardSchedule() {
+type CardScheduleProps = {
+	order: Order;
+	orderItems: OrderItem[];
+	onRemove: () => void;
+};
+
+export function CardSchedule({
+	order,
+	orderItems,
+	onRemove,
+}: CardScheduleProps) {
+	const renderItems = useMemo(() => {
+		const itemNames = orderItems.map((orderItem) => orderItem.items.name);
+
+		if (itemNames.length === 0) {
+			return;
+		}
+
+		const formattedItems = itemNames.join(", ").replace(/,([^,]*)$/, " e$1");
+		return `Os pedidos foram: ${formattedItems}`;
+	}, [orderItems]);
+
 	return (
 		<View className="justify-center gap-4 mb-3 p-3 border border-input rounded-md">
-			<View className="flex-row justify-between items-start pr-3 relative">
-				<View>
-					<Text className="font-heading text-base mb-2">Data: 07/03/2024</Text>
-					<Text className="text-sm text-gray-400">
-						As solitações foram: botas, t-shirt, e capacete.
+			<View className="flex-1 relative">
+				<View className="w-full flex-row justify-between items-start">
+					<Text className="font-heading text-base mb-2">
+						Data: {convertDateOtherFormat(order.date)}
 					</Text>
+					<OptionRoot>
+						<OptionViewSchedule order={order} />
+						<OptionDelete title="cancelar" icon="CANCEL" onRemove={onRemove} />
+					</OptionRoot>
 				</View>
-
-				<OptionRoot>
-					<OptionViewSchedule />
-					<OptionDelete title="cancelar" icon="CANCEL" onRemove={() => {}} />
-				</OptionRoot>
+				<Text className="text-sm text-gray-400">{renderItems}</Text>
 			</View>
 
 			<View className="bg-violet-200 rounded-md border-l-2 border-violet-600 flex-row items-center justify-between p-2">
 				<View className="flex-row gap-1 items-center">
 					<Clock color="#4B5563" size={16} />
-					<Text className="text-sm text-gray-600">10:00 AM</Text>
+					<Text className="text-sm text-gray-600">
+						{formatTime(order.created_at)}
+					</Text>
 				</View>
 
-				<View className="bg-yellow-50 p-1 flex-row rounded-md border border-yellow-500">
-					<Text className="text-xs text-yellow-500">Aguardando</Text>
-				</View>
+				<Badge text={order.status as VariantsProps} />
 			</View>
 		</View>
 	);

@@ -22,11 +22,11 @@ function OptionRoot({ children }: { children: React.ReactNode }) {
 	return (
 		<DropDown>
 			<DropDownTrigger>
-				<TouchableOpacity className="w-12 h-12">
+				<TouchableOpacity className="items-end">
 					<DotsThree color="#4B5563" size={16} />
 				</TouchableOpacity>
 			</DropDownTrigger>
-			<DropDownContent className="w-40 border border-input abosolute top-2 -left-24">
+			<DropDownContent className="w-40 border border-input absolute -left-36 top-2">
 				<DropDownLabel labelTitle="Opções" />
 				<DropDownItemSeparator />
 				{children}

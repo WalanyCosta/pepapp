@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { Calendar as CalendarIcon } from "phosphor-react-native";
 
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
+import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
 
 type Props = {
 	saveDate: Date | null;
@@ -24,7 +25,7 @@ export function Calendar({ saveDate, setSaveDate }: Props) {
 						<Text className="text-xs text-gray-600">
 							{saveDate === null
 								? "Seleciona a data"
-								: dayjs(saveDate).format("DD/MM/YYYY").toString()}
+								: convertDateOtherFormat(saveDate)}
 						</Text>
 					</TouchableOpacity>
 				</DialogTrigger>
