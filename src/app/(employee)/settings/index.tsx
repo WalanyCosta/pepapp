@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Container } from "@/components/layout";
 import { ArrowLeft } from "phosphor-react-native";
 import { router } from "expo-router";
@@ -16,12 +16,24 @@ import { Switch } from "@/components/ui/Switch";
 import { useState } from "react";
 
 export default function Home() {
-	const { setAuth } = useAuth();
+	const { user, setAuth } = useAuth();
 	const [isEnabled, setIsEnabled] = useState(false);
 
 	async function signOut() {
 		await supabase.auth.signOut();
 		setAuth(null);
+	}
+
+	async function handleChangePassword() {
+		const { data, error } = await supabase.auth.resetPasswordForEmail(
+			user?.email ?? "",
+		);
+		if (error) {
+			Alert.alert("Error", "Error interno do servidor");
+			return;
+		}
+
+		router.replace("/(initial-screen)/reset-password");
 	}
 
 	function handleBack() {
@@ -65,7 +77,10 @@ export default function Home() {
 						<CaretRight color="#4B5563" size={16} />
 					</TouchableOpacity>
 
-					<TouchableOpacity className="flex-row item-center justify-between border-b border-input py-2">
+					<TouchableOpacity
+						onPress={handleChangePassword}
+						className="flex-row item-center justify-between border-b border-input py-2"
+					>
 						<View className="flex-row gap-2 items-center">
 							<Lock color="#4B5563" size={20} />
 							<Text className="text-xs text-gray-600">Alterar senha</Text>

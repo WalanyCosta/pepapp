@@ -3,10 +3,16 @@ import { useDialog } from "@/components/ui/Dialog";
 import { View, Image, Text } from "react-native";
 
 type PopoverDualButtonProps = {
+	title: string;
+	question: string;
 	confirm: () => void;
 };
 
-export function PopoverDualButton({ confirm }: PopoverDualButtonProps) {
+export function PopoverDualButton({
+	confirm,
+	title,
+	question,
+}: PopoverDualButtonProps) {
 	const { setOpen } = useDialog();
 
 	return (
@@ -16,15 +22,13 @@ export function PopoverDualButton({ confirm }: PopoverDualButtonProps) {
 				source={require("@/assets/logo.png")}
 			/>
 			<View className="gap-2 justify-center items-center ">
-				<Text className="font-heading text-2xl text-center">
-					Cancelar pedidos
-				</Text>
-				<Text className="text-gray-500 text-center w-64 text-base">
-					Tem a certeza de que queres cancelar o pedido?
+				<Text className="font-heading text-2xl text-center">{title}</Text>
+				<Text className="text-gray-500 text-center w-72 text-base">
+					{question}
 				</Text>
 			</View>
 
-			<View className="mt-6 gap-3 justify-center items-center">
+			<View className="mt-8 gap-3 justify-center items-center">
 				<Button
 					className="w-full"
 					label="Sim"

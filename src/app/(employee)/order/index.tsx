@@ -206,7 +206,11 @@ export default function Order() {
 						/>
 					</DialogTrigger>
 					<DialogContent>
-						<PopoverDualButton confirm={handleCancel} />
+						<PopoverDualButton
+							title="Cancelar pedidos"
+							question="Tem a certeza de que queres cancelar o pedido?"
+							confirm={handleCancel}
+						/>
 					</DialogContent>
 				</Dialog>
 			</View>

@@ -66,6 +66,7 @@ export function MainLayout() {
 				<Stack.Screen name="index" />
 				<Stack.Screen name="(initial-screen)/" />
 				<Stack.Screen name="(initial-screen)/signin" />
+				<Stack.Screen name="(initial-screen)/reset-password" />
 				<Stack.Screen name="(employee)/home/home" />
 				<Stack.Screen name="(manager)/home" />
 			</Stack>
