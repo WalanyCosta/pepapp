@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout";
 import { router } from "expo-router";
 import { View, Text, Image, Alert } from "react-native";
-import { Avatar, AvatarFallback } from "@/components/ui/Avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { useEffect, useState } from "react";
 import { Tab, TabScreen } from "@/components/layout/tab";
 import { supabase } from "@/lib/supabase";
@@ -10,6 +10,8 @@ import { Items } from "@/components/screen/items";
 import type { Category } from "@/models/category";
 import { Categories } from "@/components/screen/categories";
 import { useItem } from "@/context/item-context";
+import { useAuth } from "@/context/auth-context";
+import { useImage } from "@/hooks/use-image";
 
 const categoryDefault = {
 	id: "any_id",
@@ -27,6 +29,8 @@ export default function Home() {
 	const [isActive, setIsActive] = useState("Todos");
 	const [isActiveTab, setIsActiveTab] = useState("House");
 	const { getItemSize } = useItem();
+	const { user } = useAuth();
+	const { setUrl, url } = useImage("files");
 
 	function handleChangeScreenToOrder() {
 		if (getItemSize() <= 0) {
@@ -77,6 +81,7 @@ export default function Home() {
 
 	useEffect(() => {
 		fetchCategory();
+		setUrl(user?.image || null);
 	}, []);
 
 	useEffect(() => {
@@ -91,12 +96,20 @@ export default function Home() {
 			/>
 			<View className="gap-1 mb-12 justify-center">
 				<View className="flex-row justify-between items-center">
-					<Text className="font-heading text-2xl">Olá Marcos 👋</Text>
-					<View className="rounded-md size-10 items-center justify-center">
-						<Avatar className="rounded-md w-10 h-10 border border-input">
-							<AvatarFallback className="w-full h-full rounded-md text-xs">
-								MA
-							</AvatarFallback>
+					<Text className="font-heading text-2xl">
+						Olá {user?.name.split(" ")[0]} 👋
+					</Text>
+					<View className="rounded-md size-10 items-center justify-center relative">
+						<Avatar className="absolute -top-3">
+							{url ? (
+								<AvatarImage
+									source={{
+										uri: url,
+									}}
+								/>
+							) : (
+								<AvatarFallback>pq</AvatarFallback>
+							)}
 						</Avatar>
 					</View>
 				</View>

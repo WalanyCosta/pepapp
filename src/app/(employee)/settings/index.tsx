@@ -13,15 +13,51 @@ import {
 	SignOut,
 } from "phosphor-react-native";
 import { Switch } from "@/components/ui/Switch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useImage } from "@/hooks/use-image";
 
 export default function Home() {
 	const { user, setAuth } = useAuth();
+	const { uploadImage, url, setUrl } = useImage("files");
 	const [isEnabled, setIsEnabled] = useState(false);
+
+	async function fetch() {
+		const { data, error } = await supabase
+			.from("users")
+			.select("image")
+			.single();
+
+		if (error) {
+			Alert.alert("Error", error.message);
+			return;
+		}
+
+		if (data && user) {
+			setUrl(data.image);
+			setAuth({ ...user, image: data.image });
+		}
+	}
+
+	useEffect(() => {
+		fetch();
+	}, []);
 
 	async function signOut() {
 		await supabase.auth.signOut();
 		setAuth(null);
+	}
+
+	async function handleUpdateImage() {
+		uploadImage();
+
+		const { data, error } = await supabase
+			.from("users")
+			.update({ image: url })
+			.eq("id", user?.id || "");
+
+		if (error) {
+			Alert.alert("error", error.message);
+		}
 	}
 
 	async function handleChangePassword() {
@@ -50,17 +86,24 @@ export default function Home() {
 			</TouchableOpacity>
 
 			<View className="gap-3 justify-center items-center">
-				<Avatar className="rounded-md w-16 h-16 border border-input">
-					<AvatarImage source={require("@/assets/logo.png")} />
-					<AvatarFallback>MF</AvatarFallback>
+				<Avatar className="w-24 h-24">
+					{url ? (
+						<AvatarImage
+							source={{
+								uri: url,
+							}}
+						/>
+					) : (
+						<AvatarFallback>pq</AvatarFallback>
+					)}
 				</Avatar>
 
 				<View>
 					<Text className="font-heading text-center text-xl mb-2">
-						Marcos Ferreira
+						{user?.name}
 					</Text>
 					<Text className="text-center text-sm text-gray-500">
-						marcosferreira@mail.com
+						{user?.email}
 					</Text>
 				</View>
 			</View>
@@ -68,7 +111,10 @@ export default function Home() {
 			<View className="mt-9 gap-3 justify-center ">
 				<Text className="text-gray-400 text-sm ml-3">Usuario</Text>
 				<View className="border border-input p-6 gap-2 rounded-md">
-					<TouchableOpacity className="flex-row item-center justify-between border-b border-input py-2">
+					<TouchableOpacity
+						onPress={handleUpdateImage}
+						className="flex-row item-center justify-between border-b border-input py-2"
+					>
 						<View className="flex-row gap-2 items-center">
 							<Image color="#4B5563" size={20} />
 							<Text className="text-xs text-gray-600">Alterar imagem</Text>

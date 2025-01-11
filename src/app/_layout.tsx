@@ -15,6 +15,8 @@ import { router } from "expo-router";
 import { AuthProvider, useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
 import { LoadingComponent } from "@/components/layout/loading";
+import { Alert } from "react-native";
+import type { UserRole } from "@/models/user";
 
 export default function RootLayout() {
 	const [fontsLoaded, error] = useFonts({
@@ -43,10 +45,29 @@ export default function RootLayout() {
 export function MainLayout() {
 	const { setAuth } = useAuth();
 
+	async function fetchUser(session: any) {
+		const { data, error } = await supabase
+			.from("users")
+			.select("*")
+			.eq("id", session.user.id)
+			.single();
+
+		if (error) {
+			Alert.alert("Error", "Ocorreu um interno. Por favor tente novamente");
+			return;
+		}
+
+		setAuth({
+			...session.user,
+			name: data.name,
+			role: data.role as UserRole,
+		});
+	}
+
 	useEffect(() => {
 		supabase.auth.onAuthStateChange((_event, session) => {
 			if (session) {
-				setAuth(session.user);
+				fetchUser(session);
 				router.replace("/(employee)/home");
 				return;
 			}

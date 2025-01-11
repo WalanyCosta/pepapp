@@ -1,0 +1,66 @@
+import { supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
+import * as ImagePicker from 'expo-image-picker'
+
+export function useImage(folderPath: string){
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null)
+  const [url, setUrl] = useState<string | null>(null)
+
+  useEffect(()=> {
+    if (url) downloadImage(folderPath, url)
+  }, [url])
+
+  async function downloadImage(folder: string, path: string){
+    try {
+      const {data, error} = await supabase.storage.from(folder).download(path)
+
+      if(error){
+        throw error
+      }
+
+      const fr = new FileReader()
+      fr.readAsDataURL(data)
+      fr.onload = () => {
+        setUrl(fr.result as string)
+      }
+
+    } catch (error) {
+      if(error instanceof Error){
+        console.log(error)
+        setError(error.message)
+      }
+    }
+  }
+
+  async function uploadImage(){
+    try {
+      setUploading(true);
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      })
+
+      if(!result.canceled){
+        const img = result.assets[0]
+        const arraybuffer = await fetch(img.uri).then((res) => res.arrayBuffer())
+        const fileExt = img.uri?.split('.').pop()?.toLocaleLowerCase() ?? 'png';
+        const filePath = `${new Date().getTime()}.${fileExt}`;
+        const contentType = img.mimeType ?? 'image/jpeg';
+
+        const {data} = await supabase.storage.from(folderPath).upload(filePath, arraybuffer, {contentType})
+        
+        setUrl(data?.path || null)
+      }
+
+    } catch (error: any) {
+        console.log(error.message)
+        setError(error.message || null)
+    }
+  }
+
+  return {url, uploading, setUrl, uploadImage, error}
+}
