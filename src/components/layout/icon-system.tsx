@@ -5,6 +5,10 @@ import {
 	GearSix,
 	Archive,
 	BagSimple,
+	QrCode,
+	Gauge,
+	ClockCounterClockwise,
+	UsersThree,
 } from "phosphor-react-native";
 
 export type IconName =
@@ -13,7 +17,11 @@ export type IconName =
 	| "CalendarCheck"
 	| "GearSix"
 	| "Archive"
-	| "BagSimple";
+	| "BagSimple"
+	| "QrCode"
+	| "Gauge"
+	| "ClockCounterClockwise"
+	| "UsersThree";
 
 type IconSystemProps = {
 	icon: string;
@@ -52,6 +60,33 @@ export function IconSystem({
 		return (
 			<Archive color={active === icon ? colorActive : color} size={size} />
 		);
+	}
+
+	if (icon === "QrCode") {
+		return <QrCode color={active === icon ? colorActive : color} size={size} />;
+	}
+
+	if (icon === "Gauge") {
+		return <Gauge color={active === icon ? colorActive : color} size={size} />;
+	}
+
+	if (icon === "ClockCounterClockwise") {
+		return (
+			<ClockCounterClockwise
+				color={active === icon ? colorActive : color}
+				size={size}
+			/>
+		);
+	}
+
+	if (icon === "UsersThree") {
+		return (
+			<UsersThree color={active === icon ? colorActive : color} size={size} />
+		);
+	}
+
+	if (icon === "Gauge") {
+		return <Gauge color={active === icon ? colorActive : color} size={size} />;
 	}
 
 	if (icon === "CalendarCheck") {
