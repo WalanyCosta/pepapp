@@ -45,11 +45,11 @@ export default function ForgoutPassword() {
 		}
 
 		setLoading(false);
-		router.replace("/(initial-screen)/reset-password");
+		router.replace("/(auth)/reset-password");
 	}
 
 	async function handleCancelForgoutPassword() {
-		router.replace("/(initial-screen)/signin");
+		router.replace("/(auth)/signin");
 	}
 
 	return (

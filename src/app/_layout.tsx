@@ -59,7 +59,7 @@ export function MainLayout() {
 		});
 
 		if (data.role === UserRole.MANAGER) {
-			router.replace("/(manager)/home");
+			router.replace("/(manager)/dashboard");
 		} else {
 			router.replace("/(employee)/home");
 		}
@@ -73,7 +73,7 @@ export function MainLayout() {
 				return;
 			}
 			setAuth(null);
-			router.replace("/(initial-screen)");
+			router.replace("/(auth)");
 		});
 	}, []);
 
@@ -86,9 +86,9 @@ export function MainLayout() {
 				}}
 			>
 				<Stack.Screen name="index" />
-				<Stack.Screen name="(initial-screen)/" />
-				<Stack.Screen name="(initial-screen)/signin" />
-				<Stack.Screen name="(initial-screen)/reset-password" />
+				<Stack.Screen name="(auth)/" />
+				<Stack.Screen name="(auth)/signin" />
+				<Stack.Screen name="(auth)/reset-password" />
 				<Stack.Screen name="(employee)/home/home" />
 				<Stack.Screen name="(manager)/home" />
 			</Stack>

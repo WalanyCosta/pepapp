@@ -131,7 +131,7 @@ export default function Home() {
 				</View>
 
 				<TouchableOpacity
-					onPress={() => router.replace("/(initial-screen)/forgout-password")}
+					onPress={() => router.replace("/(auth)/forgout-password")}
 					className="my-8"
 				>
 					<Text className="text-primary text-right text-sm font-heading">

@@ -59,7 +59,7 @@ export default function ResetPassword() {
 			setAuth(null);
 		}
 		setLoading(false);
-		router.replace("/(initial-screen)/signin");
+		router.replace("/(auth)/signin");
 	};
 
 	function handleCancelResetPassword() {
@@ -67,7 +67,7 @@ export default function ResetPassword() {
 			router.replace("/(employee)/home");
 			return;
 		}
-		router.replace("/(initial-screen)/signin");
+		router.replace("/(auth)/signin");
 	}
 
 	return (

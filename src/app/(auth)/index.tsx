@@ -28,7 +28,7 @@ export default function Home() {
 				label="Começar"
 				size={"default"}
 				variant={"default"}
-				onPress={() => router.replace("/(initial-screen)/signin")}
+				onPress={() => router.replace("/(auth)/signin")}
 			/>
 		</Container>
 	);

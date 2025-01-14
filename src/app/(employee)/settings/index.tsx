@@ -73,7 +73,7 @@ export default function Home() {
 			return;
 		}
 
-		router.replace("/(initial-screen)/reset-password");
+		router.replace("/(auth)/reset-password");
 	}
 
 	function handleBack() {
