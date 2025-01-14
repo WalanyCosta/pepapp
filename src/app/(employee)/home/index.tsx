@@ -1,7 +1,6 @@
 import { Container } from "@/components/layout";
 import { router } from "expo-router";
-import { View, Text, Image, Alert } from "react-native";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
+import { Alert } from "react-native";
 import { useEffect, useState } from "react";
 import { Tab, TabScreen } from "@/components/layout/tab";
 import { supabase } from "@/lib/supabase";
@@ -12,6 +11,7 @@ import { Categories } from "@/components/screen/categories";
 import { useItem } from "@/context/item-context";
 import { useAuth } from "@/context/auth-context";
 import { useImage } from "@/hooks/use-image";
+import { Header } from "@/components/layout/header";
 
 const categoryDefault = {
 	id: "any_id",
@@ -22,8 +22,8 @@ const categoryDefault = {
 
 export default function Home() {
 	const [categories, setCategories] = useState<Category[]>([]);
-
 	const [items, setItems] = useState<Item[]>([]);
+
 	const [isLoadingItem, setIsLoadingItem] = useState(false);
 	const [isLoadingCategory, setIsLoadingCategory] = useState(false);
 	const [isActive, setIsActive] = useState("Todos");
@@ -86,37 +86,11 @@ export default function Home() {
 
 	useEffect(() => {
 		fetchItems();
-	}, [isActive, isLoadingCategory]);
+	}, [isActive]);
 
 	return (
 		<Container>
-			<Image
-				className="mt-6 mb-10"
-				source={require("@/assets/mini-logo.png")}
-			/>
-			<View className="gap-1 mb-12 justify-center">
-				<View className="flex-row justify-between items-center">
-					<Text className="font-heading text-2xl">
-						Olá {user?.name.split(" ")[0]} 👋
-					</Text>
-					<View className="rounded-md size-10 items-center justify-center relative">
-						<Avatar className="absolute -top-3">
-							{url ? (
-								<AvatarImage
-									source={{
-										uri: url,
-									}}
-								/>
-							) : (
-								<AvatarFallback>pq</AvatarFallback>
-							)}
-						</Avatar>
-					</View>
-				</View>
-				<Text className="text-sm text-gray-500">
-					Lorem ipsum is simply dummy text of te printing
-				</Text>
-			</View>
+			<Header url={url} />
 
 			<Categories
 				isLoadingCategory={isLoadingCategory}

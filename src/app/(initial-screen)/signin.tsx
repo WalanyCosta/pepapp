@@ -15,6 +15,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabase";
+import { UserRole } from "@/models/user";
 
 const loginUserFormSchema = z.object({
 	email: z.string({ required_error: "Campo email é obrigatório" }).email({
@@ -42,19 +43,43 @@ export default function Home() {
 
 	const onSignin = async (data: any) => {
 		setLoading(true);
-		const { data: result, error } = await supabase.auth.signInWithPassword({
-			email: data.email,
-			password: data.password,
-		});
+		const { data: result, error: loginError } =
+			await supabase.auth.signInWithPassword({
+				email: data.email,
+				password: data.password,
+			});
 
-		if (error) {
-			Alert.alert("Error", error.message);
+		if (loginError) {
+			Alert.alert("Error", loginError.message);
 			setLoading(false);
 			return;
 		}
 
-		setLoading(false);
-		router.replace("/(employee)/home");
+		if (result.user) {
+			const {
+				data: { role },
+				error,
+			} = await supabase
+				.from("user")
+				.select("*")
+				.eq("id", result.user.id || "")
+				.single();
+
+			if (error) {
+				Alert.alert("Error", error.message);
+				setLoading(false);
+				return;
+			}
+
+			if (role === UserRole.MANAGER) {
+				setLoading(false);
+				router.replace("/(manager)/home");
+				return;
+			}
+
+			setLoading(false);
+			router.replace("/(employee)/home");
+		}
 	};
 
 	return (

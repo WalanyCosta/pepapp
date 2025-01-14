@@ -25,6 +25,7 @@ export default function Home() {
 		const { data, error } = await supabase
 			.from("users")
 			.select("image")
+			.eq("id", user?.id)
 			.single();
 
 		if (error) {
@@ -48,20 +49,23 @@ export default function Home() {
 	}
 
 	async function handleUpdateImage() {
-		uploadImage();
+		await uploadImage();
 
 		const { data, error } = await supabase
 			.from("users")
 			.update({ image: url })
-			.eq("id", user?.id || "");
+			.eq("id", user?.id);
 
 		if (error) {
 			Alert.alert("error", error.message);
+			return;
 		}
+
+		console.log(data);
 	}
 
 	async function handleChangePassword() {
-		const { data, error } = await supabase.auth.resetPasswordForEmail(
+		const { error } = await supabase.auth.resetPasswordForEmail(
 			user?.email ?? "",
 		);
 		if (error) {

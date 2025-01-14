@@ -16,7 +16,7 @@ import { AuthProvider, useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
 import { LoadingComponent } from "@/components/layout/loading";
 import { Alert } from "react-native";
-import type { UserRole } from "@/models/user";
+import { UserRole } from "@/models/user";
 
 export default function RootLayout() {
 	const [fontsLoaded, error] = useFonts({
@@ -24,12 +24,6 @@ export default function RootLayout() {
 		Inter_400Regular,
 		Inter_500Medium,
 	});
-
-	// useEffect(() => {
-	// 	if (fontsLoaded || error) {
-	// 		SplashScreen.hideAsync();
-	// 	}
-	// }, [fontsLoaded, error]);
 
 	if (!fontsLoaded) {
 		return <LoadingComponent />;
@@ -60,15 +54,22 @@ export function MainLayout() {
 		setAuth({
 			...session.user,
 			name: data.name,
-			role: data.role as UserRole,
+			image: data.image,
+			role: UserRole[data.role as keyof typeof UserRole],
 		});
+
+		if (data.role === UserRole.MANAGER) {
+			router.replace("/(manager)/home");
+		} else {
+			router.replace("/(employee)/home");
+		}
 	}
 
 	useEffect(() => {
 		supabase.auth.onAuthStateChange((_event, session) => {
 			if (session) {
 				fetchUser(session);
-				router.replace("/(employee)/home");
+
 				return;
 			}
 			setAuth(null);
