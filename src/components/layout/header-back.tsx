@@ -3,7 +3,11 @@ import { ArrowLeft } from "phosphor-react-native";
 import { Fragment } from "react";
 import { View, TouchableOpacity, Text, Image } from "react-native";
 
-export default function HeaderBack() {
+type Props = {
+	title: string;
+};
+
+export function HeaderBack({ title }: Props) {
 	return (
 		<Fragment>
 			<TouchableOpacity
@@ -17,9 +21,7 @@ export default function HeaderBack() {
 
 			<View className="justify-center mb-5">
 				<Image className="mb-5" source={require("@/assets/mini-logo.png")} />
-				<Text className="font-heading text-xl flex-1">
-					Usuarios Cadastrados
-				</Text>
+				<Text className="font-heading text-xl flex-1">{title}</Text>
 			</View>
 		</Fragment>
 	);

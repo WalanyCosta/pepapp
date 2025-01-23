@@ -7,6 +7,7 @@ import {
 	OptionRoot,
 } from "@/components/layout/options/Option";
 import { Tab, TabScreen } from "@/components/layout/tab";
+import { CardOrder } from "@/components/screen/card-order";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/badge";
@@ -226,66 +227,10 @@ export default function Dasboard() {
 						keyExtractor={(item) => item.id.toString()}
 						data={orders}
 						renderItem={({ item }) => (
-							<View className="justify-center mb-3 p-3 border border-input rounded-md">
-								<View className="flex-1">
-									<View className="w-full flex-row justify-between items-start mb-3">
-										<View className="flex-row items-center gap-3">
-											<Avatar className="w-10 h-10">
-												{item.users.image ? (
-													<AvatarImage
-														className=""
-														source={{
-															uri: item.users.image,
-														}}
-													/>
-												) : (
-													<AvatarFallback textClassname="text-base">
-														pq
-													</AvatarFallback>
-												)}
-											</Avatar>
-
-											<Text className="font-heading text-base">
-												{item.users.name}
-											</Text>
-										</View>
-
-										<OptionRoot>
-											<OptionDelete
-												title="Negar"
-												icon={IconOptionDelete.DENY}
-												onRemove={() => {
-													handleUpdateOrdersStatus(item.id, OrderStatus.DENIED);
-												}}
-											/>
-											<OptionDelete
-												title="Aceitar"
-												icon={IconOptionDelete.ACCEPT}
-												onRemove={() => {
-													handleUpdateOrdersStatus(
-														item.id,
-														OrderStatus.ACCEPTED,
-													);
-												}}
-											/>
-										</OptionRoot>
-									</View>
-									<Text className="ml-3 mb-5 text-sm text-gray-400">
-										{formatItems(item.order_items)}
-									</Text>
-								</View>
-
-								<View className="bg-violet-200 rounded-md border-l-2 border-violet-600 flex-row items-center justify-between p-2">
-									<View className="flex-row gap-1 items-center">
-										<Clock color="#4B5563" size={16} />
-										<Text className="text-sm text-gray-600">
-											{formatTime(item.created_at)}
-										</Text>
-									</View>
-
-									<Badge text={item.status} />
-								</View>
-							</View>
+							<CardOrder
+								item={item}
+								handleUpdateOrdersStatus={handleUpdateOrdersStatus}
+							/>
 						)}
 						contentContainerStyle={{ paddingBottom: 100 }}
 						showsVerticalScrollIndicator={false}
@@ -330,7 +275,9 @@ export default function Dasboard() {
 					icon="ClockCounterClockwise"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					onPress={() => {}}
+					onPress={() => {
+						router.replace("/(manager)/history");
+					}}
 				/>
 
 				<TabScreen

@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout";
 import { CardItemEmpty } from "@/components/layout/card-item-empty";
-import HeaderBack from "@/components/layout/header-back";
+import { HeaderBack } from "@/components/layout/header-back";
 import {
 	IconOptionDelete,
 	OptionDelete,
@@ -30,8 +30,8 @@ import { FlatList } from "react-native-gesture-handler";
 export default function Users() {
 	const [users, setUsers] = useState<User[]>([]);
 	const searchRef = useRef<TextInput>(null);
-	const [featchUsers, setFeatchUsers] = useState(false);
 	const [query, setQuery] = useState("");
+	const [featchUsers, setFeatchUsers] = useState(false);
 	const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -109,7 +109,7 @@ export default function Users() {
 	return (
 		<Fragment>
 			<Container>
-				<HeaderBack />
+				<HeaderBack title="Usuarios Cadastrados" />
 
 				<View className="pl-3 mb-5 border border-input rounded-md bg-white w-full flex-row items-center gap-3">
 					<TouchableOpacity
