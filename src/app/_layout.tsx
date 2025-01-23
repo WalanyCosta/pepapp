@@ -37,7 +37,7 @@ export default function RootLayout() {
 }
 
 export function MainLayout() {
-	const { setAuth } = useAuth();
+	const { setAuth, user: olderUser } = useAuth();
 
 	async function fetchUser(session: any) {
 		const { data, error } = await supabase
@@ -67,9 +67,9 @@ export function MainLayout() {
 
 	useEffect(() => {
 		supabase.auth.onAuthStateChange((_event, session) => {
+			console.log(olderUser?.email, session.user.email);
 			if (session) {
 				fetchUser(session);
-
 				return;
 			}
 			setAuth(null);

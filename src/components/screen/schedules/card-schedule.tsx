@@ -1,12 +1,17 @@
 import { View, Text } from "react-native";
 import { Clock } from "phosphor-react-native";
-import { OptionDelete, OptionRoot } from "@/components/layout/options/Option";
+import {
+	IconOptionDelete,
+	OptionDelete,
+	OptionRoot,
+} from "@/components/layout/options/Option";
 import { OptionViewSchedule } from "@/components/screen/schedules/option-view";
 import type { OrderItem } from "@/models/order-item";
 import { useMemo } from "react";
 import { Badge, type VariantsProps } from "@/components/ui/badge";
 import type { Order } from "@/models/order";
 import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
+import { formatItems } from "@/utils/fomat-Items";
 import { formatTime } from "@/utils/format-time";
 
 type CardScheduleProps = {
@@ -21,14 +26,7 @@ export function CardSchedule({
 	onRemove,
 }: CardScheduleProps) {
 	const renderItems = useMemo(() => {
-		const itemNames = orderItems.map((orderItem) => orderItem.items.name);
-
-		if (itemNames.length === 0) {
-			return;
-		}
-
-		const formattedItems = itemNames.join(", ").replace(/,([^,]*)$/, " e$1");
-		return `Os pedidos foram: ${formattedItems}`;
+		return formatItems(orderItems);
 	}, [orderItems]);
 
 	return (
@@ -40,7 +38,11 @@ export function CardSchedule({
 					</Text>
 					<OptionRoot>
 						<OptionViewSchedule order={order} />
-						<OptionDelete title="cancelar" icon="CANCEL" onRemove={onRemove} />
+						<OptionDelete
+							title="cancelar"
+							icon={IconOptionDelete.CANCEL}
+							onRemove={onRemove}
+						/>
 					</OptionRoot>
 				</View>
 				<Text className="text-sm text-gray-400">{renderItems}</Text>

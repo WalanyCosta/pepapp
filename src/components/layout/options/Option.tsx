@@ -17,19 +17,32 @@ import {
 	Prohibit,
 } from "phosphor-react-native";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
+import { cn } from "../../../lib/utils";
+import { Icon, type IconName } from "../icon-component";
 
-function OptionRoot({ children }: { children: React.ReactNode }) {
+type Props = {
+	className?: string;
+	contentClassName?: string;
+	children: React.ReactNode;
+};
+
+function OptionRoot(props: Props) {
 	return (
 		<DropDown>
 			<DropDownTrigger>
-				<TouchableOpacity className="items-end">
+				<TouchableOpacity className={cn("items-end", props.className)}>
 					<DotsThree color="#4B5563" size={16} />
 				</TouchableOpacity>
 			</DropDownTrigger>
-			<DropDownContent className="w-40 border border-input absolute -left-36 top-2">
+			<DropDownContent
+				className={cn(
+					"w-40 border border-input absolute -left-36 top-2",
+					props.contentClassName,
+				)}
+			>
 				<DropDownLabel labelTitle="Opções" />
 				<DropDownItemSeparator />
-				{children}
+				{props.children}
 			</DropDownContent>
 		</DropDown>
 	);
@@ -81,25 +94,18 @@ function OptionEditar({ children }: { children: React.ReactNode }) {
 	);
 }
 
-type IconOptionDelete = "CANCEL" | "REMOVE" | "DENIED";
+export enum IconOptionDelete {
+	CANCEL = "XCircle",
+	REMOVE = "Trash",
+	DENY = "Prohibit",
+	ACCEPT = "Check",
+}
 
 type OptionDeleteProps = {
 	icon: IconOptionDelete;
 	title: string;
 	onRemove: () => void;
 };
-
-function IconOptionDelete({ icon }: { icon: string }) {
-	if (icon === "CANCEL") {
-		return <XCircle color="#4B5563" size={16} />;
-	}
-
-	if (icon === "REMOVE") {
-		return <Prohibit color="#4B5563" size={16} />;
-	}
-
-	return <Trash color="#4B5563" size={16} />;
-}
 
 function OptionDelete({ title, icon, onRemove }: OptionDeleteProps) {
 	const { setOpen } = useDropdown();
@@ -115,7 +121,7 @@ function OptionDelete({ title, icon, onRemove }: OptionDeleteProps) {
 				className="flex-row item-center gap-2"
 				onPress={handleRemove}
 			>
-				<IconOptionDelete icon={icon} />
+				<Icon name={icon as IconName} color="#4B5563" size={16} />
 				<Text className="text-xs ">{title}</Text>
 			</TouchableOpacity>
 		</DropDownItem>

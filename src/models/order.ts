@@ -1,5 +1,5 @@
-import type { User } from "@supabase/supabase-js";
 import type { OrderItem } from "./order-item";
+import type { User } from "./user";
 
 export enum OrderStatus {
 	PENDING = "AGUARDANDO",
@@ -14,7 +14,7 @@ export type Order = {
 	sizeDescription: string;
 	date: Date;
 	status: OrderStatus;
-	user: User;
+	users: User;
 	order_items: OrderItem[];
-  created_at: Date;
+	created_at: Date;
 };

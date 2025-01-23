@@ -1,4 +1,10 @@
-import { cloneElement, createContext, useContext, useState } from "react";
+import {
+	cloneElement,
+	createContext,
+	forwardRef,
+	useContext,
+	useState,
+} from "react";
 import { Modal, TouchableOpacity, View } from "react-native";
 
 import { cn } from "../../lib/utils";
@@ -26,13 +32,15 @@ function DialogTrigger({ children }: any) {
 	return cloneElement(children, { onPress: () => setOpen(true) });
 }
 
-function DialogContent({
-	className,
-	children,
-}: {
+type DialogContentProps = {
 	className?: string;
 	children: React.ReactNode;
-}) {
+};
+
+const DialogContent = forwardRef<
+	React.ElementRef<typeof Modal>,
+	DialogContentProps
+>(({ children, className }, ref) => {
 	const { open, setOpen } = useDialog();
 
 	return (
@@ -40,6 +48,7 @@ function DialogContent({
 			transparent
 			animationType="fade"
 			visible={open}
+			ref={ref}
 			onRequestClose={() => setOpen(false)}
 		>
 			<TouchableOpacity
@@ -60,7 +69,7 @@ function DialogContent({
 			</TouchableOpacity>
 		</Modal>
 	);
-}
+});
 
 const useDialog = () => {
 	const context = useContext(DialogContext);

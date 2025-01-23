@@ -5,9 +5,15 @@ export enum UserRole {
   NORMAL = "NORMAL"
 }
 
+export enum UserStatus{
+  ACTIVED = "ATIVO",
+  DESACTIVED="DESATIVADO"
+}
+
 export type User = UserSupabase & {
   name: string
   role: UserRole,
+  status?: UserStatus,
   image?: string,
   create_at: Date 
 }
