@@ -13,20 +13,20 @@ export default function Home() {
 				source={require("@/assets/ilustration.png")}
 			/>
 
-			<View className="justify-center items-center gap-2 mt-11">
-				<Text className="font-heading text-xl text-center text-gray-800">
-					Lorem ipsum is simply dummy text of the printing
+			<View className="justify-center items-center gap-4 mt-24">
+				<Text className="font-heading text-2xl text-center text-gray-800">
+					Faça o seu pedido de forma facil e eficaz
 				</Text>
-				<Text className="text-sm text-center">
-					Lorem ipsum is simply dummy text of the printing
+				<Text className="text-base text-center text-gray-500 w-96">
+					Pressione o botão a baixo para iniciar a o usar o teu génio
 				</Text>
 			</View>
 
 			<Button
 				isLoading={false}
-				className="mt-16 mb-12"
+				className="mt-20 mb-12"
 				label="Começar"
-				size={"default"}
+				size={"lg"}
 				variant={"default"}
 				onPress={() => router.replace("/(auth)/signin")}
 			/>

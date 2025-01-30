@@ -16,19 +16,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabase";
 import { UserRole } from "@/models/user";
+import {
+	PopoversError,
+	type StatusCode,
+} from "@/components/layout/popovers/popovers-error";
 
 const loginUserFormSchema = z.object({
-	email: z.string({ required_error: "Campo email é obrigatório" }).email({
+	email: z.string({ required_error: "Campo e-mail é obrigatório" }).email({
 		message: "E-mail inválido",
 	}),
 	password: z
-		.string({ required_error: "Campo password é obrigatório" })
-		.min(6, { message: "O password deve ter no minimo 6" }),
+		.string({ required_error: "Campo senha é obrigatório" })
+		.min(6, { message: "A senha deve ter no minimo 6" }),
 });
 
 type LoginUserFormData = z.infer<typeof loginUserFormSchema>;
 
-export default function Home() {
+export default function SignIn() {
 	const {
 		control,
 		handleSubmit,
@@ -39,6 +43,11 @@ export default function Home() {
 	});
 
 	const [loading, setLoading] = useState(false);
+	const [visible, setVisible] = useState(false);
+	const [error, setError] = useState<{
+		code: StatusCode;
+		title: string;
+	} | null>(null);
 	const passwordRef = useRef<TextInput>(null);
 
 	const onSignin = async (data: any) => {
@@ -50,7 +59,11 @@ export default function Home() {
 			});
 
 		if (loginError) {
-			Alert.alert("Error", loginError.message);
+			setError({
+				code: "UNAUTHORIZED",
+				title: "E-mail ou senha estão incorrecta",
+			});
+			setVisible(true);
 			setLoading(false);
 			return;
 		}
@@ -66,14 +79,15 @@ export default function Home() {
 				.single();
 
 			if (error) {
-				Alert.alert("Error", error.message);
+				setError(null);
+				setVisible(true);
 				setLoading(false);
 				return;
 			}
 
 			if (role === UserRole.MANAGER) {
 				setLoading(false);
-				router.replace("/(manager)/home");
+				router.replace("/(manager)/dashboard");
 				return;
 			}
 
@@ -90,11 +104,11 @@ export default function Home() {
 			/>
 
 			<View className="justify-center items-center mb-16">
-				<Text className="font-heading text-xl text-center text-gray-800">
+				<Text className="font-heading text-2xl text-center text-gray-800">
 					Faça login para sua conta
 				</Text>
-				<Text className="text-sm text-center">
-					Lorem ipsum is simply dummy text of the printing
+				<Text className="text-base text-center text-gray-500">
+					Preenchendo os campos caso esteje registrado
 				</Text>
 			</View>
 
@@ -132,9 +146,9 @@ export default function Home() {
 
 				<TouchableOpacity
 					onPress={() => router.replace("/(auth)/forgout-password")}
-					className="my-8"
+					className="my-10"
 				>
-					<Text className="text-primary text-right text-sm font-heading">
+					<Text className="text-primary text-right text-base font-heading">
 						Esqueces-te a Senha?
 					</Text>
 				</TouchableOpacity>
@@ -143,15 +157,22 @@ export default function Home() {
 					className="mb-12"
 					label="Login"
 					isLoading={loading}
-					size={"default"}
+					size={"lg"}
 					variant={"default"}
 					onPress={handleSubmit(onSignin)}
 				/>
 			</Form>
 
-			<Text className="mb-14 mt-36 text-xs text-center text-gray-600">
-				Lorem ipsum is simply dummy text of the printing
+			<Text className="mb-14 mt-44 text-sm text-center text-gray-400">
+				Todos os direitos reservado à WannasHouse
 			</Text>
+
+			<PopoversError
+				visible={visible}
+				setVisible={setVisible}
+				title={error?.title}
+				statusCode={error?.code}
+			/>
 		</Container>
 	);
 }

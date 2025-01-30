@@ -109,7 +109,10 @@ export default function Users() {
 	return (
 		<Fragment>
 			<Container>
-				<HeaderBack title="Usuarios Cadastrados" />
+				<HeaderBack
+					title="Usuarios Cadastrados"
+					backRoute="/(manager)/dashboard"
+				/>
 
 				<View className="pl-3 mb-5 border border-input rounded-md bg-white w-full flex-row items-center gap-3">
 					<TouchableOpacity

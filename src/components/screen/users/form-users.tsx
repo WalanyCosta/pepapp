@@ -6,9 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui";
-
 import { supabase } from "@/lib/supabase";
-import type { Category } from "@/models/category";
 import { type User, UserRole, UserStatus } from "@/models/user";
 
 const UserFormDataSchema = z.object({

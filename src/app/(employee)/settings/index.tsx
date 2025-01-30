@@ -44,8 +44,8 @@ export default function Home() {
 	}, []);
 
 	async function signOut() {
-		await supabase.auth.signOut();
 		setAuth(null);
+		await supabase.auth.signOut();
 	}
 
 	async function handleUpdateImage() {
@@ -77,7 +77,7 @@ export default function Home() {
 	}
 
 	function handleBack() {
-		router.replace("/(employee)/home");
+		router.back();
 	}
 
 	return (
@@ -86,11 +86,11 @@ export default function Home() {
 				onPress={handleBack}
 				className="w-8 h-8 mt-3 mb-5 justify-center items-start"
 			>
-				<ArrowLeft color="#4B5563" size={24} />
+				<ArrowLeft color="#4B5563" size={28} />
 			</TouchableOpacity>
 
 			<View className="gap-3 justify-center items-center">
-				<Avatar className="w-24 h-24">
+				<Avatar className="w-28 h-28">
 					{url ? (
 						<AvatarImage
 							source={{
@@ -98,15 +98,15 @@ export default function Home() {
 							}}
 						/>
 					) : (
-						<AvatarFallback>pq</AvatarFallback>
+						<AvatarFallback textClassname="text-2xl">pq</AvatarFallback>
 					)}
 				</Avatar>
 
 				<View>
-					<Text className="font-heading text-center text-xl mb-2">
+					<Text className="font-heading text-center text-2xl mb-2">
 						{user?.name}
 					</Text>
-					<Text className="text-center text-sm text-gray-500">
+					<Text className="text-center text-base text-gray-500">
 						{user?.email}
 					</Text>
 				</View>
@@ -120,11 +120,11 @@ export default function Home() {
 						className="flex-row item-center justify-between border-b border-input py-2"
 					>
 						<View className="flex-row gap-2 items-center">
-							<Image color="#4B5563" size={20} />
-							<Text className="text-xs text-gray-600">Alterar imagem</Text>
+							<Image color="#4B5563" size={24} />
+							<Text className="text-base text-gray-600">Alterar imagem</Text>
 						</View>
 
-						<CaretRight color="#4B5563" size={16} />
+						<CaretRight color="#4B5563" size={18} />
 					</TouchableOpacity>
 
 					<TouchableOpacity
@@ -132,17 +132,17 @@ export default function Home() {
 						className="flex-row item-center justify-between border-b border-input py-2"
 					>
 						<View className="flex-row gap-2 items-center">
-							<Lock color="#4B5563" size={20} />
-							<Text className="text-xs text-gray-600">Alterar senha</Text>
+							<Lock color="#4B5563" size={24} />
+							<Text className="text-base text-gray-600">Alterar senha</Text>
 						</View>
 
-						<CaretRight color="#4B5563" size={16} />
+						<CaretRight color="#4B5563" size={18} />
 					</TouchableOpacity>
 
 					<View className="flex-row item-center justify-between">
 						<View className="flex-row gap-2 items-center">
-							<PaintRoller color="#4B5563" size={20} />
-							<Text className="text-xs text-gray-600">
+							<PaintRoller color="#4B5563" size={24} />
+							<Text className="text-base text-gray-600">
 								Alterar tema (light/dark)
 							</Text>
 						</View>
@@ -153,11 +153,11 @@ export default function Home() {
 
 				<TouchableOpacity
 					onPress={signOut}
-					className="flex-row item-center justify-between mt-5 py-2 border border-input rounded-md"
+					className="flex-row item-center justify-between mt-12 py-3 border border-input rounded-md"
 				>
 					<View className="flex-row gap-2 items-center ml-5">
-						<SignOut color="#4B5563" size={20} />
-						<Text className="text-xs text-gray-600">Logout</Text>
+						<SignOut color="#4B5563" size={24} />
+						<Text className="text-base text-gray-600">Logout</Text>
 					</View>
 				</TouchableOpacity>
 			</View>

@@ -14,7 +14,7 @@ type Props = {
 export function Items({ items, isLoadingItem }: Props) {
 	const { addItem } = useItem();
 	return (
-		<View className="h-[322px]">
+		<View className="h-[65vh]">
 			{isLoadingItem && <CardItemEmpty />}
 
 			{!isLoadingItem && items.length > 0 && (
@@ -24,13 +24,13 @@ export function Items({ items, isLoadingItem }: Props) {
 					data={items}
 					renderItem={({ item }) => (
 						<CardItem
-							source={require("@/assets/fotos-uniformes.jpg")}
+							image={item.image}
 							title={item.name}
 							description={item.description}
 							onPress={() => addItem(item)}
 						/>
 					)}
-					contentContainerStyle={{ paddingBottom: 100 }}
+					contentContainerClassName="pb-40"
 					showsVerticalScrollIndicator={false}
 					style={{ flex: 1 }}
 				/>

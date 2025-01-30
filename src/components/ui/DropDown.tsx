@@ -42,7 +42,7 @@ const DropDownContent = ({ className, children }: DropDownContentTypes) => {
 			{open && (
 				<View
 					className={cn(
-						"min-w-[8rem] w-full absolute flex gap-3 overflow-hidden rounded-md border border-border bg-background text-popover-foreground shadow-md mt-3 p-3 top-12 mx-auto justify-center z-50",
+						"min-w-[8rem] w-full absolute flex gap-2 overflow-hidden rounded-md border border-border bg-background text-popover-foreground shadow-md mt-3 p-3 top-12 mx-auto justify-center z-50",
 						className,
 					)}
 				>

@@ -18,12 +18,12 @@ export function PopoverDualButton({
 	return (
 		<View className="justify-center item-center">
 			<Image
-				className="self-center w-24 h-24 mb-6"
-				source={require("@/assets/logo.png")}
+				className="self-center w-36 h-36 mb-6"
+				source={require("@/assets/Cancel.png")}
 			/>
 			<View className="gap-2 justify-center items-center ">
 				<Text className="font-heading text-2xl text-center">{title}</Text>
-				<Text className="text-gray-500 text-center w-72 text-base">
+				<Text className="text-gray-400 text-center w-72 text-base">
 					{question}
 				</Text>
 			</View>
@@ -33,7 +33,7 @@ export function PopoverDualButton({
 					className="w-full"
 					label="Sim"
 					isLoading={false}
-					size={"default"}
+					size={"lg"}
 					variant={"default"}
 					onPress={confirm}
 				/>
@@ -42,7 +42,7 @@ export function PopoverDualButton({
 					className="w-full"
 					label="Não, obrigado"
 					isLoading={false}
-					size={"default"}
+					size={"lg"}
 					variant={"ghost"}
 					onPress={() => setOpen(false)}
 				/>

@@ -3,7 +3,7 @@ import { type IconName, IconSystem } from "./icon-system";
 
 function Tab({ children }: { children: React.ReactNode }) {
 	return (
-		<View className="fixed bottom-24 gap-6 bg-violet-600 py-1 px-2 flex-row items-center justify-center z-50 rounded-md">
+		<View className="fixed bottom-20 gap-6 bg-violet-600 py-1 px-2 flex-row items-center justify-center z-50 rounded-md">
 			{children}
 		</View>
 	);
@@ -36,22 +36,21 @@ function TabScreen({
 	return (
 		<TouchableOpacity
 			onPress={handlePress}
-			className={`w-12 h-12 relative items-center justify-center ${active === icon && "bg-white rounded-full"}`}
+			className={`w-14 h-14 relative items-center justify-center ${active === icon && "bg-white rounded-full"}`}
 		>
 			{badge && badgeNumber > 0 && (
-				<View className="bg-white w-7 h-7 py-2 overflow-hidden flex-row justify-center items-center absolute rounded-full -top-1 left-6 z-10">
-					<View className="mx-auto  flex-row justify-center items-center">
-						<Text className="text-xs text-violet-600 self-center">
+				<View className="bg-white w-7 h-7 py-2 overflow-hidden flex-row justify-center items-center absolute rounded-full top-1 left-8 z-10">
+					<View className="mx-auto flex-row justify-center items-center">
+						<Text className="text-xs text-violet-600 flex-row justify-center items-center">
 							{badgeNumber}
 						</Text>
-						<Text className="text-xs text-violet-600">{textBadge}</Text>
 					</View>
 				</View>
 			)}
 
 			<IconSystem
 				icon={icon}
-				size={24}
+				size={32}
 				color="#fff"
 				colorActive="#7c3aed"
 				active={active}

@@ -77,7 +77,7 @@ function Button({
 				{!isLoading ? (
 					label
 				) : (
-					<ActivityIndicator className="size-4 bg-primary" />
+					<ActivityIndicator className="size-4 bg-transparent" color="#fff" />
 				)}
 			</Text>
 		</TouchableOpacity>

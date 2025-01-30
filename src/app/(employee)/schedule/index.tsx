@@ -1,27 +1,23 @@
-import { TouchableOpacity, View, Text, Image } from "react-native";
+import { View, Text } from "react-native";
 import { Container } from "@/components/layout";
 import { useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft } from "phosphor-react-native";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Calendar } from "@/components/layout/calendar";
-import { router } from "expo-router";
 import { CardSchedule } from "@/components/screen/schedules/card-schedule";
 import { OrderStatus, type Order } from "@/models/order";
 import { FlatList } from "react-native-gesture-handler";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
-import { Alert } from "react-native";
+import { HeaderBack } from "@/components/layout/header-back";
+import { PopoversError } from "@/components/layout/popovers/popovers-error";
 
 export default function Schedule() {
 	const { user } = useAuth();
 	const [refresh, setRefresh] = useState(false);
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [visible, setVisible] = useState(false);
 	const [saveDate, setSaveDate] = useState<Date | null>(null);
-
-	function handleBack() {
-		router.replace("/(employee)/home");
-	}
 
 	const fetchItems = async () => {
 		let response: any;
@@ -41,8 +37,8 @@ export default function Schedule() {
 		}
 
 		if (response.error) {
+			setVisible(true);
 			setLoading(false);
-			Alert.alert("Error do sistema", response.error.message);
 			return;
 		}
 
@@ -61,7 +57,7 @@ export default function Schedule() {
 			.eq("id", order.id);
 
 		if (error) {
-			Alert.alert("Error", "Ocorreu um error no servidor");
+			setVisible(true);
 			return;
 		}
 		setRefresh(!refresh);
@@ -73,22 +69,12 @@ export default function Schedule() {
 
 	return (
 		<Container>
-			<TouchableOpacity
-				onPress={handleBack}
-				className="w-8 h-8 mt-3 mb-5 justify-center items-start"
-			>
-				<ArrowLeft color="#4B5563" size={24} />
-			</TouchableOpacity>
-
-			<View className="justify-center mb-8">
-				<Image className="mb-5" source={require("@/assets/mini-logo.png")} />
-				<Text className="font-heading text-xl">Agenda de solicitações</Text>
-			</View>
+			<HeaderBack title="Pedidos feitos" backRoute="/(employee)/home" />
 
 			<Calendar saveDate={saveDate} setSaveDate={setSaveDate} />
 
 			<View>
-				<View className="h-[322px]">
+				<View className="h-[70vh]">
 					{loading && <CardScheduleEmpty />}
 
 					{!loading && orders.length > 0 && (
@@ -117,6 +103,8 @@ export default function Schedule() {
 					)}
 				</View>
 			</View>
+
+			<PopoversError visible={visible} setVisible={setVisible} />
 		</Container>
 	);
 }

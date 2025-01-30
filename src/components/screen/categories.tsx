@@ -3,7 +3,8 @@ import { Fragment } from "react";
 import { View } from "react-native";
 import { Skeleton } from "../ui/Skeleton";
 import { FlatList } from "react-native-gesture-handler";
-import { CategoryItem, type IconProps } from "../layout/category-item";
+import { CategoryItem } from "../layout/category-item";
+import type { IconName } from "../layout/icon-component";
 
 type Props = {
 	categories: Category[];
@@ -22,10 +23,9 @@ export function Categories({
 		<Fragment>
 			{isLoadingCategory ? (
 				<View className="gap-2 mb-8 flex-row">
-					<Skeleton className="w-24 h-10 rounded-md" />
-					<Skeleton className="w-24 h-10 rounded-md" />
-					<Skeleton className="w-24 h-10 rounded-md" />
-					<Skeleton className="w-24 h-10 rounded-md" />
+					{Array.from({ length: 4 }).map((_, index) => (
+						<Skeleton key={index.toString()} className="w-32 h-12 rounded-md" />
+					))}
 				</View>
 			) : (
 				<FlatList
@@ -34,8 +34,8 @@ export function Categories({
 					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => (
 						<CategoryItem
+							icon={item.icon as IconName}
 							name={item.name}
-							icon={item.icon as IconProps}
 							isActive={isActive}
 							setIsActive={setIsActive}
 						/>

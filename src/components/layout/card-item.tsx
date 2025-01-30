@@ -6,9 +6,10 @@ import {
 	type ImageSourcePropType,
 } from "react-native";
 import { Trash } from "phosphor-react-native";
+import { verifyImageUri } from "@/utils/verify-image-uri";
 
 type Props = {
-	source: ImageSourcePropType;
+	image: string;
 	title: string;
 	description: string;
 	isOption?: boolean;
@@ -17,7 +18,7 @@ type Props = {
 };
 
 export function CardItem({
-	source,
+	image,
 	title,
 	description,
 	isOption = false,
@@ -27,19 +28,19 @@ export function CardItem({
 	return (
 		<TouchableOpacity
 			onPress={onPress}
-			className="flex-row gap-4 mb-2 px-2 py-3 border border-input rounded-md"
+			className="flex-row items-center gap-4 mb-2 px-2 py-3 border border-input rounded-md"
 		>
-			<Image className="w-14 h-14" source={source} />
-			<View className="gap-1 w-64">
-				<Text className="text-base font-heading">{title}</Text>
-				<Text className="text-xs text-wrap text-gray-500">{description}</Text>
+			<Image className="w-16 h-16" source={verifyImageUri(image)} />
+			<View className="gap-1 w-80">
+				<Text className="text-xl font-heading">{title}</Text>
+				<Text className="text-sm text-wrap text-gray-500">{description}</Text>
 			</View>
 			{isOption && (
 				<TouchableOpacity
 					onPress={onPressDelete}
-					className="absolute right-2 top-1/2 opacity-75"
+					className="absolute right-4 top-4 opacity-75"
 				>
-					<Trash color="#4B5563" size={20} />
+					<Trash color="#4B5563" size={18} />
 				</TouchableOpacity>
 			)}
 		</TouchableOpacity>

@@ -15,6 +15,7 @@ import type { Item } from "@/models/item";
 import { supabase } from "@/lib/supabase";
 import { CardItemEmpty } from "@/components/layout/card-item-empty";
 import { FlatList } from "react-native";
+import { verifyImageUri } from "@/utils/verify-image-uri";
 
 export default function Items() {
 	const [featchItems, setFeatchItems] = useState(false);
@@ -43,12 +44,6 @@ export default function Items() {
 	useEffect(() => {
 		fetchItems();
 	}, []);
-
-	const verifyImageUri = (itemImage: string) => {
-		return itemImage
-			? { uri: itemImage }
-			: require("@/assets/fotos-uniformes.jpg");
-	};
 
 	return (
 		<View className="flex-1 relative">

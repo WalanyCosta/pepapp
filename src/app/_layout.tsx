@@ -67,7 +67,6 @@ export function MainLayout() {
 
 	useEffect(() => {
 		supabase.auth.onAuthStateChange((_event, session) => {
-			console.log(olderUser?.email, session.user.email);
 			if (session) {
 				fetchUser(session);
 				return;
@@ -79,18 +78,17 @@ export function MainLayout() {
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
-			<StatusBar style="light" />
+			<StatusBar style="dark" />
 			<Stack
 				screenOptions={{
 					headerShown: false,
 				}}
 			>
 				<Stack.Screen name="index" />
-				<Stack.Screen name="(auth)/" />
 				<Stack.Screen name="(auth)/signin" />
 				<Stack.Screen name="(auth)/reset-password" />
-				<Stack.Screen name="(employee)/home/home" />
-				<Stack.Screen name="(manager)/home" />
+				<Stack.Screen name="(employee)/home" />
+				<Stack.Screen name="(manager)/dashboard" />
 			</Stack>
 		</GestureHandlerRootView>
 	);

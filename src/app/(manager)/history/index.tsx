@@ -108,7 +108,10 @@ export default function History() {
 
 	return (
 		<Container>
-			<HeaderBack title="Históricos de pedidos" />
+			<HeaderBack
+				title="Históricos de pedidos"
+				backRoute="/(manager)/dashboard"
+			/>
 
 			<View className="px-3 mb-5 border relative border-input rounded-md bg-white w-full flex-row items-center gap-3">
 				<TouchableOpacity

@@ -9,7 +9,11 @@ export type IconName =
 	| "Prohibit"
 	| "Trash"
 	| "TrendUp"
-	| "TrendDown";
+	| "TrendDown"
+	| "Boot"
+	| "HardHat"
+	| "ShirtFolded"
+	| "ArrowsInCardinal";
 
 type IconProps = {
 	name: IconName;

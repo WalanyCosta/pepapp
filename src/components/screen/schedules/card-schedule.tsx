@@ -33,25 +33,25 @@ export function CardSchedule({
 		<View className="justify-center gap-4 mb-3 p-3 border border-input rounded-md">
 			<View className="flex-1 relative">
 				<View className="w-full flex-row justify-between items-start">
-					<Text className="font-heading text-base mb-2">
+					<Text className="font-heading text-xl mb-2">
 						Data: {convertDateOtherFormat(order.date)}
 					</Text>
 					<OptionRoot>
 						<OptionViewSchedule order={order} />
 						<OptionDelete
-							title="cancelar"
+							title="Cancelar"
 							icon={IconOptionDelete.CANCEL}
 							onRemove={onRemove}
 						/>
 					</OptionRoot>
 				</View>
-				<Text className="text-sm text-gray-400">{renderItems}</Text>
+				<Text className="text-base text-gray-400">{renderItems}</Text>
 			</View>
 
 			<View className="bg-violet-200 rounded-md border-l-2 border-violet-600 flex-row items-center justify-between p-2">
 				<View className="flex-row gap-1 items-center">
-					<Clock color="#4B5563" size={16} />
-					<Text className="text-sm text-gray-600">
+					<Clock color="#4B5563" size={20} />
+					<Text className="text-base text-gray-600">
 						{formatTime(order.created_at)}
 					</Text>
 				</View>

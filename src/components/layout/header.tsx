@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import { useAuth } from "@/context/auth-context";
 
 type Props = {
-	url: string | null;
+	url?: string | null;
 };
 
 export function Header({ url }: Props) {
@@ -16,28 +16,28 @@ export function Header({ url }: Props) {
 				className="mt-6 mb-10"
 				source={require("@/assets/mini-logo.png")}
 			/>
-			<View className="gap-1 mb-12 justify-center">
-				<View className="flex-row justify-between items-center">
+			<View className="flex-row mb-12 justify-between items-center">
+				<View className="gap-2 flex-1 justify-center">
 					<Text className="font-heading text-2xl">
 						Olá {user?.name.split(" ")[0]} 👋
 					</Text>
-					<View className="rounded-md size-10 items-center justify-center relative">
-						<Avatar className="absolute -top-3">
-							{url ? (
-								<AvatarImage
-									source={{
-										uri: url,
-									}}
-								/>
-							) : (
-								<AvatarFallback>pq</AvatarFallback>
-							)}
-						</Avatar>
-					</View>
+					<Text className="text-base text-gray-400">
+						Seja bem-vindo novamente, esperamos que tenhas uma boa experência
+					</Text>
 				</View>
-				<Text className="text-sm text-gray-500">
-					Lorem ipsum is simply dummy text of te printing
-				</Text>
+				<View>
+					<Avatar className="w-16 h-16">
+						{user?.image ? (
+							<AvatarImage
+								source={{
+									uri: user?.image,
+								}}
+							/>
+						) : (
+							<AvatarFallback textClassname="text-xl">pq</AvatarFallback>
+						)}
+					</Avatar>
+				</View>
 			</View>
 		</Fragment>
 	);

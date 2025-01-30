@@ -10,12 +10,15 @@ import type { Category } from "@/models/category";
 import { Categories } from "@/components/screen/categories";
 import { useItem } from "@/context/item-context";
 import { useAuth } from "@/context/auth-context";
-import { useImage } from "@/hooks/use-image";
 import { Header } from "@/components/layout/header";
+import {
+	PopoversError,
+	type StatusCode,
+} from "@/components/layout/popovers/popovers-error";
 
 const categoryDefault = {
 	id: "any_id",
-	icon: "all",
+	icon: "ArrowsInCardinal",
 	name: "Todos",
 	description: "any_description",
 } as Category;
@@ -23,18 +26,24 @@ const categoryDefault = {
 export default function Home() {
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [items, setItems] = useState<Item[]>([]);
-
+	const [visible, setVisible] = useState(false);
+	const [error, setError] = useState<{
+		code: StatusCode;
+		title: string;
+	} | null>(null);
 	const [isLoadingItem, setIsLoadingItem] = useState(false);
 	const [isLoadingCategory, setIsLoadingCategory] = useState(false);
-	const [isActive, setIsActive] = useState("Todos");
+	const [isActive, setIsActive] = useState("ArrowsInCardinal");
 	const [isActiveTab, setIsActiveTab] = useState("House");
 	const { getItemSize } = useItem();
-	const { user } = useAuth();
-	const { setUrl, url } = useImage("files");
 
 	function handleChangeScreenToOrder() {
 		if (getItemSize() <= 0) {
-			Alert.alert("Info", "Selecione um item para poder fazer pedido");
+			setError({
+				code: "INFO",
+				title: "Selecione um item para poder fazer pedido",
+			});
+			setVisible(true);
 			setIsActiveTab("House");
 			return;
 		}
@@ -47,7 +56,8 @@ export default function Home() {
 		const { data, error } = await supabase.from("categories").select("*");
 
 		if (error) {
-			Alert.alert("Error do sistema", error.message);
+			setVisible(true);
+			setError(null);
 			setIsLoadingCategory(false);
 			return;
 		}
@@ -60,18 +70,19 @@ export default function Home() {
 		let response: any;
 		setIsLoadingItem(true);
 
-		if (isActive === "Todos") {
+		if (isActive === "ArrowsInCardinal") {
 			response = await supabase.from("items").select("*");
 		} else {
 			response = await supabase
 				.from("items")
 				.select("*, categories!inner(name)")
-				.eq("categories.name", isActive);
+				.eq("categories.icon", isActive);
 		}
 
 		if (response.error) {
 			setIsLoadingItem(false);
-			Alert.alert("Error do sistema", response.error.message);
+			setVisible(true);
+			setError(null);
 			return;
 		}
 
@@ -81,7 +92,6 @@ export default function Home() {
 
 	useEffect(() => {
 		fetchCategory();
-		setUrl(user?.image || null);
 	}, []);
 
 	useEffect(() => {
@@ -90,7 +100,7 @@ export default function Home() {
 
 	return (
 		<Container>
-			<Header url={url} />
+			<Header />
 
 			<Categories
 				isLoadingCategory={isLoadingCategory}
@@ -133,6 +143,13 @@ export default function Home() {
 					}}
 				/>
 			</Tab>
+
+			<PopoversError
+				visible={visible}
+				setVisible={setVisible}
+				title={error?.title}
+				statusCode={error?.code}
+			/>
 		</Container>
 	);
 }

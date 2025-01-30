@@ -214,7 +214,7 @@ export default function Dasboard() {
 				</View>
 			</ScrollView>
 
-			<View>
+			<View className="h-[50vh]">
 				<Text className="text-gray-400 text-sm ml-3 mb-4">
 					Pedidos recentes
 				</Text>
@@ -223,7 +223,7 @@ export default function Dasboard() {
 
 				{!loading && orders.length > 0 && (
 					<FlatList
-						className="gap-2 flex-1 h-[322px]"
+						className="gap-2 flex-1"
 						keyExtractor={(item) => item.id.toString()}
 						data={orders}
 						renderItem={({ item }) => (
@@ -284,7 +284,9 @@ export default function Dasboard() {
 					icon="GearSix"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					onPress={() => {}}
+					onPress={() => {
+						router.replace("/(employee)/settings");
+					}}
 				/>
 			</Tab>
 		</Container>

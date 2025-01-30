@@ -1,31 +1,8 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import {
-	ShirtFolded,
-	Boot,
-	HardHat,
-	ArrowsInCardinal,
-} from "phosphor-react-native";
-import { useState } from "react";
+import { Icon, type IconName } from "./icon-component";
 
-export type IconProps = "all" | "Boot" | "HardHat" | "ShirtFolded";
-
-function CategoryItemIcon({ icon, active }: { icon: string; active: boolean }) {
-	if (icon === "ShirtFolded") {
-		return <ShirtFolded color={active ? "#FFF" : "#4B5563"} size={20} />;
-	}
-
-	if (icon === "HardHat") {
-		return <HardHat color={active ? "#FFF" : "#4B5563"} size={20} />;
-	}
-
-	if (icon === "Boot") {
-		return <Boot color={active ? "#FFF" : "#4B5563"} size={20} />;
-	}
-
-	return <ArrowsInCardinal color={active ? "#FFF" : "#4B5563"} size={20} />;
-}
 type Props = {
-	icon?: IconProps;
+	icon: IconName;
 	name: string;
 	isActive: string;
 	setIsActive: (active: string) => void;
@@ -33,17 +10,21 @@ type Props = {
 
 export function CategoryItem({ icon, name, isActive, setIsActive }: Props) {
 	function handleCategoryItem() {
-		setIsActive(name);
+		setIsActive(icon);
 	}
 
 	return (
 		<TouchableOpacity
 			onPress={handleCategoryItem}
-			className={`mr-2 px-3 py-2 flex-row gap-2 rounded-md justify-center items-center ${isActive === name ? "bg-violet-600" : "border border-input"} `}
+			className={`mr-2 px-4 py-3 flex-row gap-2 rounded-md justify-center items-center ${isActive === icon ? "bg-violet-600" : "border border-input"} `}
 		>
-			<CategoryItemIcon icon={icon ?? "all"} active={isActive === name} />
+			<Icon
+				name={icon}
+				color={isActive === icon ? "#FFF" : "#4B5563"}
+				size={20}
+			/>
 			<Text
-				className={`${isActive === name ? "text-white" : "text-gray-800"} text-sm`}
+				className={`${isActive === icon ? "text-white" : "text-gray-800"} text-base`}
 			>
 				{name}
 			</Text>

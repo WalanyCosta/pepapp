@@ -17,12 +17,12 @@ export function Calendar({ saveDate, setSaveDate }: Props) {
 	const [date, setDate] = useState(dayjs());
 
 	return (
-		<View className="flex-row mb-4 items-center relative">
+		<View className="flex-row mb-10 items-center relative">
 			<Dialog>
 				<DialogTrigger>
-					<TouchableOpacity className="flex-row items-center gap-2 py-2 px-2 border border-input rounded-md">
-						<CalendarIcon color="#4B5563" size={20} />
-						<Text className="text-xs text-gray-600">
+					<TouchableOpacity className="flex-row items-center gap-2 py-2 px-4 border border-input rounded-md">
+						<CalendarIcon color="#4B5563" size={24} />
+						<Text className="text-base text-gray-600">
 							{saveDate === null
 								? "Seleciona a data"
 								: convertDateOtherFormat(saveDate)}
@@ -37,8 +37,9 @@ export function Calendar({ saveDate, setSaveDate }: Props) {
 							onChange={(params: any) => {
 								setDate(params.date);
 								setSaveDate(params.date);
+								console.log(dayjs(params.date));
 							}}
-							locale={dayjs.locale("pt")}
+							locale={dayjs.locale("pt-br")}
 						/>
 					</View>
 				</DialogContent>

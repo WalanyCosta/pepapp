@@ -20,8 +20,8 @@ export const InputControl = forwardRef<TextInput, InputControlProps>(
 					render={({ field }) => (
 						<Input
 							onChangeText={field.onChange}
-							labelClasses="text-sm font-heading text-gray-800"
-							inputClasses={`text-sm text-gray-800 	${clsx(
+							labelClasses="text-base font-heading text-gray-800"
+							inputClasses={`text-base text-gray-800 	${clsx(
 								{
 									["border-border-red"]: error.length > 0,
 									["border-primary"]: error.length === 0 && field.value,
@@ -39,7 +39,7 @@ export const InputControl = forwardRef<TextInput, InputControlProps>(
 				/>
 
 				{error.length > 0 && (
-					<Text className="text-xs font-body text-border-red">{error}</Text>
+					<Text className="text-sm font-body text-border-red">{error}</Text>
 				)}
 			</View>
 		);

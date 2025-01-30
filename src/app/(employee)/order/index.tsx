@@ -12,9 +12,11 @@ import {
 	type TextInput,
 	FlatList,
 	Alert,
+	Modal,
 } from "react-native";
 import * as z from "zod";
 import { router } from "expo-router";
+import LottieView from "lottie-react-native";
 import { CardItem } from "@/components/layout/card-item";
 import { useItem } from "@/context/item-context";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
@@ -22,6 +24,12 @@ import { PopoverDualButton } from "@/components/layout/popovers/dual-button";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/auth-context";
 import { OrderStatus } from "@/models/order";
+import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
+import { HeaderBack } from "@/components/layout/header-back";
+import {
+	PopoversError,
+	type StatusCode,
+} from "@/components/layout/popovers/popovers-error";
 
 const loginUserFormSchema = z.object({
 	ranson: z
@@ -44,6 +52,12 @@ export default function Order() {
 	const { user } = useAuth();
 	const { items, deleteItem, clearItems, getItemSize } = useItem();
 	const [loading, setLoading] = useState(false);
+	const [visible, setVisible] = useState(false);
+	const [visibleError, setVisibleError] = useState(false);
+	const [error, setError] = useState<{
+		code: StatusCode;
+		title: string;
+	} | null>(null);
 	const ransonRef = useRef<TextInput>(null);
 
 	const {
@@ -62,7 +76,11 @@ export default function Order() {
 
 	async function handleAddOrders(data: any) {
 		if (getItemSize() <= 0) {
-			Alert.alert("Error", "Selecione items para fazer pedido");
+			setError({
+				code: "INFO",
+				title: "Selecione um item para poder fazer pedido",
+			});
+			setVisibleError(true);
 			return;
 		}
 
@@ -94,11 +112,10 @@ export default function Order() {
 			await supabase.from("order_items").insert(values);
 
 			setLoading(false);
-			Alert.alert("Feito com successo", "O seu pedido foi feito com sucesso");
-			clearItems();
-			router.replace("/(employee)/schedule");
+			setVisible(true);
 		} catch (error: any) {
-			Alert.alert("Error", error?.message);
+			setError(null);
+			setVisible(true);
 			setLoading(false);
 			return;
 		}
@@ -106,28 +123,16 @@ export default function Order() {
 
 	return (
 		<Container>
-			<TouchableOpacity
-				onPress={() => {
-					router.replace("/(employee)/home");
-				}}
-				className="w-8 h-8 mt-3 mb-5 justify-center items-start"
-			>
-				<ArrowLeft color="#4B5563" size={24} />
-			</TouchableOpacity>
-
-			<View className="justify-center mb-8">
-				<Image className="mb-5" source={require("@/assets/mini-logo.png")} />
-				<Text className="font-heading text-xl">Items Solicitados</Text>
-			</View>
+			<HeaderBack title="Fazendo pedido" backRoute="/(employee)/home" />
 
 			{items.length > 0 && (
 				<FlatList
-					className="gap-2 h-60"
+					className="gap-2 h-80"
 					keyExtractor={(item) => item.id}
 					data={items}
 					renderItem={({ item }) => (
 						<CardItem
-							source={require("@/assets/fotos-uniformes.jpg")}
+							image={item.image}
 							title={item.name}
 							isOption={true}
 							description={item.description}
@@ -192,28 +197,35 @@ export default function Order() {
 				<Button
 					label="Concluir pedido"
 					isLoading={loading}
-					size={"default"}
+					size={"lg"}
 					variant={"default"}
 					onPress={handleSubmit(handleAddOrders)}
 				/>
 				<Dialog>
 					<DialogTrigger>
 						<Button
-							label="cancelar pedido"
+							label="Cancelar pedido"
 							isLoading={false}
-							size={"default"}
+							size={"lg"}
 							variant={"secondary"}
 						/>
 					</DialogTrigger>
 					<DialogContent>
 						<PopoverDualButton
-							title="Cancelar pedidos"
+							title="Cancelar pedido"
 							question="Tem a certeza de que queres cancelar o pedido?"
 							confirm={handleCancel}
 						/>
 					</DialogContent>
 				</Dialog>
 			</View>
+			<PopoversError
+				visible={visibleError}
+				setVisible={setVisibleError}
+				title={error?.title}
+				statusCode={error?.code}
+			/>
+			<PopoversSuccess visible={visible} setVisible={setVisible} />
 		</Container>
 	);
 }

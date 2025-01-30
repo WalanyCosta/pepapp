@@ -41,7 +41,6 @@ function OptionRoot(props: Props) {
 				)}
 			>
 				<DropDownLabel labelTitle="Opções" />
-				<DropDownItemSeparator />
 				{props.children}
 			</DropDownContent>
 		</DropDown>
@@ -61,8 +60,8 @@ function OptionView({ children }: { children: React.ReactNode }) {
 							setOpen(false);
 						}}
 					>
-						<Eye color="#4B5563" size={16} />
-						<Text className="text-xs ">Ver mais</Text>
+						<Eye color="#4B5563" size={20} />
+						<Text className="text-sm ">Ver mais</Text>
 					</TouchableOpacity>
 				</DialogTrigger>
 
@@ -121,8 +120,8 @@ function OptionDelete({ title, icon, onRemove }: OptionDeleteProps) {
 				className="flex-row item-center gap-2"
 				onPress={handleRemove}
 			>
-				<Icon name={icon as IconName} color="#4B5563" size={16} />
-				<Text className="text-xs ">{title}</Text>
+				<Icon name={icon as IconName} color="#4B5563" size={20} />
+				<Text className="text-sm ">{title}</Text>
 			</TouchableOpacity>
 		</DropDownItem>
 	);
