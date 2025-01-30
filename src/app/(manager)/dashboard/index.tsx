@@ -6,11 +6,14 @@ import {
 	OptionDelete,
 	OptionRoot,
 } from "@/components/layout/options/Option";
+import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
 import { Tab, TabScreen } from "@/components/layout/tab";
 import { CardOrder } from "@/components/screen/card-order";
+import { StatisticCards } from "@/components/screen/dashboard/statistic-cards";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useAuth } from "@/context/auth-context";
 import { useImage } from "@/hooks/use-image";
 import { supabase } from "@/lib/supabase";
@@ -28,17 +31,17 @@ export default function Dasboard() {
 	const { user, setAuth } = useAuth();
 	const [refresh, setRefresh] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [loadingOrder, setLoadingOrder] = useState(false);
+	const [loadingItems, setLoadingItems] = useState(false);
+	const [loadingUsers, setLoadingUsers] = useState(false);
 	const [orders, setOrders] = useState<Order[]>([]);
+	const [visible, setVisible] = useState(false);
+	const [visibleError, setVisibleError] = useState(false);
 	const { url, setUrl } = useImage("files");
 	const [totalOrder, setTotalOrder] = useState(0);
 	const [totalItems, setTotalItems] = useState(0);
 	const [totalUsers, setTotalUsers] = useState(0);
 	const [isActiveTab, setIsActiveTab] = useState("Gauge");
-
-	async function signOut() {
-		await supabase.auth.signOut();
-		setAuth(null);
-	}
 
 	const fetchItems = async () => {
 		let response: any;
@@ -60,7 +63,9 @@ export default function Dasboard() {
 	};
 
 	async function getWeeklyOrders() {
+		setLoadingOrder(false);
 		const today = new Date();
+
 		const firstDayOfWeek = new Date(
 			today.setDate(today.getDate() - today.getDay()),
 		); // Domingo
@@ -73,34 +78,42 @@ export default function Dasboard() {
 			.lt("created_at", new Date().toISOString()); // Até o momento atual
 
 		if (error) {
-			console.error("Error fetching weekly orders:", error.message);
+			setLoadingOrder(true);
+			setVisibleError(true);
 			return;
 		}
 		setTotalOrder(count ?? 0);
+		setLoadingOrder(true);
 	}
 
 	async function getTotalItem() {
+		setLoadingItems(false);
 		const { error, count } = await supabase
 			.from("items")
 			.select("*", { count: "exact", head: true }); // Contagem exata
 
 		if (error) {
-			console.error("Error fetching weekly orders:", error.message);
+			setVisibleError(true);
+			setLoadingItems(true);
 			return;
 		}
 		setTotalItems(count ?? 0);
+		setLoadingItems(true);
 	}
 
 	async function getTotalUsers() {
+		setLoadingUsers(false);
 		const { error, count } = await supabase
 			.from("users")
 			.select("*", { count: "exact", head: true }); // Contagem exata
 
 		if (error) {
-			console.error("Error fetching weekly orders:", error.message);
+			setVisibleError(true);
+			setLoadingUsers(true);
 			return;
 		}
 		setTotalUsers(count ?? 0);
+		setLoadingUsers(true);
 	}
 
 	async function handleUpdateOrdersStatus(
@@ -126,96 +139,53 @@ export default function Dasboard() {
 			.eq("id", orderExists.id);
 
 		if (error) {
-			Alert.alert("Error", "Ocorreu um error no servidor");
+			setVisibleError(true);
 			return;
 		}
 
 		const filterOrders = orders.filter((order) => order.id !== orderId);
-
 		setOrders(filterOrders);
-		Alert.alert("Sucesso", "Feito com sucesso");
+		setVisible(true);
 	}
 
 	useEffect(() => {
 		getWeeklyOrders();
 		getTotalItem();
 		getTotalUsers();
-	}, [loading]);
+	}, [refresh]);
 
 	useEffect(() => {
 		fetchItems();
 	}, [refresh]);
 
 	return (
-		<Container>
+		<Container visible={visibleError} setVisible={setVisibleError}>
 			<Header url={url} />
 
 			<ScrollView
 				horizontal={true}
 				showsHorizontalScrollIndicator={false}
-				className="mb-5"
+				className="mb-5 -mt-3"
 				contentContainerClassName="gap-3 items-center pr-8"
 			>
-				<View className="w-64 bg-white border border-input gap-3 px-3 py-4 rounded-md shadow-md items-start">
-					<View className="bg-violet-500 px-1 py-1 rounded-md">
-						<BagSimple size={18} weight="regular" color="#fff" />
-					</View>
+				{!loadingOrder &&
+					!loadingItems &&
+					!loadingUsers &&
+					Array.from({ length: 3 }).map((_, index) => (
+						<Skeleton key={index.toString()} className="w-64 h-44" />
+					))}
 
-					<View className="gap-1">
-						<Text className="text-sm text-gray-600 uppercase">
-							Pedidos Feitos
-						</Text>
-						<Text className="text-2xl">{totalOrder}</Text>
-					</View>
-
-					<View className="bg-violet-300 py-2 pl-3 w-full rounded-md flex-row gap-2 items-center">
-						<Icon
-							color={totalOrder >= 10 ? "#0d9488" : "#dc2626"}
-							size={18}
-							name={totalOrder >= 10 ? "TrendUp" : "TrendDown"}
-						/>
-						<Text className="text-xs"> Nesta semana</Text>
-					</View>
-				</View>
-
-				<View className="w-64 bg-white border border-input gap-3 px-3 py-4 rounded-md shadow-md items-start">
-					<View className="bg-violet-500 px-1 py-1 rounded-md">
-						<QrCode size={18} weight="regular" color="#fff" />
-					</View>
-
-					<View className="gap-1">
-						<Text className="text-sm text-gray-600 uppercase">
-							Itens Cadastros
-						</Text>
-						<Text className="text-2xl">{totalItems}</Text>
-					</View>
-
-					<View className="bg-violet-300 py-2 pl-3 w-full rounded-md flex-row gap-2 items-center">
-						<Icon color="#0d9488" size={18} name="TrendUp" />
-						<Text className="text-xs">Registrados no sistema</Text>
-					</View>
-				</View>
-
-				<View className="w-64 bg-white border border-input gap-3 px-3 py-4 rounded-md shadow-md items-start">
-					<View className="bg-violet-500 px-1 py-1 rounded-md">
-						<UsersThree size={18} weight="regular" color="#fff" />
-					</View>
-					<View className="gap-1">
-						<Text className="text-sm text-gray-600 uppercase">
-							Usuários Cadastros
-						</Text>
-						<Text className="text-2xl">{totalUsers}</Text>
-					</View>
-
-					<View className="bg-violet-300 py-2 pl-3 w-full rounded-md flex-row gap-2 items-center">
-						<Icon color="#0d9488" size={18} name="TrendUp" />
-						<Text className="text-xs">Registrados no sistema</Text>
-					</View>
-				</View>
+				{loadingOrder && loadingItems && loadingUsers && (
+					<StatisticCards
+						totalItems={totalItems}
+						totalUsers={totalUsers}
+						totalOrder={totalOrder}
+					/>
+				)}
 			</ScrollView>
 
 			<View className="h-[50vh]">
-				<Text className="text-gray-400 text-sm ml-3 mb-4">
+				<Text className="text-gray-400 text-base ml-3 mb-4">
 					Pedidos recentes
 				</Text>
 
@@ -223,7 +193,7 @@ export default function Dasboard() {
 
 				{!loading && orders.length > 0 && (
 					<FlatList
-						className="gap-2 flex-1"
+						className="gap-3 h-[322px]"
 						keyExtractor={(item) => item.id.toString()}
 						data={orders}
 						renderItem={({ item }) => (
@@ -232,14 +202,13 @@ export default function Dasboard() {
 								handleUpdateOrdersStatus={handleUpdateOrdersStatus}
 							/>
 						)}
-						contentContainerStyle={{ paddingBottom: 100 }}
+						contentContainerClassName="pb-40"
 						showsVerticalScrollIndicator={false}
-						style={{ flex: 1 }}
 					/>
 				)}
 
 				{!loading && orders.length === 0 && (
-					<View className="gap-2 h-[322px] pb-[100px] items-center justify-center">
+					<View className="gap-2 flex-1 pb-[100px] items-center justify-center">
 						<Text className="text-gray-400 text-sm">
 							Não existe nenhum pedido feitos
 						</Text>
@@ -247,7 +216,7 @@ export default function Dasboard() {
 				)}
 			</View>
 
-			<Tab>
+			<Tab className="">
 				<TabScreen
 					icon="QrCode"
 					active={isActiveTab}
@@ -289,6 +258,12 @@ export default function Dasboard() {
 					}}
 				/>
 			</Tab>
+
+			<PopoversSuccess
+				message="Decisão tomada com sucesso"
+				visible={visible}
+				setVisible={setVisible}
+			/>
 		</Container>
 	);
 }

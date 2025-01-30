@@ -1,9 +1,18 @@
 import { View, TouchableOpacity, Text } from "react-native";
 import { type IconName, IconSystem } from "./icon-system";
+import clsx from "clsx";
 
-function Tab({ children }: { children: React.ReactNode }) {
+function Tab({
+	children,
+	className,
+}: { children: React.ReactNode; className?: string }) {
 	return (
-		<View className="fixed bottom-20 gap-6 bg-violet-600 py-1 px-2 flex-row items-center justify-center z-50 rounded-md">
+		<View
+			className={clsx(
+				"fixed bottom-20 gap-6 bg-violet-600 py-1 px-2 flex-row items-center justify-center z-50 rounded-md",
+				className,
+			)}
+		>
 			{children}
 		</View>
 	);

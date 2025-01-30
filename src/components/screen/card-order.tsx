@@ -22,7 +22,7 @@ export function CardOrder({ item, handleUpdateOrdersStatus }: Props) {
 			<View className="flex-1">
 				<View className="w-full flex-row justify-between items-start mb-3">
 					<View className="flex-row items-center gap-3">
-						<Avatar className="w-10 h-10">
+						<Avatar className="w-14 h-14">
 							{item.users.image ? (
 								<AvatarImage
 									className=""
@@ -35,7 +35,7 @@ export function CardOrder({ item, handleUpdateOrdersStatus }: Props) {
 							)}
 						</Avatar>
 
-						<Text className="font-heading text-base">{item.users.name}</Text>
+						<Text className="font-heading text-xl">{item.users.name}</Text>
 					</View>
 
 					<OptionRoot>
@@ -55,15 +55,15 @@ export function CardOrder({ item, handleUpdateOrdersStatus }: Props) {
 						/>
 					</OptionRoot>
 				</View>
-				<Text className="ml-3 mb-5 text-sm text-gray-400">
+				<Text className="ml-3 mb-5 text-base text-gray-400">
 					{formatItems(item.order_items)}
 				</Text>
 			</View>
 
 			<View className="bg-violet-200 rounded-md border-l-2 border-violet-600 flex-row items-center justify-between p-2">
 				<View className="flex-row gap-1 items-center">
-					<Clock color="#4B5563" size={16} />
-					<Text className="text-sm text-gray-600">
+					<Clock color="#4B5563" size={24} />
+					<Text className="text-base text-gray-600">
 						{formatTime(item.created_at)}
 					</Text>
 				</View>

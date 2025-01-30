@@ -8,11 +8,12 @@ import { useItem } from "@/context/item-context";
 import { Button } from "@/components/ui";
 
 type Props = {
+	message?: string;
 	visible: boolean;
 	setVisible: (visible: boolean) => void;
 };
 
-export function PopoversSuccess({ visible, setVisible }: Props) {
+export function PopoversSuccess({ visible, setVisible, message }: Props) {
 	const { clearItems } = useItem();
 
 	return (
@@ -45,7 +46,7 @@ export function PopoversSuccess({ visible, setVisible }: Props) {
 							/>
 							<View className="gap-2 justify-center items-center ">
 								<Text className="font-heading text-2xl text-center">
-									Pedido feito com sucesso
+									{message ?? "Pedido feito com sucesso"}
 								</Text>
 								<Text className="text-gray-400 text-center w-72 text-base">
 									Pressione no botão de ok para fechar a messagem
