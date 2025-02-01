@@ -16,7 +16,7 @@ import { AuthProvider, useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
 import { LoadingComponent } from "@/components/layout/loading";
 import { Alert } from "react-native";
-import { UserRole } from "@/models/user";
+import { UserRole, UserStatus } from "@/models/user";
 
 export default function RootLayout() {
 	const [fontsLoaded, error] = useFonts({
@@ -44,6 +44,7 @@ export function MainLayout() {
 			.from("users")
 			.select("*")
 			.eq("id", session.user.id)
+			.neq("status", UserStatus.DESACTIVED)
 			.single();
 
 		if (error) {
@@ -72,7 +73,7 @@ export function MainLayout() {
 				return;
 			}
 			setAuth(null);
-			router.replace("/(auth)");
+			router.replace("/(auth)/onboarding");
 		});
 	}, []);
 
@@ -85,10 +86,9 @@ export function MainLayout() {
 				}}
 			>
 				<Stack.Screen name="index" />
-				<Stack.Screen name="(auth)/signin" />
-				<Stack.Screen name="(auth)/reset-password" />
-				<Stack.Screen name="(employee)/home" />
-				<Stack.Screen name="(manager)/dashboard" />
+				<Stack.Screen name="(auth)" />
+				<Stack.Screen name="(employee)" />
+				<Stack.Screen name="(manager)" />
 			</Stack>
 		</GestureHandlerRootView>
 	);

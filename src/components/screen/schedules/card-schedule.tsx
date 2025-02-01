@@ -34,7 +34,7 @@ export function CardSchedule({
 			<View className="flex-1 relative">
 				<View className="w-full flex-row justify-between items-start">
 					<Text className="font-heading text-xl mb-2">
-						Data: {convertDateOtherFormat(order.date)}
+						Data: {convertDateOtherFormat(order.created_at)}
 					</Text>
 					<OptionRoot>
 						<OptionViewSchedule order={order} />

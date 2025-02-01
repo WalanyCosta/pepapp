@@ -22,7 +22,7 @@ const loginUserFormSchema = z
 		}),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
-		message: "Senhas diferente",
+		message: "Senhas diferentes",
 		path: ["confirmPassword"], // Indica onde o erro deve aparecer
 	});
 
@@ -44,6 +44,25 @@ export default function ResetPassword() {
 
 	const onResetPasswond = async (data: any) => {
 		setLoading(true);
+
+		if (user?.email) {
+			const { error, data: userFound } = await supabase
+				.from("user_profiles")
+				.select("*")
+				.eq("email", user?.email)
+				.single();
+
+			if (error) {
+				setLoading(false);
+				if (error.code === "PGRST116") {
+					Alert.alert("Error", "Usuario não existe!");
+				}
+
+				return;
+			}
+			setLoading(false);
+		}
+
 		const { data: result, error } = await supabase.auth.updateUser({
 			password: data.password,
 		});
@@ -63,8 +82,8 @@ export default function ResetPassword() {
 	};
 
 	function handleCancelResetPassword() {
-		if (user === null) {
-			router.replace("/(employee)/home");
+		if (user !== null) {
+			router.back();
 			return;
 		}
 		router.replace("/(auth)/signin");
@@ -77,12 +96,12 @@ export default function ResetPassword() {
 				source={require("@/assets/logo.png")}
 			/>
 
-			<View className="justify-center items-center mb-16">
-				<Text className="font-heading text-xl text-center text-gray-800">
+			<View className="justify-center items-center mb-16 gap-3">
+				<Text className="font-heading text-2xl text-center text-gray-800">
 					Muda a sua senha
 				</Text>
-				<Text className="text-sm text-center">
-					Lorem ipsum is simply dummy text of the printing
+				<Text className="text-base text-center text-gray-400">
+					Empreencha os campos abaixo para poder mudar a sua senha
 				</Text>
 			</View>
 
@@ -124,11 +143,11 @@ export default function ResetPassword() {
 				</View>
 			</Form>
 
-			<View className="mt-32 mb-12 gap-2">
+			<View className="mt-56 mb-12 gap-2">
 				<Button
 					label="Continuar"
 					isLoading={loading}
-					size={"default"}
+					size={"lg"}
 					variant={"default"}
 					onPress={handleSubmit(onResetPasswond)}
 				/>
@@ -137,7 +156,7 @@ export default function ResetPassword() {
 						<Button
 							label="cancelar"
 							isLoading={false}
-							size={"default"}
+							size={"lg"}
 							variant={"secondary"}
 						/>
 					</DialogTrigger>

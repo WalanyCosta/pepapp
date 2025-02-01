@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabase";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
 import { PopoverDualButton } from "@/components/layout/popovers/dual-button";
+import { UserStatus } from "@/models/user";
 
 const loginUserFormSchema = z.object({
 	email: z.string({ required_error: "Campo email é obrigatório" }).email({
@@ -34,13 +35,25 @@ export default function ForgoutPassword() {
 	async function onSendEmail(data: any) {
 		setLoading(true);
 
-		const { error } = await supabase.auth.resetPasswordForEmail(
-			data.email || "",
-		);
+		const { error, data: userFound } = await supabase
+			.from("user-profile")
+			.select("*")
+			.eq("email", data.email)
+			.single();
 
 		if (error) {
+			if (error.code === "PGRST116") {
+				Alert.alert("Error", "Usuario não existe!");
+			}
+
 			setLoading(false);
 			Alert.alert("Error", "Error interno do servidor");
+			return;
+		}
+
+		if (userFound.status === UserStatus.DESACTIVED) {
+			setLoading(false);
+			Alert.alert("Error", "Usuario não authorizado!");
 			return;
 		}
 
@@ -59,17 +72,17 @@ export default function ForgoutPassword() {
 				source={require("@/assets/logo.png")}
 			/>
 
-			<View className="justify-center items-center mb-16">
-				<Text className="font-heading text-xl text-center text-violet-600">
+			<View className="justify-center items-center mb-16 gap-3">
+				<Text className="font-heading text-2xl text-center">
 					Faça login para sua conta
 				</Text>
-				<Text className="text-sm text-center">
+				<Text className="text-base text-center text-gray-400">
 					Lorem ipsum is simply dummy text of the printing
 				</Text>
 			</View>
 
 			<Image
-				className="self-center w-72 h-56 mb-12"
+				className="self-center w-56 h-40 mb-4"
 				source={require("@/assets/sent-message-bro.png")}
 			/>
 
@@ -90,11 +103,11 @@ export default function ForgoutPassword() {
 				</View>
 			</Form>
 
-			<View className="mt-5 mb-12 gap-2">
+			<View className="mt-56 mb-12 gap-2">
 				<Button
 					label="Continuar"
 					isLoading={loading}
-					size={"default"}
+					size={"lg"}
 					variant={"default"}
 					onPress={handleSubmit(onSendEmail)}
 				/>
@@ -103,7 +116,7 @@ export default function ForgoutPassword() {
 						<Button
 							label="Cancelar"
 							isLoading={false}
-							size={"default"}
+							size={"lg"}
 							variant={"secondary"}
 						/>
 					</DialogTrigger>

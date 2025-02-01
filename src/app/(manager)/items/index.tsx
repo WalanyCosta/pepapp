@@ -16,6 +16,7 @@ import { supabase } from "@/lib/supabase";
 import { CardItemEmpty } from "@/components/layout/card-item-empty";
 import { FlatList } from "react-native";
 import { verifyImageUri } from "@/utils/verify-image-uri";
+import { HeaderBack } from "@/components/layout/header-back";
 
 export default function Items() {
 	const [featchItems, setFeatchItems] = useState(false);
@@ -48,39 +49,28 @@ export default function Items() {
 	return (
 		<View className="flex-1 relative">
 			<Container>
-				<TouchableOpacity
-					onPress={() => {
-						router.replace("/(manager)/dashboard");
-					}}
-					className="w-8 h-8 mt-3 mb-5 justify-center items-start"
-				>
-					<ArrowLeft color="#4B5563" size={24} />
-				</TouchableOpacity>
+				<HeaderBack
+					title="Items cadastrados"
+					backRoute="/(manager)/dashboard"
+				/>
 
-				<View className="justify-center mb-8">
-					<Image className="mb-5" source={require("@/assets/mini-logo.png")} />
-					<Text className="font-heading text-xl flex-1">Items cadastrados</Text>
-				</View>
-
-				<View>
+				<View className="h-[74vh]">
 					{featchItems && <CardItemEmpty />}
 
 					{!featchItems && items.length > 0 && (
 						<FlatList
-							className="gap-2"
+							className="flex-1"
 							keyExtractor={(item) => item.id}
 							data={items}
 							renderItem={({ item }) => (
-								<View className="flex-row gap-4 items-center mb-2 px-2 py-3 border border-input rounded-md relative">
+								<View className="flex-row gap-4 justify-center items-center mb-2 px-3 py-5 border border-input rounded-md relative">
 									<Image
-										className="w-14 h-14"
+										className="w-16 h-16"
 										source={verifyImageUri(item.image)}
 									/>
-									<View className="gap-1 w-64">
-										<View className="flex-row justify-between items-start">
-											<Text className="text-base font-heading">
-												{item.name}
-											</Text>
+									<View className="gap-1 w-80">
+										<View className="flex-row justify-between">
+											<Text className="text-xl font-heading">{item.name}</Text>
 											<OptionRoot>
 												<OptionDelete
 													title="Apagar"
@@ -89,14 +79,14 @@ export default function Items() {
 												/>
 											</OptionRoot>
 										</View>
-										<Text className="text-xs text-wrap text-gray-500">
+										<Text className="text-base text-wrap  text-gray-500">
 											{item.description}
 										</Text>
 									</View>
 								</View>
 							)}
+							contentContainerClassName="pb-40"
 							showsVerticalScrollIndicator={false}
-							style={{ flex: 1 }}
 						/>
 					)}
 					{!featchItems && items.length === 0 && (
@@ -110,13 +100,13 @@ export default function Items() {
 
 				<TouchableOpacity
 					onPress={handlePresentModalPress}
-					className="fixed bottom-10 left-80 bg-violet-600 rounded items-center justify-center p-4 w-10 h-10 shadow-md"
+					className="fixed left-[22rem] bottom-12 bg-violet-600 rounded items-center justify-center p-4 w-16 h-16 shadow-md"
 				>
 					<Plus size={20} color="#fff" />
 				</TouchableOpacity>
 			</Container>
 
-			<BottomSheet ref={bottomSheetModalRef}>
+			<BottomSheet snapPoints={["65%"]} ref={bottomSheetModalRef}>
 				<FormItem items={items} setItems={setItems} />
 			</BottomSheet>
 		</View>

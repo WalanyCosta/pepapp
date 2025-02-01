@@ -3,7 +3,7 @@ import { View, Text, Image } from "react-native";
 import { router } from "expo-router";
 import { Container } from "@/components/layout/container";
 
-export default function Home() {
+export default function Onboarding() {
 	return (
 		<Container>
 			<Image className="mt-5 mr-5" source={require("@/assets/mini-logo.png")} />

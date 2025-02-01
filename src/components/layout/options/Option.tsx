@@ -31,7 +31,7 @@ function OptionRoot(props: Props) {
 		<DropDown>
 			<DropDownTrigger>
 				<TouchableOpacity className={cn("items-end", props.className)}>
-					<DotsThree color="#4B5563" size={16} />
+					<DotsThree color="#4B5563" size={20} />
 				</TouchableOpacity>
 			</DropDownTrigger>
 			<DropDownContent

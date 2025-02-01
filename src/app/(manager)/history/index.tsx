@@ -71,7 +71,8 @@ export default function History() {
 		} else {
 			response = await supabase
 				.from("orders")
-				.select("*, users!inner(*), order_items!inner(*, items!inner(*))");
+				.select("*, users!inner(*), order_items!inner(*, items!inner(*))")
+				.neq("status", OrderStatus.CANCEL);
 		}
 
 		if (response.error) {
@@ -157,11 +158,11 @@ export default function History() {
 				</DropDown>
 			</View>
 
-			{loading && <CardScheduleEmpty />}
+			{loading && <CardScheduleEmpty length={7} />}
 
 			{!loading && orders.length > 0 && (
 				<FlatList
-					className="gap-2 flex-1 h-[322px]"
+					className="gap-2 h-[75vh]"
 					keyExtractor={(item) => item.id.toString()}
 					data={orders}
 					renderItem={({ item }) => (
@@ -170,9 +171,8 @@ export default function History() {
 							handleUpdateOrdersStatus={handleUpdateOrdersStatus}
 						/>
 					)}
-					contentContainerStyle={{ paddingBottom: 100 }}
+					contentContainerClassName="pb-40"
 					showsVerticalScrollIndicator={false}
-					style={{ flex: 1 }}
 				/>
 			)}
 

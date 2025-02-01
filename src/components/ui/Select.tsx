@@ -56,6 +56,8 @@ export interface SelectProps {
 	labelKey: string;
 	/** Define valueKey to options */
 	valueKey: string;
+	refreshCategory?: boolean;
+	setRefreshCategory?: (refresh: boolean) => void;
 	isVisibleButtonAdd: boolean;
 }
 
@@ -71,6 +73,8 @@ export const Select = ({
 	labelKey,
 	valueKey,
 	isVisibleButtonAdd = true,
+	refreshCategory,
+	setRefreshCategory,
 }: SelectProps) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [dropdownPosition, setDropdownPosition] =
@@ -109,12 +113,12 @@ export const Select = ({
 				ref={selectButtonRef}
 				className={cn(
 					selectClasses,
-					"border border-input py-2 px-4 rounded-lg bg-white dark:bg-black",
+					"border border-input py-3 px-4 rounded-lg bg-white",
 				)}
 				onPress={openDropdown}
 			>
 				<Text
-					className={`text-sm capitalize ${selectedValue ? "text-gray-800" : "text-gray-400"}`}
+					className={`text-base capitalize ${selectedValue ? "text-gray-800" : "text-gray-400"}`}
 				>
 					{selectedValue
 						? new_options.find((option) => option.value === selectedValue)
@@ -140,7 +144,7 @@ export const Select = ({
 								shadowRadius: 8,
 								elevation: 5,
 							}}
-							className="absolute bg-white shadow-sm dark:bg-black p-2 rounded-md shadow-black dark:shadow-white"
+							className="absolute bg-white shadow-sm p-2 rounded-md shadow-black"
 						>
 							<FlatList
 								data={new_options}
@@ -157,7 +161,12 @@ export const Select = ({
 								)}
 							/>
 
-							{isVisibleButtonAdd && <DialogCategory />}
+							{isVisibleButtonAdd && (
+								<DialogCategory
+									refreshCategory={refreshCategory}
+									setRefreshCategory={setRefreshCategory}
+								/>
+							)}
 						</View>
 					</TouchableOpacity>
 				</Modal>

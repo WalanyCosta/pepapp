@@ -2,14 +2,13 @@ import { Container } from "@/components/layout";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 import { useEffect, useState } from "react";
-import { Tab, TabScreen } from "@/components/layout/tab";
+import { Tab, TabScreen, TabScreenRoute } from "@/components/layout/tab";
 import { supabase } from "@/lib/supabase";
 import type { Item } from "@/models/item";
 import { Items } from "@/components/screen/items";
 import type { Category } from "@/models/category";
 import { Categories } from "@/components/screen/categories";
 import { useItem } from "@/context/item-context";
-import { useAuth } from "@/context/auth-context";
 import { Header } from "@/components/layout/header";
 import {
 	PopoversError,
@@ -112,13 +111,13 @@ export default function Home() {
 			<Items items={items} isLoadingItem={isLoadingItem} />
 
 			<Tab>
-				<TabScreen
+				<TabScreenRoute
 					icon="House"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
 					onPress={() => {}}
 				/>
-				<TabScreen
+				<TabScreenRoute
 					icon="BagSimple"
 					active={isActiveTab}
 					badge={true}
@@ -130,17 +129,13 @@ export default function Home() {
 					icon="Archive"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					onPress={() => {
-						router.replace("/(employee)/schedule");
-					}}
+					routeRef="/(employee)/schedule"
 				/>
 				<TabScreen
+					routeRef="/(employee)/settings"
 					icon="GearSix"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					onPress={() => {
-						router.replace("/(employee)/settings");
-					}}
 				/>
 			</Tab>
 

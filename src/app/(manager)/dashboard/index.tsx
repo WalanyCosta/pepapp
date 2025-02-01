@@ -7,7 +7,7 @@ import {
 	OptionRoot,
 } from "@/components/layout/options/Option";
 import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
-import { Tab, TabScreen } from "@/components/layout/tab";
+import { Tab, TabScreen, TabScreenRoute } from "@/components/layout/tab";
 import { CardOrder } from "@/components/screen/card-order";
 import { StatisticCards } from "@/components/screen/dashboard/statistic-cards";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
@@ -221,41 +221,33 @@ export default function Dasboard() {
 					icon="QrCode"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					onPress={() => {
-						router.replace("/(manager)/items");
-					}}
+					routeRef="/(manager)/items"
 				/>
 				<TabScreen
 					icon="UsersThree"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					onPress={() => {
-						router.replace("/(manager)/users");
-					}}
+					routeRef="/(manager)/users"
 				/>
 
-				<TabScreen
+				<TabScreenRoute
 					icon="Gauge"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
 					onPress={() => {}}
 				/>
 				<TabScreen
+					routeRef="/(manager)/history"
 					icon="ClockCounterClockwise"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					onPress={() => {
-						router.replace("/(manager)/history");
-					}}
 				/>
 
 				<TabScreen
+					routeRef="/(employee)/settings"
 					icon="GearSix"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					onPress={() => {
-						router.replace("/(employee)/settings");
-					}}
 				/>
 			</Tab>
 

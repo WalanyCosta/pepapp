@@ -26,6 +26,7 @@ import { useAuth } from "@/context/auth-context";
 import { OrderStatus } from "@/models/order";
 import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
 import { HeaderBack } from "@/components/layout/header-back";
+import dayjs from "dayjs";
 import {
 	PopoversError,
 	type StatusCode,
@@ -87,7 +88,7 @@ export default function Order() {
 		setLoading(true);
 
 		try {
-			const date = new Date().toISOString();
+			const date = dayjs(new Date()).format("YYYY-MM-AA");
 
 			await supabase.from("orders").insert({
 				ranson: data.ranson,
@@ -127,7 +128,7 @@ export default function Order() {
 
 			{items.length > 0 && (
 				<FlatList
-					className="gap-2 h-80"
+					className="gap-2 h-56"
 					keyExtractor={(item) => item.id}
 					data={items}
 					renderItem={({ item }) => (
@@ -139,9 +140,8 @@ export default function Order() {
 							onPressDelete={() => deleteItem(item.id)}
 						/>
 					)}
-					contentContainerStyle={{ paddingBottom: 100 }}
+					contentContainerStyle={{ paddingBottom: 24 }}
 					showsVerticalScrollIndicator={false}
-					style={{ flex: 1 }}
 				/>
 			)}
 			{items.length === 0 && (
@@ -186,14 +186,14 @@ export default function Order() {
 							placeholder: "Uniforme que recebe veio com um tamanho menor",
 							multiline: true,
 							numberOfLines: 4,
-							onSubmitEditing: handleSubmit((data) => {}),
+							onSubmitEditing: handleSubmit(handleAddOrders),
 						}}
 						error={errors?.ranson ? String(errors.ranson.message) : ""}
 					/>
 				</View>
 			</Form>
 
-			<View className="mt-24 mb-12 gap-3">
+			<View className="mt-56 mb-12 gap-3">
 				<Button
 					label="Concluir pedido"
 					isLoading={loading}

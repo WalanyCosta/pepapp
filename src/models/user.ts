@@ -7,7 +7,8 @@ export enum UserRole {
 
 export enum UserStatus{
   ACTIVED = "ATIVO",
-  DESACTIVED="DESATIVADO"
+  DESACTIVED="DESATIVADO",
+  REGISTED="REGISTRADO"
 }
 
 export type User = UserSupabase & {

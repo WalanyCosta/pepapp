@@ -54,6 +54,7 @@ export function FormItem({ items, setItems }: Props) {
 	const descriptionRef = useRef<TextInput>(null);
 	const categoryRef = useRef<TextInput>(null);
 	const [loading, setLoading] = useState(false);
+	const [refreshCategory, setRefreshCategory] = useState(false);
 	const [categories, setCategories] = useState<Category[]>();
 
 	async function onSubmitItem(data: any) {
@@ -98,7 +99,7 @@ export function FormItem({ items, setItems }: Props) {
 
 	useEffect(() => {
 		fetchCategories();
-	}, []);
+	}, [refreshCategory]);
 
 	return (
 		<View className="w-full mx-4 gap-5">
@@ -144,6 +145,8 @@ export function FormItem({ items, setItems }: Props) {
 							name="categoryId"
 							render={({ field }) => (
 								<Select
+									refreshCategory={refreshCategory}
+									setRefreshCategory={setRefreshCategory}
 									options={
 										categories
 											? categories.map((category) => {

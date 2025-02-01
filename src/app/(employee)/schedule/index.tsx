@@ -10,6 +10,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
 import { HeaderBack } from "@/components/layout/header-back";
 import { PopoversError } from "@/components/layout/popovers/popovers-error";
+import dayjs from "dayjs";
 
 export default function Schedule() {
 	const { user } = useAuth();
@@ -33,7 +34,7 @@ export default function Schedule() {
 				.from("orders")
 				.select("*, order_items!inner(*, items!inner(*))")
 				.eq("userId", user?.id)
-				.eq("date", saveDate);
+				.eq("date", dayjs(saveDate).format("YYYY-MM-AA"));
 		}
 
 		if (response.error) {

@@ -22,7 +22,7 @@ export function CardOrder({ item, handleUpdateOrdersStatus }: Props) {
 			<View className="flex-1">
 				<View className="w-full flex-row justify-between items-start mb-3">
 					<View className="flex-row items-center gap-3">
-						<Avatar className="w-14 h-14">
+						<Avatar className="w-12 h-12">
 							{item.users.image ? (
 								<AvatarImage
 									className=""

@@ -9,25 +9,29 @@ import {
 import { FormUsers } from "@/components/screen/users/form-users";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { BottomSheet } from "@/components/ui/BottomSheet";
+import { useAuth } from "@/context/auth-context";
 import { supabase } from "@/lib/supabase";
 import { UserStatus, type User } from "@/models/user";
 import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
-import { formatTime } from "@/utils/format-time";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { router } from "expo-router";
 import {
-	ArrowLeft,
 	Calendar,
 	IdentificationCard,
 	MagnifyingGlass,
 	Plus,
 } from "phosphor-react-native";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { Alert } from "react-native";
-import { Text, TouchableOpacity, Image, View, TextInput } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import {
+	Text,
+	TouchableOpacity,
+	View,
+	TextInput,
+	Alert,
+	FlatList,
+} from "react-native";
 
 export default function Users() {
+	const { user } = useAuth();
 	const [users, setUsers] = useState<User[]>([]);
 	const searchRef = useRef<TextInput>(null);
 	const [query, setQuery] = useState("");
@@ -49,11 +53,13 @@ export default function Users() {
 				.from("user_profiles")
 				.select("*")
 				.neq("status", UserStatus.DESACTIVED)
+				.neq("id", user?.id)
 				.ilike("name", `%${query}%`);
 		} else {
 			response = await supabase
 				.from("user_profiles")
 				.select("*")
+				.neq("id", user?.id)
 				.neq("status", UserStatus.DESACTIVED);
 		}
 
@@ -101,7 +107,7 @@ export default function Users() {
 
 		return () => {
 			if (newTimeoutId) {
-				clearTimeout(newTimeoutId);
+				setTimeoutId(newTimeoutId);
 			}
 		};
 	}, [query]);
@@ -130,19 +136,19 @@ export default function Users() {
 					/>
 				</View>
 
-				<View className="gap-3 justify-center">
+				<View className="gap-3 justify-center h-[74vh]">
 					{featchUsers && <CardItemEmpty />}
 
 					{!featchUsers && users.length > 0 && (
 						<FlatList
-							className="gap-2"
+							className="flex-1"
 							keyExtractor={(item) => item.id}
 							data={users}
 							renderItem={({ item }) => (
 								<View className="p-3 border border-input rounded-md">
 									<View className="w-full flex-row justify-between items-start mb-4">
 										<View className="flex-row items-start gap-3">
-											<Avatar className="w-10 h-10">
+											<Avatar className="w-12 h-12">
 												{item.image ? (
 													<AvatarImage
 														className=""
@@ -158,10 +164,10 @@ export default function Users() {
 											</Avatar>
 
 											<View className="justify-start gap-2">
-												<Text className="font-heading text-base">
+												<Text className="font-heading text-xl">
 													{item.name}
 												</Text>
-												<Text className="text-sm text-gray-400">
+												<Text className="text-base text-gray-400">
 													{item.email}
 												</Text>
 											</View>
@@ -180,14 +186,14 @@ export default function Users() {
 
 									<View className="ml-12 flex-row justify-between items-center">
 										<View className="flex-row gap-2 items-center">
-											<IdentificationCard color="#6b7280" size={16} />
+											<IdentificationCard color="#6b7280" size={20} />
 											<Text className="text-sm text-gray-500 capitalize">
 												{item.role}
 											</Text>
 										</View>
 
 										<View className="flex-row gap-2 items-center">
-											<Calendar color="#6b7280" size={16} />
+											<Calendar color="#6b7280" size={20} />
 											<Text className="text-sm text-gray-500">
 												{convertDateOtherFormat(new Date(item.created_at))}
 											</Text>
@@ -197,12 +203,11 @@ export default function Users() {
 							)}
 							showsVerticalScrollIndicator={false}
 							contentContainerClassName="gap-3 justify-start pb-8"
-							style={{ flex: 1 }}
 						/>
 					)}
 					{!featchUsers && users.length === 0 && (
 						<View className="gap-2 h-[322px] pb-[100px] items-center justify-center">
-							<Text className="text-gray-400 text-sm">
+							<Text className="text-gray-400 text-base">
 								Não existe usuarios cadastrados
 							</Text>
 						</View>
@@ -211,13 +216,13 @@ export default function Users() {
 
 				<TouchableOpacity
 					onPress={handlePresentModalPress}
-					className="fixed bottom-2 left-80 bg-violet-600 rounded items-center justify-center p-4 w-10 h-10 shadow-md"
+					className="fixed left-[22rem] bottom-24 bg-violet-600 rounded items-center justify-center p-4 w-16 h-16 shadow-md"
 				>
 					<Plus size={20} color="#fff" />
 				</TouchableOpacity>
 			</Container>
 
-			<BottomSheet snapPoints={["65%"]} ref={bottomSheetModalRef}>
+			<BottomSheet snapPoints={["50%"]} ref={bottomSheetModalRef}>
 				<FormUsers users={users} setUsers={setUsers} />
 			</BottomSheet>
 		</Fragment>

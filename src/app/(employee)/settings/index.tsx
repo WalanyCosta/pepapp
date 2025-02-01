@@ -15,11 +15,13 @@ import {
 import { Switch } from "@/components/ui/Switch";
 import { useEffect, useState } from "react";
 import { useImage } from "@/hooks/use-image";
+import { Link } from "expo-router";
 
-export default function Home() {
+export default function Settings() {
 	const { user, setAuth } = useAuth();
 	const { uploadImage, url, setUrl } = useImage("files");
 	const [isEnabled, setIsEnabled] = useState(false);
+	const [hrefRoute, setHrefRoute] = useState("");
 
 	async function fetch() {
 		const { data, error } = await supabase
@@ -62,18 +64,6 @@ export default function Home() {
 		}
 
 		console.log(data);
-	}
-
-	async function handleChangePassword() {
-		const { error } = await supabase.auth.resetPasswordForEmail(
-			user?.email ?? "",
-		);
-		if (error) {
-			Alert.alert("Error", "Error interno do servidor");
-			return;
-		}
-
-		router.replace("/(auth)/reset-password");
 	}
 
 	function handleBack() {
@@ -127,18 +117,16 @@ export default function Home() {
 						<CaretRight color="#4B5563" size={18} />
 					</TouchableOpacity>
 
-					<TouchableOpacity
-						onPress={handleChangePassword}
-						className="flex-row item-center justify-between border-b border-input py-2"
-					>
-						<View className="flex-row gap-2 items-center">
-							<Lock color="#4B5563" size={24} />
-							<Text className="text-base text-gray-600">Alterar senha</Text>
+					<Link href="/(auth)/reset-password">
+						<View className="w-full flex-row item-center justify-between border-b border-input py-2">
+							<View className="flex-row gap-2 items-center">
+								<Lock color="#4B5563" size={24} />
+								<Text className="text-base text-gray-600">Alterar senha</Text>
+							</View>
+
+							<CaretRight color="#4B5563" size={18} />
 						</View>
-
-						<CaretRight color="#4B5563" size={18} />
-					</TouchableOpacity>
-
+					</Link>
 					<View className="flex-row item-center justify-between">
 						<View className="flex-row gap-2 items-center">
 							<PaintRoller color="#4B5563" size={24} />

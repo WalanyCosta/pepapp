@@ -36,8 +36,7 @@ export function Calendar({ saveDate, setSaveDate }: Props) {
 							date={date}
 							onChange={(params: any) => {
 								setDate(params.date);
-								setSaveDate(params.date);
-								console.log(dayjs(params.date));
+								setSaveDate(new Date(params.date));
 							}}
 							locale={dayjs.locale("pt-br")}
 						/>

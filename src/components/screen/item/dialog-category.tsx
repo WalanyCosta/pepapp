@@ -1,13 +1,19 @@
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogTrigger,
+	useDialog,
+} from "@/components/ui/Dialog";
 import { Form, InputControl } from "@/components/layout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/Button";
 import { Icon, type IconName } from "@/components/layout/icon-component";
-import { IconProps } from "@/components/layout/category-item";
 import { TouchableOpacity, View, FlatList, Text } from "react-native";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { Alert } from "react-native";
 
 const IconPicker: React.FC<{
 	setValue: (value: any) => void;
@@ -24,27 +30,32 @@ const IconPicker: React.FC<{
 					<TouchableOpacity key={item} onPress={() => setValue(item)}>
 						<Icon
 							name={item as IconName}
-							size={24}
-							color={selectedIcon === item ? "blue" : "gray"}
+							size={32}
+							color={selectedIcon === item ? "#7c3aed" : "#9ca3af"}
 						/>
 					</TouchableOpacity>
 				)}
 				contentContainerStyle={{
 					flexDirection: "row",
 					flexWrap: "wrap",
-					gap: 3,
+					gap: 5,
 				}}
 			/>
 		</View>
 	);
 };
 
-export function DialogCategory() {
+type Props = {
+	refreshCategory: boolean;
+	setRefreshCategory: (refresh: boolean) => void;
+};
+
+export function DialogCategory({ setRefreshCategory, refreshCategory }: Props) {
 	const ItemFormDataSchema = z.object({
 		name: z
 			.string({ required_error: "Campo nome é obrigatório" })
-			.min(10, {
-				message: "No minimo o campo nome só permite 10",
+			.min(2, {
+				message: "No minimo o campo nome só permite 2",
 			})
 			.max(250, {
 				message: "No máximo o campo nome só permite 250",
@@ -53,10 +64,7 @@ export function DialogCategory() {
 			.string()
 			.max(200, "No máximo o campo categoria só permite 200")
 			.optional(),
-		icon: z
-			.string()
-			.max(200, "No máximo o campo icon só permite 200")
-			.optional(),
+		icon: z.string().max(200, "No máximo o campo icon só permite 200"),
 	});
 
 	type ItemFormData = z.infer<typeof ItemFormDataSchema>;
@@ -65,15 +73,39 @@ export function DialogCategory() {
 		handleSubmit,
 		setValue,
 		watch,
+		resetField,
 		formState: { errors },
 	} = useForm<ItemFormData>({
 		mode: "all",
 		resolver: zodResolver(ItemFormDataSchema),
 	});
+	const [loading, setLoading] = useState(false);
+
 	const descriptionRef = useRef<TextInput>(null);
 
 	const selectedIcon = watch("icon");
 
+	async function onSubmitCategory(data: any) {
+		setLoading(true);
+
+		const { error } = await supabase.from("categories").insert({
+			name: data.name,
+			description: data.description,
+			icon: data.icon,
+		});
+
+		if (error) {
+			setLoading(false);
+			Alert.alert("Error", error.message);
+			return;
+		}
+
+		resetField("name");
+		resetField("description");
+		resetField("icon");
+		setLoading(false);
+		setRefreshCategory(!refreshCategory);
+	}
 	return (
 		<Dialog>
 			<DialogTrigger>
@@ -81,8 +113,8 @@ export function DialogCategory() {
 					<Text className="text-white text-center">Adicionar categoria</Text>
 				</TouchableOpacity>
 			</DialogTrigger>
-			<DialogContent>
-				<View className="w-full ">
+			<DialogContent className="w-11/12">
+				<View className="">
 					<Text className="font-heading text-xl mt-3 mb-4">
 						Cadastrar categoria
 					</Text>
@@ -140,7 +172,7 @@ export function DialogCategory() {
 								)}
 							/>
 							{errors.icon && (
-								<Text className="text-xs font-body text-border-red">
+								<Text className="text-xs font-body text-red-500">
 									{errors.icon.message}
 								</Text>
 							)}
@@ -148,10 +180,10 @@ export function DialogCategory() {
 					</Form>
 					<Button
 						label="Adicionar categoria"
-						isLoading={false}
+						isLoading={loading}
 						size={"default"}
 						variant={"default"}
-						// onPress={handleSubmit(onSubmitItem)}
+						onPress={handleSubmit(onSubmitCategory)}
 					/>
 				</View>
 			</DialogContent>

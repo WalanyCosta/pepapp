@@ -15,7 +15,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/lib/supabase";
-import { UserRole } from "@/models/user";
+import { UserRole, UserStatus } from "@/models/user";
 import {
 	PopoversError,
 	type StatusCode,
@@ -37,6 +37,7 @@ export default function SignIn() {
 		control,
 		handleSubmit,
 		formState: { errors },
+		getValues,
 	} = useForm<LoginUserFormData>({
 		mode: "all",
 		resolver: zodResolver(loginUserFormSchema),
@@ -69,14 +70,26 @@ export default function SignIn() {
 		}
 
 		if (result.user) {
-			const {
-				data: { role },
-				error,
-			} = await supabase
-				.from("user")
+			const { data: user, error } = await supabase
+				.from("users")
 				.select("*")
 				.eq("id", result.user.id || "")
+				.neq("status", UserStatus.DESACTIVED)
 				.single();
+
+			const { error: errorUpdate } = await supabase
+				.from("users")
+				.update({
+					status: UserStatus.ACTIVED,
+				})
+				.eq("id", result.user.id);
+
+			if (errorUpdate) {
+				setError(null);
+				setVisible(true);
+				setLoading(false);
+				return;
+			}
 
 			if (error) {
 				setError(null);
@@ -85,7 +98,7 @@ export default function SignIn() {
 				return;
 			}
 
-			if (role === UserRole.MANAGER) {
+			if (user.role === UserRole.MANAGER) {
 				setLoading(false);
 				router.replace("/(manager)/dashboard");
 				return;
@@ -95,6 +108,10 @@ export default function SignIn() {
 			router.replace("/(employee)/home");
 		}
 	};
+
+	async function replaceRoute() {
+		router.replace("/(auth)/forgout-password");
+	}
 
 	return (
 		<Container>
@@ -144,10 +161,7 @@ export default function SignIn() {
 					/>
 				</View>
 
-				<TouchableOpacity
-					onPress={() => router.replace("/(auth)/forgout-password")}
-					className="my-10"
-				>
+				<TouchableOpacity onPress={() => replaceRoute()} className="my-10">
 					<Text className="text-primary text-right text-base font-heading">
 						Esqueces-te a Senha?
 					</Text>

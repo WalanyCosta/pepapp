@@ -45,23 +45,29 @@ export function FormUsers({ users, setUsers }: Props) {
 	async function onSubmitItem(data: any) {
 		setLoading(true);
 
-		const { error } = await supabase.auth.signUp({
+		const response = await supabase.auth.admin.createUser({
 			email: data.email,
 			password: "peapp1234",
-			options: {
-				data: {
-					name: data.name,
-					role: data.role,
-					status: UserStatus.ACTIVED,
-				},
-			},
 		});
 
-		if (error) {
+		if (response.error) {
 			setLoading(false);
-			Alert.alert("Error", error.message);
+			Alert.alert("Error", response.error.message);
 			return;
 		}
+
+		// const { error: errorUser } = await supabase.from("users").insert({
+		// 	id: response.data.user.id,
+		// 	name: data.name,
+		// 	role: data.role,
+		// 	status: UserStatus.ACTIVED,
+		// });
+
+		// if (errorUser) {
+		// 	setLoading(false);
+		// 	Alert.alert("Error", errorUser.message);
+		// 	return;
+		// }
 
 		const { data: newUsers, error: userError } = await supabase
 			.from("user_profiles")
@@ -148,7 +154,7 @@ export function FormUsers({ users, setUsers }: Props) {
 				className="mt-5"
 				label="Cadastrar item"
 				isLoading={loading}
-				size={"default"}
+				size={"lg"}
 				variant={"default"}
 				onPress={handleSubmit(onSubmitItem)}
 			/>

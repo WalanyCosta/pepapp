@@ -1,6 +1,7 @@
 import { View, TouchableOpacity, Text } from "react-native";
 import { type IconName, IconSystem } from "./icon-system";
 import clsx from "clsx";
+import { type Href, Link } from "expo-router";
 
 function Tab({
 	children,
@@ -18,7 +19,7 @@ function Tab({
 	);
 }
 
-type TabScreenProps = {
+type TabScreenRouteProps = {
 	icon: IconName;
 	badge?: boolean;
 	badgeNumber?: number;
@@ -28,7 +29,7 @@ type TabScreenProps = {
 	setActive: (active: string) => void;
 };
 
-function TabScreen({
+function TabScreenRoute({
 	icon,
 	active = "House",
 	badge = false,
@@ -36,7 +37,7 @@ function TabScreen({
 	textBadge,
 	setActive,
 	onPress,
-}: TabScreenProps) {
+}: TabScreenRouteProps) {
 	function handlePress() {
 		setActive(icon);
 		onPress();
@@ -68,4 +69,50 @@ function TabScreen({
 	);
 }
 
-export { Tab, TabScreen };
+type TabScreenProps = {
+	icon: IconName;
+	badge?: boolean;
+	badgeNumber?: number;
+	textBadge?: string;
+	active: string;
+	routeRef?: Href;
+	setActive: (active: string) => void;
+};
+
+function TabScreen({
+	icon,
+	active = "House",
+	badge = false,
+	badgeNumber = 0,
+	textBadge,
+	setActive,
+	routeRef,
+}: TabScreenProps) {
+	return (
+		<Link href={routeRef || "/(employee)/home"}>
+			<View
+				className={`w-14 h-14 relative items-center justify-center ${active === icon && "bg-white rounded-full"}`}
+			>
+				{badge && badgeNumber > 0 && (
+					<View className="bg-white w-7 h-7 py-2 overflow-hidden flex-row justify-center items-center absolute rounded-full top-1 left-8 z-10">
+						<View className="mx-auto flex-row justify-center items-center">
+							<Text className="text-xs text-violet-600 flex-row justify-center items-center">
+								{badgeNumber}
+							</Text>
+						</View>
+					</View>
+				)}
+
+				<IconSystem
+					icon={icon}
+					size={32}
+					color="#fff"
+					colorActive="#7c3aed"
+					active={active}
+				/>
+			</View>
+		</Link>
+	);
+}
+
+export { Tab, TabScreen, TabScreenRoute };
