@@ -12,6 +12,8 @@ import { supabase } from "@/lib/supabase";
 import { Alert } from "react-native";
 import { router } from "expo-router";
 import type { Category } from "@/models/category";
+import { useError } from "@/hooks/use-error";
+import { PopoversError } from "@/components/layout/popovers/popovers-error";
 
 const ItemFormDataSchema = z.object({
 	name: z
@@ -54,6 +56,7 @@ export function FormItem({ items, setItems }: Props) {
 	const descriptionRef = useRef<TextInput>(null);
 	const categoryRef = useRef<TextInput>(null);
 	const [loading, setLoading] = useState(false);
+	const { visible, setVisible, error, setError } = useError();
 	const [refreshCategory, setRefreshCategory] = useState(false);
 	const [categories, setCategories] = useState<Category[]>();
 
@@ -69,7 +72,8 @@ export function FormItem({ items, setItems }: Props) {
 
 		if (error) {
 			setLoading(false);
-			Alert.alert("Error", error.message);
+			setVisible(true);
+			setError(null);
 			return;
 		}
 
@@ -90,7 +94,8 @@ export function FormItem({ items, setItems }: Props) {
 		const { data, error } = await supabase.from("categories").select("*");
 
 		if (error) {
-			Alert.alert("Error do sistema", error.message);
+			setVisible(true);
+			setError(null);
 			return;
 		}
 
@@ -202,6 +207,15 @@ export function FormItem({ items, setItems }: Props) {
 				variant={"default"}
 				onPress={handleSubmit(onSubmitItem)}
 			/>
+
+			{visible && (
+				<PopoversError
+					visible={visible ?? false}
+					setVisible={setVisible}
+					title={error?.title}
+					statusCode={error?.code}
+				/>
+			)}
 		</View>
 	);
 }

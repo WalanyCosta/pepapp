@@ -11,6 +11,8 @@ import { supabase } from "@/lib/supabase";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
 import { PopoverDualButton } from "@/components/layout/popovers/dual-button";
 import { useAuth } from "@/context/auth-context";
+import type { StatusCode } from "@/components/layout/popovers/popovers-error";
+import { useError } from "@/hooks/use-error";
 
 const loginUserFormSchema = z
 	.object({
@@ -39,6 +41,7 @@ export default function ResetPassword() {
 	});
 
 	const { user, setAuth } = useAuth();
+	const { visible, setVisible, error, setError } = useError();
 	const [loading, setLoading] = useState(false);
 	const confirmPasswordRef = useRef<TextInput>(null);
 
@@ -46,29 +49,34 @@ export default function ResetPassword() {
 		setLoading(true);
 
 		if (user?.email) {
-			const { error, data: userFound } = await supabase
+			const { error: userError, data: userFound } = await supabase
 				.from("user_profiles")
 				.select("*")
 				.eq("email", user?.email)
 				.single();
 
-			if (error) {
-				setLoading(false);
-				if (error.code === "PGRST116") {
-					Alert.alert("Error", "Usuario não existe!");
+			if (userError) {
+				let messageError: { code: StatusCode; title: string } | null = null;
+				if (userError.code === "PGRST116") {
+					messageError = {
+						code: "INTERNAL_SERVER",
+						title: "Usuario não existe!",
+					};
 				}
 
-				return;
+				setVisible(true);
+				setError(messageError);
+				setLoading(false);
 			}
-			setLoading(false);
 		}
 
-		const { data: result, error } = await supabase.auth.updateUser({
+		const { error } = await supabase.auth.updateUser({
 			password: data.password,
 		});
 
 		if (error) {
-			Alert.alert("Error", error.message);
+			setVisible(true);
+			setError(null);
 			setLoading(false);
 			return;
 		}
@@ -90,7 +98,7 @@ export default function ResetPassword() {
 	}
 
 	return (
-		<Container>
+		<Container visible={visible} setVisible={setVisible} error={error}>
 			<Image
 				className="self-center mt-14 mb-12"
 				source={require("@/assets/logo.png")}

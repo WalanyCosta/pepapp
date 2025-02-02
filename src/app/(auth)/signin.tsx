@@ -114,7 +114,7 @@ export default function SignIn() {
 	}
 
 	return (
-		<Container>
+		<Container visible={visible} setVisible={setVisible} error={error}>
 			<Image
 				className="self-center mt-14 mb-12"
 				source={require("@/assets/logo.png")}
@@ -180,13 +180,6 @@ export default function SignIn() {
 			<Text className="mb-14 mt-44 text-sm text-center text-gray-400">
 				Todos os direitos reservado à WannasHouse
 			</Text>
-
-			<PopoversError
-				visible={visible}
-				setVisible={setVisible}
-				title={error?.title}
-				statusCode={error?.code}
-			/>
 		</Container>
 	);
 }

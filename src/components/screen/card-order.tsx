@@ -1,15 +1,18 @@
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/Avatar";
 import {
 	IconOptionDelete,
 	OptionDelete,
 	OptionRoot,
+	OptionView,
 } from "../layout/options/Option";
 import { formatItems } from "@/utils/fomat-Items";
 import { Clock } from "phosphor-react-native";
 import { formatTime } from "@/utils/format-time";
-import { Badge } from "../ui/badge";
+import { Badge, type VariantsProps } from "../ui/badge";
 import { type Order, OrderStatus } from "@/models/order";
+import { FlatList } from "react-native-gesture-handler";
+import { verifyImageUri } from "@/utils/verify-image-uri";
 
 type Props = {
 	item: Order;
@@ -53,6 +56,73 @@ export function CardOrder({ item, handleUpdateOrdersStatus }: Props) {
 								handleUpdateOrdersStatus(item.id, OrderStatus.ACCEPTED);
 							}}
 						/>
+
+						<OptionView>
+							<View className="w-96 gap-3">
+								<View className="w-32">
+									<Text className="w-72 font-heading text-xl mb-2">
+										{item.users.name}
+									</Text>
+									<Badge text={item.status as VariantsProps} />
+								</View>
+
+								<View className="mt-3 gap-3 justify-center">
+									<View className="gap-1 justify-center">
+										<Text className="text-xl font-heading">
+											Descrisão de tamanho
+										</Text>
+										<Text className="text-base text-gray-500">
+											{item.sizeDescription}
+										</Text>
+									</View>
+									<View className="gap-1 justify-center">
+										<Text className="text-xl font-heading">
+											Motivos da solicitação
+										</Text>
+										<Text className="text-base text-gray-500">
+											{item.ranson}
+										</Text>
+									</View>
+								</View>
+
+								<View className="mt-3 gap-3 justify-center">
+									<View className="gap-3 justify-center">
+										<Text className="text-xl font-heading">
+											Items solicitados
+										</Text>
+
+										<FlatList
+											className="gap-2 mb-3"
+											keyExtractor={(item) => item.id.toString()}
+											data={item.order_items}
+											renderItem={({ item }) => (
+												<View className="flex-row items-center gap-3">
+													<Image
+														className="w-14 h-14"
+														source={verifyImageUri(item.items.image)}
+													/>
+
+													<View className="gap-1 w-60 pb-2 pr-4">
+														<Text className="text-base font-heading">
+															{item.items.name}
+														</Text>
+														<Text className="text-base text-wrap text-gray-500">
+															{item.items.description}
+														</Text>
+													</View>
+												</View>
+											)}
+											contentContainerStyle={{
+												paddingBottom: 32,
+												gap: 8,
+												alignItems: "flex-start",
+											}}
+											showsVerticalScrollIndicator={false}
+										/>
+									</View>
+								</View>
+							</View>
+						</OptionView>
 					</OptionRoot>
 				</View>
 				<Text className="ml-3 mb-5 text-base text-gray-400">

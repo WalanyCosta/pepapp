@@ -1,6 +1,5 @@
 import { Container } from "@/components/layout";
 import { router } from "expo-router";
-import { Alert } from "react-native";
 import { useEffect, useState } from "react";
 import { Tab, TabScreen, TabScreenRoute } from "@/components/layout/tab";
 import { supabase } from "@/lib/supabase";
@@ -10,10 +9,7 @@ import type { Category } from "@/models/category";
 import { Categories } from "@/components/screen/categories";
 import { useItem } from "@/context/item-context";
 import { Header } from "@/components/layout/header";
-import {
-	PopoversError,
-	type StatusCode,
-} from "@/components/layout/popovers/popovers-error";
+import { useError } from "@/hooks/use-error";
 
 const categoryDefault = {
 	id: "any_id",
@@ -23,13 +19,9 @@ const categoryDefault = {
 } as Category;
 
 export default function Home() {
+	const { visible, setVisible, error, setError } = useError();
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [items, setItems] = useState<Item[]>([]);
-	const [visible, setVisible] = useState(false);
-	const [error, setError] = useState<{
-		code: StatusCode;
-		title: string;
-	} | null>(null);
 	const [isLoadingItem, setIsLoadingItem] = useState(false);
 	const [isLoadingCategory, setIsLoadingCategory] = useState(false);
 	const [isActive, setIsActive] = useState("ArrowsInCardinal");
@@ -98,7 +90,7 @@ export default function Home() {
 	}, [isActive]);
 
 	return (
-		<Container>
+		<Container visible={visible} setVisible={setVisible} error={error}>
 			<Header />
 
 			<Categories
@@ -138,13 +130,6 @@ export default function Home() {
 					setActive={setIsActiveTab}
 				/>
 			</Tab>
-
-			<PopoversError
-				visible={visible}
-				setVisible={setVisible}
-				title={error?.title}
-				statusCode={error?.code}
-			/>
 		</Container>
 	);
 }

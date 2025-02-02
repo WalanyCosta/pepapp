@@ -1,9 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { View, Text, Image, Alert, type TextInput } from "react-native";
 import { Container, Form, InputControl } from "@/components/layout";
 import { Button } from "@/components/ui/Button";
 import { router } from "expo-router";
-
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,6 +10,8 @@ import { supabase } from "@/lib/supabase";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
 import { PopoverDualButton } from "@/components/layout/popovers/dual-button";
 import { UserStatus } from "@/models/user";
+import { useError } from "@/hooks/use-error";
+import type { StatusCode } from "@/components/layout/popovers/popovers-error";
 
 const loginUserFormSchema = z.object({
 	email: z.string({ required_error: "Campo email é obrigatório" }).email({
@@ -30,30 +31,39 @@ export default function ForgoutPassword() {
 		resolver: zodResolver(loginUserFormSchema),
 	});
 
+	const { visible, setVisible, error, setError } = useError();
 	const [loading, setLoading] = useState(false);
 
 	async function onSendEmail(data: any) {
 		setLoading(true);
-
-		const { error, data: userFound } = await supabase
-			.from("user-profile")
+		const { error: userError, data: userFound } = await supabase
+			.from("user_profiles")
 			.select("*")
 			.eq("email", data.email)
 			.single();
 
-		if (error) {
-			if (error.code === "PGRST116") {
-				Alert.alert("Error", "Usuario não existe!");
+		if (userError) {
+			let messageError: { code: StatusCode; title: string } | null = null;
+			if (userError.code === "PGRST116") {
+				messageError = {
+					code: "INTERNAL_SERVER",
+					title: "Usuario não existe!",
+				};
 			}
 
+			setVisible(true);
+			setError(messageError);
 			setLoading(false);
-			Alert.alert("Error", "Error interno do servidor");
 			return;
 		}
 
 		if (userFound.status === UserStatus.DESACTIVED) {
+			setVisible(true);
+			setError({
+				code: "INTERNAL_SERVER",
+				title: "Usuario não authorizado!",
+			});
 			setLoading(false);
-			Alert.alert("Error", "Usuario não authorizado!");
 			return;
 		}
 
@@ -66,7 +76,7 @@ export default function ForgoutPassword() {
 	}
 
 	return (
-		<Container>
+		<Container visible={visible} setVisible={setVisible} error={error}>
 			<Image
 				className="self-center mt-14 mb-12"
 				source={require("@/assets/logo.png")}

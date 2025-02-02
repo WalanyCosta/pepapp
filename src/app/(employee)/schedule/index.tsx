@@ -11,6 +11,7 @@ import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-e
 import { HeaderBack } from "@/components/layout/header-back";
 import { PopoversError } from "@/components/layout/popovers/popovers-error";
 import dayjs from "dayjs";
+import { useError } from "@/hooks/use-error";
 
 export default function Schedule() {
 	const { user } = useAuth();
@@ -18,6 +19,12 @@ export default function Schedule() {
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [visible, setVisible] = useState(false);
+	const {
+		visible: visibleError,
+		setVisible: setVisibleError,
+		error,
+		setError,
+	} = useError();
 	const [saveDate, setSaveDate] = useState<Date | null>(null);
 
 	const fetchItems = async () => {
@@ -39,6 +46,7 @@ export default function Schedule() {
 
 		if (response.error) {
 			setVisible(true);
+			setError(null);
 			setLoading(false);
 			return;
 		}
@@ -59,6 +67,7 @@ export default function Schedule() {
 
 		if (error) {
 			setVisible(true);
+			setError(null);
 			return;
 		}
 		setRefresh(!refresh);
@@ -69,7 +78,7 @@ export default function Schedule() {
 	}, [saveDate, refresh]);
 
 	return (
-		<Container>
+		<Container visible={visible} setVisible={setVisible} error={error}>
 			<HeaderBack title="Pedidos feitos" backRoute="/(employee)/home" />
 
 			<Calendar saveDate={saveDate} setSaveDate={setSaveDate} />

@@ -16,12 +16,13 @@ import { Switch } from "@/components/ui/Switch";
 import { useEffect, useState } from "react";
 import { useImage } from "@/hooks/use-image";
 import { Link } from "expo-router";
+import { useError } from "@/hooks/use-error";
 
 export default function Settings() {
 	const { user, setAuth } = useAuth();
 	const { uploadImage, url, setUrl } = useImage("files");
 	const [isEnabled, setIsEnabled] = useState(false);
-	const [hrefRoute, setHrefRoute] = useState("");
+	const { visible, setVisible, error, setError } = useError();
 
 	async function fetch() {
 		const { data, error } = await supabase
@@ -59,11 +60,10 @@ export default function Settings() {
 			.eq("id", user?.id);
 
 		if (error) {
-			Alert.alert("error", error.message);
+			setVisible(true);
+			setError(null);
 			return;
 		}
-
-		console.log(data);
 	}
 
 	function handleBack() {
@@ -71,7 +71,7 @@ export default function Settings() {
 	}
 
 	return (
-		<Container>
+		<Container visible={visible} setVisible={setVisible} error={error}>
 			<TouchableOpacity
 				onPress={handleBack}
 				className="w-8 h-8 mt-3 mb-5 justify-center items-start"

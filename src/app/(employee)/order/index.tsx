@@ -123,7 +123,11 @@ export default function Order() {
 	}
 
 	return (
-		<Container>
+		<Container
+			visible={visibleError}
+			setVisible={setVisibleError}
+			error={error}
+		>
 			<HeaderBack title="Fazendo pedido" backRoute="/(employee)/home" />
 
 			{items.length > 0 && (
@@ -219,12 +223,6 @@ export default function Order() {
 					</DialogContent>
 				</Dialog>
 			</View>
-			<PopoversError
-				visible={visibleError}
-				setVisible={setVisibleError}
-				title={error?.title}
-				statusCode={error?.code}
-			/>
 			<PopoversSuccess visible={visible} setVisible={setVisible} />
 		</Container>
 	);

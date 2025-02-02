@@ -17,10 +17,12 @@ import { CardItemEmpty } from "@/components/layout/card-item-empty";
 import { FlatList } from "react-native";
 import { verifyImageUri } from "@/utils/verify-image-uri";
 import { HeaderBack } from "@/components/layout/header-back";
+import { useError } from "@/hooks/use-error";
 
 export default function Items() {
 	const [featchItems, setFeatchItems] = useState(false);
 	const [items, setItems] = useState<Item[]>([]);
+	const { visible, setVisible, error, setError } = useError();
 
 	const fetchItems = async () => {
 		setFeatchItems(true);
@@ -48,7 +50,7 @@ export default function Items() {
 
 	return (
 		<View className="flex-1 relative">
-			<Container>
+			<Container visible={visible} setVisible={setVisible} error={error}>
 				<HeaderBack
 					title="Items cadastrados"
 					backRoute="/(manager)/dashboard"

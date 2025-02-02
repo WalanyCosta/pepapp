@@ -10,6 +10,7 @@ import { FormUsers } from "@/components/screen/users/form-users";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { useAuth } from "@/context/auth-context";
+import { useError } from "@/hooks/use-error";
 import { supabase } from "@/lib/supabase";
 import { UserStatus, type User } from "@/models/user";
 import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
@@ -35,9 +36,9 @@ export default function Users() {
 	const [users, setUsers] = useState<User[]>([]);
 	const searchRef = useRef<TextInput>(null);
 	const [query, setQuery] = useState("");
+	const { visible, setVisible, error, setError } = useError();
 	const [featchUsers, setFeatchUsers] = useState(false);
 	const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
 	const handlePresentModalPress = useCallback(() => {
@@ -65,7 +66,8 @@ export default function Users() {
 
 		if (response.error) {
 			setFeatchUsers(false);
-			Alert.alert("Error do sistema", response.error.message);
+			setVisible(true);
+			setError(null);
 			return;
 		}
 
@@ -82,7 +84,8 @@ export default function Users() {
 			.eq("id", userId);
 
 		if (response.error) {
-			Alert.alert("Error do sistema", response.error.message);
+			setVisible(true);
+			setError(null);
 			return;
 		}
 
@@ -114,7 +117,7 @@ export default function Users() {
 
 	return (
 		<Fragment>
-			<Container>
+			<Container visible={visible} setVisible={setVisible} error={error}>
 				<HeaderBack
 					title="Usuarios Cadastrados"
 					backRoute="/(manager)/dashboard"

@@ -8,6 +8,8 @@ import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { type User, UserRole, UserStatus } from "@/models/user";
+import { useError } from "@/hooks/use-error";
+import { PopoversError } from "@/components/layout/popovers/popovers-error";
 
 const UserFormDataSchema = z.object({
 	name: z
@@ -39,6 +41,7 @@ export function FormUsers({ users, setUsers }: Props) {
 		mode: "all",
 		resolver: zodResolver(UserFormDataSchema),
 	});
+	const { visible, setVisible, error, setError } = useError();
 	const emailRef = useRef<TextInput>(null);
 	const [loading, setLoading] = useState(false);
 
@@ -52,28 +55,32 @@ export function FormUsers({ users, setUsers }: Props) {
 
 		if (response.error) {
 			setLoading(false);
-			Alert.alert("Error", response.error.message);
+			setVisible(true);
+			setError(null);
 			return;
 		}
 
-		// const { error: errorUser } = await supabase.from("users").insert({
-		// 	id: response.data.user.id,
-		// 	name: data.name,
-		// 	role: data.role,
-		// 	status: UserStatus.ACTIVED,
-		// });
+		const { error: errorUser } = await supabase.from("users").insert({
+			id: response.data.user.id,
+			name: data.name,
+			role: data.role,
+			status: UserStatus.ACTIVED,
+		});
 
-		// if (errorUser) {
-		// 	setLoading(false);
-		// 	Alert.alert("Error", errorUser.message);
-		// 	return;
-		// }
+		if (errorUser) {
+			setVisible(true);
+			setError(null);
+			setLoading(false);
+			return;
+		}
 
 		const { data: newUsers, error: userError } = await supabase
 			.from("user_profiles")
 			.select("*");
 
 		if (userError) {
+			setVisible(true);
+			setError(null);
 			setLoading(false);
 			Alert.alert("Error", userError.message);
 			return;
@@ -150,6 +157,7 @@ export function FormUsers({ users, setUsers }: Props) {
 					</View>
 				</View>
 			</Form>
+
 			<Button
 				className="mt-5"
 				label="Cadastrar item"
@@ -158,6 +166,14 @@ export function FormUsers({ users, setUsers }: Props) {
 				variant={"default"}
 				onPress={handleSubmit(onSubmitItem)}
 			/>
+			{visible && (
+				<PopoversError
+					visible={visible ?? false}
+					setVisible={setVisible}
+					title={error?.title}
+					statusCode={error?.code}
+				/>
+			)}
 		</View>
 	);
 }

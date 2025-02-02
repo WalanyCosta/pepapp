@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout";
 import { HeaderBack } from "@/components/layout/header-back";
+import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
 import { CardOrder } from "@/components/screen/card-order";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -8,6 +9,7 @@ import {
 	DropDownContent,
 	DropDownTrigger,
 } from "@/components/ui/DropDown";
+import { useError } from "@/hooks/use-error";
 import { supabase } from "@/lib/supabase";
 import { type Order, OrderStatus } from "@/models/order";
 import { Faders, MagnifyingGlass } from "phosphor-react-native";
@@ -23,6 +25,13 @@ export default function History() {
 	const [filterStatus, setFilterStatus] = useState("");
 	const [fetchOrders, setFetchOrders] = useState(false);
 	const [timeoutId, setTimeoutId] = useState();
+	const {
+		visible: visibleError,
+		setVisible: setVisibleError,
+		error,
+		setError,
+	} = useError();
+	const [visible, setVisible] = useState(false);
 
 	async function handleUpdateOrdersStatus(
 		orderId: number | string,
@@ -47,7 +56,8 @@ export default function History() {
 			.eq("id", orderExists.id);
 
 		if (error) {
-			Alert.alert("Error", "Ocorreu um error no servidor");
+			setVisibleError(true);
+			setError(null);
 			return;
 		}
 
@@ -77,7 +87,8 @@ export default function History() {
 
 		if (response.error) {
 			setFetchOrders(false);
-			Alert.alert("Error do sistema", response.error.message);
+			setVisibleError(true);
+			setError(null);
 			return;
 		}
 
@@ -108,7 +119,11 @@ export default function History() {
 	}, [query, filterStatus]);
 
 	return (
-		<Container>
+		<Container
+			visible={visibleError}
+			setVisible={setVisibleError}
+			error={error}
+		>
 			<HeaderBack
 				title="Históricos de pedidos"
 				backRoute="/(manager)/dashboard"
@@ -183,6 +198,8 @@ export default function History() {
 					</Text>
 				</View>
 			)}
+
+			<PopoversSuccess visible={visible} setVisible={setVisible} />
 		</Container>
 	);
 }

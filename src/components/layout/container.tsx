@@ -8,8 +8,8 @@ type Props = {
 	className?: string;
 	children: ReactNode;
 	visible?: boolean;
-	setVisible?: (visible: boolean) => void;
-	error?: { code: StatusCode; title: string };
+	setVisible: (visible: boolean) => void;
+	error?: { code: StatusCode; title: string } | null;
 };
 
 export function Container({
@@ -26,13 +26,17 @@ export function Container({
 				className,
 			)}
 		>
-			<View className="mx-7">{children}</View>
-			<PopoversError
-				visible={visible ?? false}
-				setVisible={(visible: boolean) => {}}
-				title={error?.title}
-				statusCode={error?.code}
-			/>
+			<ScrollView>
+				<View className="mx-7">{children}</View>
+				{visible && (
+					<PopoversError
+						visible={visible ?? false}
+						setVisible={setVisible}
+						title={error?.title}
+						statusCode={error?.code}
+					/>
+				)}
+			</ScrollView>
 		</SafeAreaView>
 	);
 }
