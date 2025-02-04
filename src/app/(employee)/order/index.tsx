@@ -88,7 +88,7 @@ export default function Order() {
 		setLoading(true);
 
 		try {
-			const date = dayjs(new Date()).format("YYYY-MM-AA");
+			const date = dayjs(new Date()).format("YYYY-MM-DD");
 
 			await supabase.from("orders").insert({
 				ranson: data.ranson,
@@ -102,13 +102,16 @@ export default function Order() {
 				.from("orders")
 				.select("*")
 				.eq("userId", user?.id)
-				.eq("date", date)
+				.order("created_at", { ascending: false })
+				.limit(1)
 				.single();
 
 			const values = items.map((item) => ({
 				itemId: item.id,
 				orderId: order?.id,
 			}));
+
+			console.log(values);
 
 			await supabase.from("order_items").insert(values);
 

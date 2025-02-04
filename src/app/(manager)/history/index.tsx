@@ -20,9 +20,8 @@ import { TextInput } from "react-native-gesture-handler";
 export default function History() {
 	const searchRef = useRef<TextInput>(null);
 	const [query, setQuery] = useState("");
-	const [loading, setLoading] = useState(false);
 	const [orders, setOrders] = useState<Order[]>([]);
-	const [filterStatus, setFilterStatus] = useState("");
+	const [filterStatus, setFilterStatus] = useState<string>(OrderStatus.PENDING);
 	const [fetchOrders, setFetchOrders] = useState(false);
 	const [timeoutId, setTimeoutId] = useState();
 	const {
@@ -71,18 +70,18 @@ export default function History() {
 		setFetchOrders(true);
 		let response: any;
 
-		if (query.trim() !== "" || filterStatus.trim() !== "") {
+		if (query.trim() !== "") {
 			response = await supabase
 				.from("orders")
 				.select("*, users!inner(*), order_items!inner(*, items!inner(*))")
-				.or(
-					`${query && `users.name.ilike.%${query}%`} status.eq.${filterStatus}`,
-				);
+				.eq("status", filterStatus)
+				.ilike("users.name", `%${query}%`);
 		} else {
 			response = await supabase
 				.from("orders")
 				.select("*, users!inner(*), order_items!inner(*, items!inner(*))")
-				.neq("status", OrderStatus.CANCEL);
+				.eq("status", filterStatus)
+				.order("created_at", { ascending: false });
 		}
 
 		if (response.error) {
@@ -92,8 +91,8 @@ export default function History() {
 			return;
 		}
 
-		setOrders(response.data);
 		setFetchOrders(false);
+		setOrders(response.data);
 	};
 
 	useEffect(() => {
@@ -106,7 +105,7 @@ export default function History() {
 		if (query.trim() !== "" || filterStatus.trim() !== "") {
 			newTimeoutId = setTimeout(() => {
 				getOrders(query, filterStatus);
-			}, 500);
+			}, 300);
 		} else {
 			getOrders();
 		}
@@ -173,9 +172,9 @@ export default function History() {
 				</DropDown>
 			</View>
 
-			{loading && <CardScheduleEmpty length={7} />}
+			{fetchOrders && <CardScheduleEmpty length={7} />}
 
-			{!loading && orders.length > 0 && (
+			{!fetchOrders && orders.length > 0 && (
 				<FlatList
 					className="gap-2 h-[75vh]"
 					keyExtractor={(item) => item.id.toString()}
@@ -191,7 +190,7 @@ export default function History() {
 				/>
 			)}
 
-			{!loading && orders.length === 0 && (
+			{!fetchOrders && orders.length === 0 && (
 				<View className="gap-2 h-[322px] pb-[100px] items-center justify-center">
 					<Text className="text-gray-400 text-sm">
 						Não existe nenhum pedido feitos

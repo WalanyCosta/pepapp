@@ -25,12 +25,7 @@ function Checkbox({
 	const [isChecked, setChecked] = useState(false);
 
 	const toggleCheckbox = () => {
-		setChecked((prev) => !prev);
-		if (name !== filter) {
-			setFilter(name);
-			return;
-		}
-		setFilter("");
+		setFilter(name);
 	};
 
 	return (

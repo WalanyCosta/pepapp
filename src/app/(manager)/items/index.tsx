@@ -38,6 +38,26 @@ export default function Items() {
 		setItems(data);
 		setFeatchItems(false);
 	};
+	async function handleDelete(id: string) {
+		const { error: errorDelete } = await supabase
+			.from("items")
+			.delete()
+			.eq("id", id);
+
+		if (errorDelete) {
+			Alert.alert("Error do sistema", errorDelete.message);
+		}
+
+		const { data, error } = await supabase.from("items").select("*");
+
+		if (error) {
+			Alert.alert("Error do sistema", error.message);
+			return;
+		}
+
+		setItems(data);
+	}
+
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
 	const handlePresentModalPress = useCallback(() => {
@@ -77,7 +97,7 @@ export default function Items() {
 												<OptionDelete
 													title="Apagar"
 													icon={IconOptionDelete.REMOVE}
-													onRemove={() => {}}
+													onRemove={() => handleDelete(item.id)}
 												/>
 											</OptionRoot>
 										</View>

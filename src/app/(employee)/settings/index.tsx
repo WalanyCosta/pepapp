@@ -27,43 +27,44 @@ export default function Settings() {
 	async function fetch() {
 		const { data, error } = await supabase
 			.from("users")
-			.select("image")
+			.select("*")
 			.eq("id", user?.id)
 			.single();
 
 		if (error) {
-			Alert.alert("Error", error.message);
 			return;
-		}
-
-		if (data && user) {
-			setUrl(data.image);
-			setAuth({ ...user, image: data.image });
 		}
 	}
 
 	useEffect(() => {
+		if (url && user) {
+			setAuth({ ...user, image: url });
+			updateUserImage();
+		}
 		fetch();
-	}, []);
+	}, [url]);
 
 	async function signOut() {
 		setAuth(null);
 		await supabase.auth.signOut();
 	}
 
-	async function handleUpdateImage() {
-		await uploadImage();
-
+	async function updateUserImage() {
 		const { data, error } = await supabase
 			.from("users")
 			.update({ image: url })
 			.eq("id", user?.id);
 
 		if (error) {
-			setVisible(true);
-			setError(null);
+			console.log(error.message);
 			return;
 		}
+
+		console.log(data);
+	}
+
+	async function handleUpdateImage() {
+		await uploadImage();
 	}
 
 	function handleBack() {
@@ -81,10 +82,10 @@ export default function Settings() {
 
 			<View className="gap-3 justify-center items-center">
 				<Avatar className="w-28 h-28">
-					{url ? (
+					{user?.image ? (
 						<AvatarImage
 							source={{
-								uri: url,
+								uri: user?.image,
 							}}
 						/>
 					) : (

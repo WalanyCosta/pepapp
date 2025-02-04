@@ -27,7 +27,6 @@ import {
 	TouchableOpacity,
 	View,
 	TextInput,
-	Alert,
 	FlatList,
 } from "react-native";
 

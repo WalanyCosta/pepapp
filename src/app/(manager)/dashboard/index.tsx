@@ -50,7 +50,8 @@ export default function Dasboard() {
 		response = await supabase
 			.from("orders")
 			.select("*, users!inner(*), order_items!inner(*, items!inner(*))")
-			.eq("status", OrderStatus.PENDING);
+			.eq("status", OrderStatus.PENDING)
+			.order("created_at", { ascending: false });
 
 		if (response.error) {
 			setLoading(false);
@@ -145,7 +146,6 @@ export default function Dasboard() {
 
 		const filterOrders = orders.filter((order) => order.id !== orderId);
 		setOrders(filterOrders);
-		setVisible(true);
 	}
 
 	useEffect(() => {

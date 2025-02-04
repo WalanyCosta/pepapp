@@ -15,6 +15,6 @@ export type User = UserSupabase & {
   name: string
   role: UserRole,
   status?: UserStatus,
-  image?: string,
+  image: string | null,
   create_at: Date 
 }

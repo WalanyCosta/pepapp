@@ -1,6 +1,6 @@
 import { Form, InputControl } from "@/components/layout";
 import { View, type TextInput, Text, Alert } from "react-native";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import * as z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,26 +51,18 @@ export function FormUsers({ users, setUsers }: Props) {
 		const response = await supabase.auth.admin.createUser({
 			email: data.email,
 			password: "peapp1234",
+			user_metadata: {
+				name: data.name,
+				role: data.role,
+				status: UserStatus.ACTIVED,
+			},
 		});
 
 		if (response.error) {
 			setLoading(false);
 			setVisible(true);
 			setError(null);
-			return;
-		}
-
-		const { error: errorUser } = await supabase.from("users").insert({
-			id: response.data.user.id,
-			name: data.name,
-			role: data.role,
-			status: UserStatus.ACTIVED,
-		});
-
-		if (errorUser) {
-			setVisible(true);
-			setError(null);
-			setLoading(false);
+			console.log(response.error);
 			return;
 		}
 
@@ -102,70 +94,72 @@ export function FormUsers({ users, setUsers }: Props) {
 	};
 
 	return (
-		<View className="w-full mx-4 gap-5">
-			<Form>
-				<View className="gap-4 justify-center">
-					<InputControl
-						formProps={{
-							name: "name",
-							control: control as any,
-						}}
-						inputProps={{
-							label: "Nome",
-							placeholder: "Filipe Argel",
-							onSubmitEditing: () => emailRef.current?.focus(),
-							returnKeyType: "next",
-						}}
-						error={errors?.name ? String(errors.name.message) : ""}
-					/>
-
-					<InputControl
-						ref={emailRef}
-						formProps={{
-							name: "email",
-							control: control as any,
-						}}
-						inputProps={{
-							label: "E-mail",
-							placeholder: "exemplo@mail.com",
-						}}
-						error={errors?.email ? String(errors.email.message) : ""}
-					/>
-
-					<View className="gap-2 justify-center">
-						<Controller
-							control={control}
-							name="role"
-							render={({ field }) => (
-								<Select
-									isVisibleButtonAdd={false}
-									options={iterableUserRole()}
-									label="Cargo"
-									onSelect={field.onChange}
-									placeholder="Selecione uma categoria"
-									selectedValue={field.value}
-									labelKey="role"
-									valueKey="role"
-								/>
-							)}
+		<Fragment>
+			<View className="w-full mx-4 gap-5">
+				<Form>
+					<View className="gap-4 justify-center">
+						<InputControl
+							formProps={{
+								name: "name",
+								control: control as any,
+							}}
+							inputProps={{
+								label: "Nome",
+								placeholder: "Filipe Argel",
+								onSubmitEditing: () => emailRef.current?.focus(),
+								returnKeyType: "next",
+							}}
+							error={errors?.name ? String(errors.name.message) : ""}
 						/>
-						{errors.role && (
-							<Text className="text-xs font-body text-border-red">
-								{errors.role.message}
-							</Text>
-						)}
-					</View>
-				</View>
-			</Form>
 
-			<Button
-				className="mt-5"
-				label="Cadastrar item"
-				isLoading={loading}
-				size={"lg"}
-				variant={"default"}
-				onPress={handleSubmit(onSubmitItem)}
-			/>
+						<InputControl
+							ref={emailRef}
+							formProps={{
+								name: "email",
+								control: control as any,
+							}}
+							inputProps={{
+								label: "E-mail",
+								placeholder: "exemplo@mail.com",
+							}}
+							error={errors?.email ? String(errors.email.message) : ""}
+						/>
+
+						<View className="gap-2 justify-center">
+							<Controller
+								control={control}
+								name="role"
+								render={({ field }) => (
+									<Select
+										isVisibleButtonAdd={false}
+										options={iterableUserRole()}
+										label="Cargo"
+										onSelect={field.onChange}
+										placeholder="Selecione uma categoria"
+										selectedValue={field.value}
+										labelKey="role"
+										valueKey="role"
+									/>
+								)}
+							/>
+							{errors.role && (
+								<Text className="text-xs font-body text-border-red">
+									{errors.role.message}
+								</Text>
+							)}
+						</View>
+					</View>
+				</Form>
+
+				<Button
+					className="mt-5"
+					label="Cadastrar item"
+					isLoading={loading}
+					size={"lg"}
+					variant={"default"}
+					onPress={handleSubmit(onSubmitItem)}
+				/>
+			</View>
 			{visible && (
 				<PopoversError
 					visible={visible ?? false}
@@ -174,6 +168,6 @@ export function FormUsers({ users, setUsers }: Props) {
 					statusCode={error?.code}
 				/>
 			)}
-		</View>
+		</Fragment>
 	);
 }

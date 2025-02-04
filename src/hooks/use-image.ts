@@ -6,10 +6,11 @@ export function useImage(folderPath: string){
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null)
   const [url, setUrl] = useState<string | null>(null)
+  const [image, setImage] = useState<string | null>(null)
 
   useEffect(()=> {
-    if (url) downloadImage(folderPath, url)
-  }, [url])
+    if (image) downloadImage(folderPath, image)
+  }, [image])
 
   async function downloadImage(folder: string, path: string){
     try {
@@ -27,7 +28,6 @@ export function useImage(folderPath: string){
 
     } catch (error) {
       if(error instanceof Error){
-        console.log(error)
         setError(error.message)
       }
     }
@@ -51,13 +51,12 @@ export function useImage(folderPath: string){
         const filePath = `${new Date().getTime()}.${fileExt}`;
         const contentType = img.mimeType ?? 'image/jpeg';
 
-        const {data} = await supabase.storage.from(folderPath).upload(filePath, arraybuffer, {contentType})
+        const {data,error} = await supabase.storage.from(folderPath).upload(filePath, arraybuffer, {contentType})
         
-        setUrl(data?.path || null)
+        setImage(data?.path || null)
       }
 
     } catch (error: any) {
-        console.log(error.message)
         setError(error.message || null)
     }
   }

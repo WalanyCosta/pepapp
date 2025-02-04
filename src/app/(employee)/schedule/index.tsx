@@ -35,13 +35,15 @@ export default function Schedule() {
 			response = await supabase
 				.from("orders")
 				.select("*, order_items!inner(*, items(*))")
-				.eq("userId", user?.id);
+				.eq("userId", user?.id)
+				.order("created_at", { ascending: false });
 		} else {
 			response = await supabase
 				.from("orders")
 				.select("*, order_items!inner(*, items!inner(*))")
 				.eq("userId", user?.id)
-				.eq("date", dayjs(saveDate).format("YYYY-MM-AA"));
+				.eq("date", dayjs(saveDate).format("YYYY-MM-DD"))
+				.order("created_at", { ascending: false });
 		}
 
 		if (response.error) {
@@ -57,6 +59,15 @@ export default function Schedule() {
 
 	async function handleCancelOrder(order: Order) {
 		if (order.status === OrderStatus.CANCEL) {
+			return;
+		}
+
+		if (
+			order.status === OrderStatus.DENIED ||
+			order.status === OrderStatus.ACCEPTED
+		) {
+			setVisible(true);
+			setError({ code: "INFO", title: "Já tem resposta para esse pedido." });
 			return;
 		}
 
@@ -78,18 +89,22 @@ export default function Schedule() {
 	}, [saveDate, refresh]);
 
 	return (
-		<Container visible={visible} setVisible={setVisible} error={error}>
+		<Container
+			visible={visibleError}
+			setVisible={setVisibleError}
+			error={error}
+		>
 			<HeaderBack title="Pedidos feitos" backRoute="/(employee)/home" />
 
 			<Calendar saveDate={saveDate} setSaveDate={setSaveDate} />
 
 			<View>
 				<View className="h-[70vh]">
-					{loading && <CardScheduleEmpty />}
+					{loading && orders.length > 0 && <CardScheduleEmpty />}
 
 					{!loading && orders.length > 0 && (
 						<FlatList
-							className="gap-2 flex-1 h-[322px]"
+							className="gap-2 flex-1"
 							keyExtractor={(item) => item.id}
 							data={orders}
 							renderItem={({ item }) => (
@@ -99,9 +114,8 @@ export default function Schedule() {
 									onRemove={() => handleCancelOrder(item)}
 								/>
 							)}
-							contentContainerStyle={{ paddingBottom: 100 }}
+							contentContainerStyle={{ paddingBottom: 24 }}
 							showsVerticalScrollIndicator={false}
-							style={{ flex: 1 }}
 						/>
 					)}
 					{!loading && orders.length === 0 && (

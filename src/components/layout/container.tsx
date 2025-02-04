@@ -26,17 +26,15 @@ export function Container({
 				className,
 			)}
 		>
-			<ScrollView>
-				<View className="mx-7">{children}</View>
-				{visible && (
-					<PopoversError
-						visible={visible ?? false}
-						setVisible={setVisible}
-						title={error?.title}
-						statusCode={error?.code}
-					/>
-				)}
-			</ScrollView>
+			<View className="mx-7">{children}</View>
+			{visible && (
+				<PopoversError
+					visible={visible ?? false}
+					setVisible={setVisible}
+					title={error?.title}
+					statusCode={error?.code}
+				/>
+			)}
 		</SafeAreaView>
 	);
 }
