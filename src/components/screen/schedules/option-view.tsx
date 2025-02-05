@@ -34,7 +34,7 @@ export function OptionViewSchedule({ order }: OptionViewScheduleProps) {
 						<Text className="text-xl font-heading">Items solicitados</Text>
 
 						<FlatList
-							className="gap-2 mb-3"
+							className="gap-2 mb-3 h-32"
 							keyExtractor={(item) => item.id.toString()}
 							data={order.order_items}
 							renderItem={({ item }) => (
@@ -54,11 +54,7 @@ export function OptionViewSchedule({ order }: OptionViewScheduleProps) {
 									</View>
 								</View>
 							)}
-							contentContainerStyle={{
-								paddingBottom: 32,
-								gap: 8,
-								alignItems: "flex-start",
-							}}
+							contentContainerClassName="items-start gap-2 pb-8 flex-1"
 							showsVerticalScrollIndicator={false}
 						/>
 					</View>

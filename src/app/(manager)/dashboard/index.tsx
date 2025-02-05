@@ -18,6 +18,7 @@ import { useAuth } from "@/context/auth-context";
 import { useImage } from "@/hooks/use-image";
 import { supabase } from "@/lib/supabase";
 import { type Order, OrderStatus } from "@/models/order";
+import { UserStatus } from "@/models/user";
 import { formatItems } from "@/utils/fomat-Items";
 import { formatTime } from "@/utils/format-time";
 import { router } from "expo-router";
@@ -106,7 +107,8 @@ export default function Dasboard() {
 		setLoadingUsers(false);
 		const { error, count } = await supabase
 			.from("users")
-			.select("*", { count: "exact", head: true }); // Contagem exata
+			.select("*", { count: "exact", head: true })
+			.neq("status", UserStatus.DESACTIVED); // Contagem exata
 
 		if (error) {
 			setVisibleError(true);

@@ -49,7 +49,7 @@ export default function ResetPassword() {
 		setLoading(true);
 
 		if (user?.email) {
-			const { error: userError, data: userFound } = await supabase
+			const { error: userError } = await supabase
 				.from("user_profiles")
 				.select("*")
 				.eq("email", user?.email)
@@ -65,8 +65,9 @@ export default function ResetPassword() {
 				}
 
 				setVisible(true);
-				setError(messageError);
 				setLoading(false);
+				setError(messageError);
+				return;
 			}
 		}
 
@@ -76,17 +77,18 @@ export default function ResetPassword() {
 
 		if (error) {
 			setVisible(true);
-			setError(null);
 			setLoading(false);
+			setError(null);
 			return;
 		}
 
 		if (user !== null) {
-			await supabase.auth.signOut();
 			setAuth(null);
+			await supabase.auth.signOut();
+		} else {
+			router.replace("/(auth)/signin");
 		}
 		setLoading(false);
-		router.replace("/(auth)/signin");
 	};
 
 	function handleCancelResetPassword() {

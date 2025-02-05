@@ -100,7 +100,7 @@ export default function Schedule() {
 
 			<View>
 				<View className="h-[70vh]">
-					{loading && orders.length > 0 && <CardScheduleEmpty />}
+					{loading && <CardScheduleEmpty length={5} />}
 
 					{!loading && orders.length > 0 && (
 						<FlatList

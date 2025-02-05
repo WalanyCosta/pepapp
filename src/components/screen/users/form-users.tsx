@@ -10,6 +10,8 @@ import { supabase } from "@/lib/supabase";
 import { type User, UserRole, UserStatus } from "@/models/user";
 import { useError } from "@/hooks/use-error";
 import { PopoversError } from "@/components/layout/popovers/popovers-error";
+import { createUser } from "@/lib/create-user";
+import { useAuth } from "@/context/auth-context";
 
 const UserFormDataSchema = z.object({
 	name: z
@@ -41,6 +43,7 @@ export function FormUsers({ users, setUsers }: Props) {
 		mode: "all",
 		resolver: zodResolver(UserFormDataSchema),
 	});
+	const { user } = useAuth();
 	const { visible, setVisible, error, setError } = useError();
 	const emailRef = useRef<TextInput>(null);
 	const [loading, setLoading] = useState(false);
@@ -48,10 +51,10 @@ export function FormUsers({ users, setUsers }: Props) {
 	async function onSubmitItem(data: any) {
 		setLoading(true);
 
-		const response = await supabase.auth.admin.createUser({
+		const response = await createUser({
 			email: data.email,
 			password: "peapp1234",
-			user_metadata: {
+			data: {
 				name: data.name,
 				role: data.role,
 				status: UserStatus.ACTIVED,
@@ -62,13 +65,15 @@ export function FormUsers({ users, setUsers }: Props) {
 			setLoading(false);
 			setVisible(true);
 			setError(null);
-			console.log(response.error);
+			console.log("api", response.error);
 			return;
 		}
 
 		const { data: newUsers, error: userError } = await supabase
 			.from("user_profiles")
-			.select("*");
+			.select("*")
+			.neq("status", UserStatus.DESACTIVED)
+			.neq("id", user?.id);
 
 		if (userError) {
 			setVisible(true);
