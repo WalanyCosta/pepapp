@@ -29,16 +29,24 @@ const UserFormDataSchema = z.object({
 type UserFormData = z.infer<typeof UserFormDataSchema>;
 
 type Props = {
+	bottomSheetModalRef: any;
+	userId: string | null;
 	refresh: boolean;
 	setRefresh: (refresh: boolean) => void;
 };
 
-export function FormUsers({ refresh, setRefresh }: Props) {
+export function FormUsers({
+	bottomSheetModalRef,
+	userId,
+	refresh,
+	setRefresh,
+}: Props) {
 	const {
 		control,
 		handleSubmit,
 		formState: { errors },
 		resetField,
+		setValue,
 	} = useForm<UserFormData>({
 		mode: "all",
 		resolver: zodResolver(UserFormDataSchema),
@@ -83,6 +91,48 @@ export function FormUsers({ refresh, setRefresh }: Props) {
 		resetField("email");
 	}
 
+	async function onEditUser(data: any) {
+		setLoading(true);
+
+		const response = await supabase
+			.from("users")
+			.update({ name: data.name, role: data.role })
+			.eq("id", userId);
+
+		if (response.error) {
+			setLoading(false);
+			setError(null);
+			setVisible(true);
+			console.log("api", response.error);
+			return;
+		}
+
+		setRefresh(!refresh);
+		setLoading(false);
+		bottomSheetModalRef.current?.close();
+	}
+
+	async function getUser() {
+		if (userId) {
+			const { data, error } = await supabase
+				.from("user_profiles")
+				.select("*")
+				.eq("id", userId)
+				.single();
+
+			if (error) {
+				setError(null);
+				setVisible(true);
+			}
+
+			if (data) {
+				setValue("name", data?.name);
+				setValue("email", data?.email);
+				setValue("role", data?.role);
+			}
+		}
+	}
+
 	const iterableUserRole = (): any[] => {
 		const roles: any[] = [];
 		Object.entries(UserRole).forEach(([key, value]) => {
@@ -91,6 +141,10 @@ export function FormUsers({ refresh, setRefresh }: Props) {
 
 		return roles;
 	};
+
+	useEffect(() => {
+		getUser();
+	}, [userId]);
 
 	return (
 		<Fragment>
@@ -156,7 +210,7 @@ export function FormUsers({ refresh, setRefresh }: Props) {
 					isLoading={loading}
 					size={"lg"}
 					variant={"default"}
-					onPress={handleSubmit(onSubmitItem)}
+					onPress={handleSubmit(!userId ? onSubmitItem : onEditUser)}
 				/>
 			</View>
 			{visible && (

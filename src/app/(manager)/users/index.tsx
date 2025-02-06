@@ -33,12 +33,14 @@ export default function Users() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [query, setQuery] = useState("");
 	const deferredQuery = useDeferredValue(query);
+	const [userId, setUserId] = useState<string | null>(null);
 	const [filterStatus, setFilterStatus] = useState<string>(UserStatus.ACTIVED);
 	const { visible, setVisible, error, setError } = useError();
 	const [featchUsers, setFeatchUsers] = useState(false);
 	const [refresh, setRefresh] = useState(false);
 
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+	const bottomSheetModalEditRef = useRef<BottomSheetModal>(null);
 
 	const handlePresentModalPress = useCallback(() => {
 		bottomSheetModalRef.current?.present();
@@ -91,6 +93,20 @@ export default function Users() {
 		const usersDiferents = users.filter((user) => user.id !== userId);
 		setUsers(usersDiferents);
 	}
+
+	async function handleEditUser(userId: string) {
+		const userFound = users.find((user) => user.id.toString() === userId);
+
+		if (!userFound) {
+			setVisible(true);
+			setError({ code: "INTERNAL_SERVER", title: "Usuario não existe" });
+			return;
+		}
+		setUserId(userId);
+		bottomSheetModalEditRef.current?.present();
+	}
+
+	handleEditUser;
 
 	useEffect(() => {
 		fetchUsers();
@@ -158,10 +174,18 @@ export default function Users() {
 
 										<OptionRoot>
 											<OptionDelete
-												title="remover"
+												title="Remover"
 												icon={IconOptionDelete.REMOVE}
 												onRemove={() => {
 													handleRemoveUser(item.id);
+												}}
+											/>
+
+											<OptionDelete
+												title="Editar"
+												icon={IconOptionDelete.EDIT}
+												onRemove={() => {
+													handleEditUser(item.id);
 												}}
 											/>
 										</OptionRoot>
@@ -205,8 +229,22 @@ export default function Users() {
 				</TouchableOpacity>
 			</Container>
 
-			<BottomSheet snapPoints={["50%", "85%"]} ref={bottomSheetModalRef}>
-				<FormUsers refresh={refresh} setRefresh={setRefresh} />
+			<BottomSheet snapPoints={["50%", "75%"]} ref={bottomSheetModalRef}>
+				<FormUsers
+					bottomSheetModalRef={bottomSheetModalRef}
+					userId={null}
+					refresh={refresh}
+					setRefresh={setRefresh}
+				/>
+			</BottomSheet>
+
+			<BottomSheet snapPoints={["50%", "75%"]} ref={bottomSheetModalEditRef}>
+				<FormUsers
+					bottomSheetModalRef={bottomSheetModalEditRef}
+					userId={userId}
+					refresh={refresh}
+					setRefresh={setRefresh}
+				/>
 			</BottomSheet>
 		</Fragment>
 	);

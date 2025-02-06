@@ -98,6 +98,7 @@ export enum IconOptionDelete {
 	REMOVE = "Trash",
 	DENY = "Prohibit",
 	ACCEPT = "Check",
+	EDIT = "PencilLine",
 }
 
 type OptionDeleteProps = {

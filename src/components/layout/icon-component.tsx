@@ -13,7 +13,8 @@ export type IconName =
 	| "Boot"
 	| "HardHat"
 	| "ShirtFolded"
-	| "ArrowsInCardinal";
+	| "ArrowsInCardinal"
+	| "PencilLine";
 
 type IconProps = {
 	name: IconName;
