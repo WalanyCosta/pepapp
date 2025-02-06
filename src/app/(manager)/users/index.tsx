@@ -9,58 +9,58 @@ import {
 import { FormUsers } from "@/components/screen/users/form-users";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { BottomSheet } from "@/components/ui/BottomSheet";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Search } from "@/components/ui/search";
 import { useAuth } from "@/context/auth-context";
 import { useError } from "@/hooks/use-error";
 import { supabase } from "@/lib/supabase";
 import { UserStatus, type User } from "@/models/user";
 import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Calendar, IdentificationCard, Plus } from "phosphor-react-native";
 import {
-	Calendar,
-	IdentificationCard,
-	MagnifyingGlass,
-	Plus,
-} from "phosphor-react-native";
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import {
-	Text,
-	TouchableOpacity,
-	View,
-	TextInput,
-	FlatList,
-} from "react-native";
+	Fragment,
+	useCallback,
+	useDeferredValue,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import { Text, TouchableOpacity, View, FlatList } from "react-native";
 
 export default function Users() {
 	const { user } = useAuth();
 	const [users, setUsers] = useState<User[]>([]);
-	const searchRef = useRef<TextInput>(null);
 	const [query, setQuery] = useState("");
+	const deferredQuery = useDeferredValue(query);
+	const [filterStatus, setFilterStatus] = useState<string>(UserStatus.ACTIVED);
 	const { visible, setVisible, error, setError } = useError();
 	const [featchUsers, setFeatchUsers] = useState(false);
-	const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+	const [refresh, setRefresh] = useState(false);
+
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
 	const handlePresentModalPress = useCallback(() => {
 		bottomSheetModalRef.current?.present();
 	}, []);
 
-	const fetchUsers = async (query = "") => {
+	const fetchUsers = async () => {
 		setFeatchUsers(true);
 		let response: any;
 
-		if (query.trim() !== "") {
+		if (deferredQuery.trim() !== "") {
 			response = await supabase
 				.from("user_profiles")
 				.select("*")
-				.neq("status", UserStatus.DESACTIVED)
+				.eq("status", filterStatus)
 				.neq("id", user?.id)
-				.ilike("name", `%${query}%`);
+				.ilike("name", `%${deferredQuery}%`);
 		} else {
 			response = await supabase
 				.from("user_profiles")
 				.select("*")
 				.neq("id", user?.id)
-				.neq("status", UserStatus.DESACTIVED);
+				.eq("status", filterStatus);
 		}
 
 		if (response.error) {
@@ -93,26 +93,8 @@ export default function Users() {
 	}
 
 	useEffect(() => {
-		let newTimeoutId: any;
-
-		if (timeoutId) {
-			clearTimeout(timeoutId); // Limpa qualquer timeout pendente
-		}
-
-		if (query.trim() !== "") {
-			newTimeoutId = setTimeout(() => {
-				fetchUsers(query);
-			}, 500);
-		} else {
-			fetchUsers();
-		}
-
-		return () => {
-			if (newTimeoutId) {
-				setTimeoutId(newTimeoutId);
-			}
-		};
-	}, [query]);
+		fetchUsers();
+	}, [deferredQuery, filterStatus, refresh]);
 
 	return (
 		<Fragment>
@@ -122,21 +104,20 @@ export default function Users() {
 					backRoute="/(manager)/dashboard"
 				/>
 
-				<View className="pl-3 mb-5 border border-input rounded-md bg-white w-full flex-row items-center gap-3">
-					<TouchableOpacity
-						onPress={() => {
-							searchRef.current?.focus();
-						}}
-					>
-						<MagnifyingGlass color="#9ca3af" size={16} />
-					</TouchableOpacity>
-					<TextInput
-						ref={searchRef}
-						className="text-sm flex-1 text-nowrap text-gray-400"
-						placeholder="Pesquisar"
-						onChangeText={setQuery}
+				<Search setQuery={setQuery} query={query}>
+					<Checkbox
+						name={UserStatus.ACTIVED}
+						setFilter={setFilterStatus}
+						filter={filterStatus}
+						label={UserStatus.ACTIVED}
 					/>
-				</View>
+					<Checkbox
+						name={UserStatus.DESACTIVED}
+						setFilter={setFilterStatus}
+						filter={filterStatus}
+						label={UserStatus.DESACTIVED}
+					/>
+				</Search>
 
 				<View className="gap-3 justify-center h-[74vh]">
 					{featchUsers && <CardItemEmpty />}
@@ -224,8 +205,8 @@ export default function Users() {
 				</TouchableOpacity>
 			</Container>
 
-			<BottomSheet snapPoints={["50%"]} ref={bottomSheetModalRef}>
-				<FormUsers users={users} setUsers={setUsers} />
+			<BottomSheet snapPoints={["50%", "85%"]} ref={bottomSheetModalRef}>
+				<FormUsers refresh={refresh} setRefresh={setRefresh} />
 			</BottomSheet>
 		</Fragment>
 	);

@@ -29,11 +29,11 @@ const UserFormDataSchema = z.object({
 type UserFormData = z.infer<typeof UserFormDataSchema>;
 
 type Props = {
-	users: User[];
-	setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+	refresh: boolean;
+	setRefresh: (refresh: boolean) => void;
 };
 
-export function FormUsers({ users, setUsers }: Props) {
+export function FormUsers({ refresh, setRefresh }: Props) {
 	const {
 		control,
 		handleSubmit,
@@ -43,10 +43,9 @@ export function FormUsers({ users, setUsers }: Props) {
 		mode: "all",
 		resolver: zodResolver(UserFormDataSchema),
 	});
-	const { user } = useAuth();
 	const { visible, setVisible, error, setError } = useError();
-	const emailRef = useRef<TextInput>(null);
 	const [loading, setLoading] = useState(false);
+	const emailRef = useRef<TextInput>(null);
 
 	async function onSubmitItem(data: any) {
 		setLoading(true);
@@ -63,27 +62,22 @@ export function FormUsers({ users, setUsers }: Props) {
 
 		if (response.error) {
 			setLoading(false);
-			setVisible(true);
+
+			if (response.error === "Esse e-mail já existe") {
+				setError({
+					code: "UNAUTHORIZED",
+					title: "Já existe uma conta com esse email",
+				});
+				setVisible(true);
+				return;
+			}
 			setError(null);
+			setVisible(true);
 			console.log("api", response.error);
 			return;
 		}
 
-		const { data: newUsers, error: userError } = await supabase
-			.from("user_profiles")
-			.select("*")
-			.neq("status", UserStatus.DESACTIVED)
-			.neq("id", user?.id);
-
-		if (userError) {
-			setVisible(true);
-			setError(null);
-			setLoading(false);
-			Alert.alert("Error", userError.message);
-			return;
-		}
-
-		setUsers(newUsers);
+		setRefresh(!refresh);
 		setLoading(false);
 		resetField("name");
 		resetField("email");

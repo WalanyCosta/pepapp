@@ -1,11 +1,11 @@
 import { supabaseAnonKey } from "./config-supabase";
 
 export async function createUser(data: any){
-  let user = null;
+  let response = null
   let error = null;
 
   try{
-    user = await fetch("https://iborvasrdopkfbmwuywt.supabase.co/auth/v1/signup", {
+    response = await fetch("https://iborvasrdopkfbmwuywt.supabase.co/auth/v1/signup", {
       method: "POST",
       headers: {
         "apikey": supabaseAnonKey ?? "",
@@ -13,12 +13,13 @@ export async function createUser(data: any){
       },
       body: JSON.stringify(data)
     })
+
+    
   }catch(err){
     error = err
   }
   
   return {
-    data: user,
-    error
+    error: response?.status === 422 ? "Esse e-mail já existe" : error
   }
 }
