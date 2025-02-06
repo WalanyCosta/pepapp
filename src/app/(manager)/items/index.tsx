@@ -4,8 +4,7 @@ import {
 	OptionDelete,
 	OptionRoot,
 } from "@/components/layout/options/Option";
-import { router } from "expo-router";
-import { ArrowLeft, Plus } from "phosphor-react-native";
+import { Plus } from "phosphor-react-native";
 import { Image, View, Text, TouchableOpacity, Alert } from "react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BottomSheet } from "@/components/ui/BottomSheet";
@@ -23,6 +22,9 @@ export default function Items() {
 	const [featchItems, setFeatchItems] = useState(false);
 	const [items, setItems] = useState<Item[]>([]);
 	const { visible, setVisible, error, setError } = useError();
+	const [itemId, setItemId] = useState<string | null>(null);
+	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+	const bottomSheetModalEditRef = useRef<BottomSheetModal>(null);
 
 	const fetchItems = async () => {
 		setFeatchItems(true);
@@ -58,7 +60,17 @@ export default function Items() {
 		setItems(data);
 	}
 
-	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+	async function handleEditItem(itemId: string) {
+		const userFound = items.find((item) => item.id.toString() === itemId);
+
+		if (!userFound) {
+			setVisible(true);
+			setError({ code: "INTERNAL_SERVER", title: "Usuario não existe" });
+			return;
+		}
+		setItemId(itemId);
+		bottomSheetModalEditRef.current?.present();
+	}
 
 	const handlePresentModalPress = useCallback(() => {
 		bottomSheetModalRef.current?.present();
@@ -95,9 +107,16 @@ export default function Items() {
 											<Text className="text-xl font-heading">{item.name}</Text>
 											<OptionRoot>
 												<OptionDelete
-													title="Apagar"
+													title="Remover"
 													icon={IconOptionDelete.REMOVE}
 													onRemove={() => handleDelete(item.id)}
+												/>
+												<OptionDelete
+													title="Editar"
+													icon={IconOptionDelete.EDIT}
+													onRemove={() => {
+														handleEditItem(item.id);
+													}}
 												/>
 											</OptionRoot>
 										</View>
@@ -128,8 +147,22 @@ export default function Items() {
 				</TouchableOpacity>
 			</Container>
 
-			<BottomSheet snapPoints={["65%"]} ref={bottomSheetModalRef}>
-				<FormItem items={items} setItems={setItems} />
+			<BottomSheet snapPoints={["65%", "95%"]} ref={bottomSheetModalRef}>
+				<FormItem
+					itemId={null}
+					bottomSheetModalRef={bottomSheetModalRef}
+					items={items}
+					setItems={setItems}
+				/>
+			</BottomSheet>
+
+			<BottomSheet snapPoints={["65%", "95%"]} ref={bottomSheetModalRef}>
+				<FormItem
+					itemId={itemId}
+					bottomSheetModalRef={bottomSheetModalEditRef}
+					items={items}
+					setItems={setItems}
+				/>
 			</BottomSheet>
 		</View>
 	);

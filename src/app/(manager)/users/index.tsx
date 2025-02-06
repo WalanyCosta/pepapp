@@ -77,9 +77,7 @@ export default function Users() {
 	};
 
 	async function handleRemoveUser(userId: string) {
-		let response: any;
-
-		response = await supabase
+		const response = await supabase
 			.from("users")
 			.update({ status: UserStatus.DESACTIVED })
 			.eq("id", userId);
@@ -180,7 +178,6 @@ export default function Users() {
 													handleRemoveUser(item.id);
 												}}
 											/>
-
 											<OptionDelete
 												title="Editar"
 												icon={IconOptionDelete.EDIT}

@@ -9,8 +9,6 @@ import { Button } from "@/components/ui";
 import { Upload } from "@/components/ui/Upload";
 import type { Item } from "@/models/item";
 import { supabase } from "@/lib/supabase";
-import { Alert } from "react-native";
-import { router } from "expo-router";
 import type { Category } from "@/models/category";
 import { useError } from "@/hooks/use-error";
 import { PopoversError } from "@/components/layout/popovers/popovers-error";
@@ -38,11 +36,18 @@ const ItemFormDataSchema = z.object({
 type ItemFormData = z.infer<typeof ItemFormDataSchema>;
 
 type Props = {
+	bottomSheetModalRef: any;
+	itemId: string | null;
 	items: Item[];
 	setItems: React.Dispatch<React.SetStateAction<Item[]>>;
 };
 
-export function FormItem({ items, setItems }: Props) {
+export function FormItem({
+	bottomSheetModalRef,
+	itemId,
+	items,
+	setItems,
+}: Props) {
 	const {
 		control,
 		handleSubmit,
@@ -59,6 +64,18 @@ export function FormItem({ items, setItems }: Props) {
 	const { visible, setVisible, error, setError } = useError();
 	const [refreshCategory, setRefreshCategory] = useState(false);
 	const [categories, setCategories] = useState<Category[]>();
+
+	const getItems = async () => {
+		const { data, error } = await supabase.from("items").select("*");
+
+		if (error) {
+			setVisible(true);
+			setError(null);
+			return null;
+		}
+
+		return data;
+	};
 
 	async function onSubmitItem(data: any) {
 		setLoading(true);
@@ -77,19 +94,60 @@ export function FormItem({ items, setItems }: Props) {
 			return;
 		}
 
+		const items = await getItems();
+
 		setLoading(false);
-		setItems([
-			...items,
-			{
-				name: data.name,
-				description: data.description,
-				image: data.image,
-			} as Item,
-		]);
+		setItems(items ?? []);
 		resetField("name");
 		resetField("description");
 		resetField("image");
 	}
+
+	async function onEditItem(data: any) {
+		setLoading(true);
+
+		const response = await supabase
+			.from("items")
+			.update({ name: data.name, role: data.role })
+			.eq("id", itemId);
+
+		if (response.error) {
+			setLoading(false);
+			setError(null);
+			setVisible(true);
+			console.log("api", response.error);
+			return;
+		}
+
+		const items = await getItems();
+
+		setLoading(false);
+		setItems(items ?? []);
+		bottomSheetModalRef.current?.close();
+	}
+
+	async function fetchItem() {
+		if (itemId) {
+			const { data, error } = await supabase
+				.from("items")
+				.select("*, categories!inner(*)")
+				.eq("id", itemId)
+				.single();
+
+			if (error) {
+				setError(null);
+				setVisible(true);
+			}
+
+			if (data) {
+				setValue("name", data?.name);
+				setValue("description", data?.description);
+				setValue("categoryId", data?.categoryId);
+				setValue("image", data?.image);
+			}
+		}
+	}
+
 	const fetchCategories = async () => {
 		const { data, error } = await supabase.from("categories").select("*");
 
@@ -101,6 +159,10 @@ export function FormItem({ items, setItems }: Props) {
 
 		setCategories(data);
 	};
+
+	useEffect(() => {
+		fetchItem();
+	}, [itemId]);
 
 	useEffect(() => {
 		fetchCategories();
@@ -205,7 +267,7 @@ export function FormItem({ items, setItems }: Props) {
 				isLoading={loading}
 				size={"default"}
 				variant={"default"}
-				onPress={handleSubmit(onSubmitItem)}
+				onPress={handleSubmit(itemId ? onEditItem : onSubmitItem)}
 			/>
 
 			{visible && (

@@ -11,7 +11,6 @@ import { type User, UserRole, UserStatus } from "@/models/user";
 import { useError } from "@/hooks/use-error";
 import { PopoversError } from "@/components/layout/popovers/popovers-error";
 import { createUser } from "@/lib/create-user";
-import { useAuth } from "@/context/auth-context";
 
 const UserFormDataSchema = z.object({
 	name: z
