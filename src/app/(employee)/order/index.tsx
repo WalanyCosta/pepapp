@@ -2,7 +2,7 @@ import { Container, Form, InputControl } from "@/components/layout";
 import { Button } from "@/components/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "phosphor-react-native";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
 	TouchableOpacity,
@@ -27,10 +27,7 @@ import { OrderStatus } from "@/models/order";
 import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
 import { HeaderBack } from "@/components/layout/header-back";
 import dayjs from "dayjs";
-import {
-	PopoversError,
-	type StatusCode,
-} from "@/components/layout/popovers/popovers-error";
+import type { StatusCode } from "@/components/layout/popovers/popovers-error";
 
 const loginUserFormSchema = z.object({
 	ranson: z
@@ -51,7 +48,7 @@ type LoginUserFormData = z.infer<typeof loginUserFormSchema>;
 
 export default function Order() {
 	const { user } = useAuth();
-	const { items, deleteItem, clearItems, getItemSize } = useItem();
+	const { order, items, deleteItem, clearItems, getItemSize } = useItem();
 	const [loading, setLoading] = useState(false);
 	const [visible, setVisible] = useState(false);
 	const [visibleError, setVisibleError] = useState(false);
@@ -65,6 +62,7 @@ export default function Order() {
 		control,
 		handleSubmit,
 		formState: { errors },
+		setValue,
 	} = useForm<LoginUserFormData>({
 		mode: "all",
 		resolver: zodResolver(loginUserFormSchema),
@@ -77,6 +75,7 @@ export default function Order() {
 
 	async function handleAddOrders(data: any) {
 		if (getItemSize() <= 0) {
+			clearItems();
 			setError({
 				code: "INFO",
 				title: "Selecione um item para poder fazer pedido",
@@ -115,15 +114,80 @@ export default function Order() {
 
 			await supabase.from("order_items").insert(values);
 
+			clearItems();
 			setLoading(false);
 			setVisible(true);
 		} catch (error: any) {
+			clearItems();
 			setError(null);
 			setVisible(true);
 			setLoading(false);
 			return;
 		}
 	}
+
+	async function handleEditOrders(data: any) {
+		if (getItemSize() <= 0) {
+			clearItems();
+			setError({
+				code: "INFO",
+				title: "Selecione um item para poder fazer pedido",
+			});
+			setVisibleError(true);
+			return;
+		}
+
+		setLoading(true);
+
+		try {
+			if (!order) return;
+
+			await supabase
+				.from("orders")
+				.update({
+					ranson: data.ranson,
+					sizeDescription: data.descriptionSize,
+				})
+				.eq("id", order?.id);
+
+			const itemIds = items.map((item) => ({
+				itemId: item.id,
+				orderId: order.id,
+			}));
+
+			const { error } = await supabase
+				.from("order_items")
+				.delete()
+				.in(
+					"id",
+					order.order_items.map((orderItem) => orderItem.id),
+				);
+
+			if (error) {
+				clearItems();
+				console.log(error.message);
+			}
+
+			await supabase.from("order_items").insert(itemIds);
+
+			clearItems();
+			setLoading(false);
+			setVisible(true);
+		} catch (error: any) {
+			clearItems();
+			setError(null);
+			setVisible(true);
+			setLoading(false);
+			return;
+		}
+	}
+
+	useMemo(() => {
+		if (order) {
+			setValue("ranson", order.ranson);
+			setValue("descriptionSize", order.sizeDescription);
+		}
+	}, [order]);
 
 	return (
 		<Container
@@ -202,16 +266,16 @@ export default function Order() {
 
 			<View className="mt-56 mb-12 gap-3">
 				<Button
-					label="Concluir pedido"
+					label={order ? "Manter alterações" : "Concluir pedido"}
 					isLoading={loading}
 					size={"lg"}
 					variant={"default"}
-					onPress={handleSubmit(handleAddOrders)}
+					onPress={handleSubmit(order ? handleEditOrders : handleAddOrders)}
 				/>
 				<Dialog>
 					<DialogTrigger>
 						<Button
-							label="Cancelar pedido"
+							label={order ? "Descartar alterações" : "Cancelar pedido"}
 							isLoading={false}
 							size={"lg"}
 							variant={"secondary"}
@@ -219,14 +283,18 @@ export default function Order() {
 					</DialogTrigger>
 					<DialogContent>
 						<PopoverDualButton
-							title="Cancelar pedido"
-							question="Tem a certeza de que queres cancelar o pedido?"
+							title={order ? "Descartar alterações" : "Cancelar Pedido"}
+							question={`Tem a certeza de que queres ${order ? "descartar as alterações feita no " : "cancelar o"} pedido?`}
 							confirm={handleCancel}
 						/>
 					</DialogContent>
 				</Dialog>
 			</View>
-			<PopoversSuccess visible={visible} setVisible={setVisible} />
+			<PopoversSuccess
+				visible={visible}
+				setVisible={setVisible}
+				message={order ? "Alterações feitas com successo" : ""}
+			/>
 		</Container>
 	);
 }

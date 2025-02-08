@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Tab, TabScreen, TabScreenRoute } from "@/components/layout/tab";
 import { supabase } from "@/lib/supabase";
 import type { Item } from "@/models/item";
@@ -10,6 +10,7 @@ import { Categories } from "@/components/screen/categories";
 import { useItem } from "@/context/item-context";
 import { Header } from "@/components/layout/header";
 import { useError } from "@/hooks/use-error";
+import type { Href } from "expo-router";
 
 const categoryDefault = {
 	id: "any_id",
@@ -26,7 +27,7 @@ export default function Home() {
 	const [isLoadingCategory, setIsLoadingCategory] = useState(false);
 	const [isActive, setIsActive] = useState("ArrowsInCardinal");
 	const [isActiveTab, setIsActiveTab] = useState("House");
-	const { getItemSize } = useItem();
+	const { getItemSize, order } = useItem();
 
 	function handleChangeScreenToOrder() {
 		if (getItemSize() <= 0) {
@@ -40,6 +41,21 @@ export default function Home() {
 		}
 		router.replace("/(employee)/order");
 	}
+
+	const BlockChangeScreenIfOrderExists = useCallback(
+		(route: Href) => {
+			// if (order) {
+			// 	setVisible(true);
+			// 	setError({
+			// 		code: "INFO",
+			// 		title: "Termine a edição do pedido. Para poder navegar",
+			// 	});
+			// 	return "/(employee)/home";
+			// }
+			return route;
+		},
+		[order],
+	);
 
 	const fetchCategory = async () => {
 		setIsLoadingCategory(true);
@@ -102,7 +118,7 @@ export default function Home() {
 
 			<Items items={items} isLoadingItem={isLoadingItem} />
 
-			<Tab>
+			<Tab className="bottom-28">
 				<TabScreenRoute
 					icon="House"
 					active={isActiveTab}
@@ -121,10 +137,10 @@ export default function Home() {
 					icon="Archive"
 					active={isActiveTab}
 					setActive={setIsActiveTab}
-					routeRef="/(employee)/schedule"
+					routeRef={BlockChangeScreenIfOrderExists("/(employee)/schedule")}
 				/>
 				<TabScreen
-					routeRef="/(employee)/settings"
+					routeRef={BlockChangeScreenIfOrderExists("/(employee)/settings")}
 					icon="GearSix"
 					active={isActiveTab}
 					setActive={setIsActiveTab}

@@ -12,6 +12,8 @@ import { HeaderBack } from "@/components/layout/header-back";
 import { PopoversError } from "@/components/layout/popovers/popovers-error";
 import dayjs from "dayjs";
 import { useError } from "@/hooks/use-error";
+import { useItem } from "@/context/item-context";
+import { router } from "expo-router";
 
 export default function Schedule() {
 	const { user } = useAuth();
@@ -19,6 +21,7 @@ export default function Schedule() {
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [visible, setVisible] = useState(false);
+	const { setOrder, setItems, order, items } = useItem();
 	const {
 		visible: visibleError,
 		setVisible: setVisibleError,
@@ -47,41 +50,87 @@ export default function Schedule() {
 		}
 
 		if (response.error) {
-			setVisible(true);
-			setError(null);
 			setLoading(false);
+			setVisibleError(true);
+			setError(null);
 			return;
 		}
 
-		setOrders(response.data);
 		setLoading(false);
+		setOrders(response.data);
 	};
 
-	async function handleCancelOrder(order: Order) {
-		if (order.status === OrderStatus.CANCEL) {
+	async function handleCancelOrder(orderSelected: Order) {
+		if (order) {
+			setError({ code: "INFO", title: "Finaliza o processo de editar" });
+			setVisibleError(true);
+			return;
+		}
+
+		if (items.length > 0) {
+			setError({ code: "INFO", title: "Finaliza o teu primeiro pedido" });
+			setVisibleError(true);
+			return;
+		}
+
+		if (orderSelected.status === OrderStatus.CANCEL) {
 			return;
 		}
 
 		if (
-			order.status === OrderStatus.DENIED ||
-			order.status === OrderStatus.ACCEPTED
+			orderSelected.status === OrderStatus.DENIED ||
+			orderSelected.status === OrderStatus.ACCEPTED
 		) {
-			setVisible(true);
-			setError({ code: "INFO", title: "Já tem resposta para esse pedido." });
+			setError({ code: "INFO", title: "Esse já tem uma resposta!" });
+			setVisibleError(true);
 			return;
 		}
 
 		const { error } = await supabase
 			.from("orders")
 			.update({ status: OrderStatus.CANCEL })
-			.eq("id", order.id);
+			.eq("id", orderSelected.id);
 
 		if (error) {
-			setVisible(true);
 			setError(null);
+			setVisibleError(true);
 			return;
 		}
 		setRefresh(!refresh);
+	}
+
+	async function handleEdit(id: string) {
+		if (order) {
+			setVisibleError(true);
+			setError({ code: "INFO", title: "Finaliza o processo de editar" });
+			return;
+		}
+
+		if (items.length > 0) {
+			setVisibleError(true);
+			setError({ code: "INFO", title: "Finaliza o teu primeiro pedido" });
+			return;
+		}
+
+		const { data, error } = await supabase
+			.from("orders")
+			.select("*, order_items!inner(*, items(*))")
+			.eq("id", id)
+			.single();
+
+		if (error) {
+			setVisibleError(true);
+			setError(null);
+			return;
+		}
+		if (data) {
+			const order = data ? (data as Order) : null;
+			const items =
+				order?.order_items.map((order_item) => order_item.items) ?? [];
+			setOrder(order);
+			setItems(items);
+			router.replace("/(employee)/order");
+		}
 	}
 
 	useEffect(() => {
@@ -112,6 +161,7 @@ export default function Schedule() {
 									order={item}
 									orderItems={item.order_items}
 									onRemove={() => handleCancelOrder(item)}
+									onEdit={() => handleEdit(item.id)}
 								/>
 							)}
 							contentContainerStyle={{ paddingBottom: 24 }}
@@ -127,8 +177,6 @@ export default function Schedule() {
 					)}
 				</View>
 			</View>
-
-			<PopoversError visible={visible} setVisible={setVisible} />
 		</Container>
 	);
 }

@@ -7,23 +7,26 @@ import {
 } from "@/components/layout/options/Option";
 import { OptionViewSchedule } from "@/components/screen/schedules/option-view";
 import type { OrderItem } from "@/models/order-item";
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 import { Badge, type VariantsProps } from "@/components/ui/badge";
-import type { Order } from "@/models/order";
+import { OrderStatus, type Order } from "@/models/order";
 import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
 import { formatItems } from "@/utils/fomat-Items";
 import { formatTime } from "@/utils/format-time";
+import { supabase } from "@/lib/supabase";
 
 type CardScheduleProps = {
 	order: Order;
 	orderItems: OrderItem[];
 	onRemove: () => void;
+	onEdit: () => void;
 };
 
 export function CardSchedule({
 	order,
 	orderItems,
 	onRemove,
+	onEdit,
 }: CardScheduleProps) {
 	const renderItems = useMemo(() => {
 		return formatItems(orderItems);
@@ -38,11 +41,21 @@ export function CardSchedule({
 					</Text>
 					<OptionRoot>
 						<OptionViewSchedule order={order} />
-						<OptionDelete
-							title="Cancelar"
-							icon={IconOptionDelete.CANCEL}
-							onRemove={onRemove}
-						/>
+						{(order.status === OrderStatus.PENDING ||
+							order.status === OrderStatus.CANCEL) && (
+							<Fragment>
+								<OptionDelete
+									title="Cancelar"
+									icon={IconOptionDelete.CANCEL}
+									onRemove={onRemove}
+								/>
+								<OptionDelete
+									title="editar"
+									icon={IconOptionDelete.EDIT}
+									onRemove={onEdit}
+								/>
+							</Fragment>
+						)}
 					</OptionRoot>
 				</View>
 				<Text className="text-base text-gray-400">{renderItems}</Text>
