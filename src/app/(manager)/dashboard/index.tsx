@@ -2,8 +2,8 @@ import { Container } from "@/components/layout";
 import { Header } from "@/components/layout/header";
 import { Icon } from "@/components/layout/icon-component";
 import {
-	IconOptionDelete,
-	OptionDelete,
+	IconOptionAction,
+	OptionAction,
 	OptionRoot,
 } from "@/components/layout/options/Option";
 import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";

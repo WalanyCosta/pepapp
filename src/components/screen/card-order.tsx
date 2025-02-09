@@ -1,8 +1,8 @@
 import { Image, Text, View } from "react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/Avatar";
 import {
-	IconOptionDelete,
-	OptionDelete,
+	IconOptionAction,
+	OptionAction,
 	OptionRoot,
 	OptionView,
 } from "../layout/options/Option";
@@ -42,17 +42,17 @@ export function CardOrder({ item, handleUpdateOrdersStatus }: Props) {
 					</View>
 
 					<OptionRoot>
-						<OptionDelete
+						<OptionAction
 							title="Negar"
-							icon={IconOptionDelete.DENY}
-							onRemove={() =>
+							icon={IconOptionAction.DENY}
+							onAction={() =>
 								handleUpdateOrdersStatus(item.id, OrderStatus.DENIED)
 							}
 						/>
-						<OptionDelete
+						<OptionAction
 							title="Aceitar"
-							icon={IconOptionDelete.ACCEPT}
-							onRemove={() => {
+							icon={IconOptionAction.ACCEPT}
+							onAction={() => {
 								handleUpdateOrdersStatus(item.id, OrderStatus.ACCEPTED);
 							}}
 						/>

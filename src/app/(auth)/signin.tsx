@@ -137,6 +137,7 @@ export default function SignIn() {
 							control: control as any,
 						}}
 						inputProps={{
+							keyboardType: "email-address",
 							placeholder: "exemplo@mail.com",
 							label: "E-mail",
 							onSubmitEditing: () => passwordRef.current?.focus(),

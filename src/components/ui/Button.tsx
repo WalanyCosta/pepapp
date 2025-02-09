@@ -66,6 +66,7 @@ function Button({
 }: ButtonProps) {
 	return (
 		<TouchableOpacity
+      disabled={isLoading ?? false}
 			className={cn(buttonVariants({ variant, size, className }))}
 			{...props}
 		>

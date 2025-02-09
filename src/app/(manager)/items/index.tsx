@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout";
 import {
-	IconOptionDelete,
-	OptionDelete,
+	IconOptionAction,
+	OptionAction,
 	OptionRoot,
 } from "@/components/layout/options/Option";
 import { Plus } from "phosphor-react-native";
@@ -106,15 +106,15 @@ export default function Items() {
 										<View className="flex-row justify-between">
 											<Text className="text-xl font-heading">{item.name}</Text>
 											<OptionRoot>
-												<OptionDelete
+												<OptionAction
 													title="Remover"
-													icon={IconOptionDelete.REMOVE}
-													onRemove={() => handleDelete(item.id)}
+													icon={IconOptionAction.REMOVE}
+													onAction={() => handleDelete(item.id)}
 												/>
-												<OptionDelete
+												<OptionAction
 													title="Editar"
-													icon={IconOptionDelete.EDIT}
-													onRemove={() => {
+													icon={IconOptionAction.EDIT}
+													onAction={() => {
 														handleEditItem(item.id);
 													}}
 												/>
@@ -147,7 +147,7 @@ export default function Items() {
 				</TouchableOpacity>
 			</Container>
 
-			<BottomSheet snapPoints={["65%", "95%"]} ref={bottomSheetModalRef}>
+			<BottomSheet snapPoints={["65%"]} ref={bottomSheetModalRef}>
 				<FormItem
 					itemId={null}
 					bottomSheetModalRef={bottomSheetModalRef}
@@ -156,7 +156,7 @@ export default function Items() {
 				/>
 			</BottomSheet>
 
-			<BottomSheet snapPoints={["65%", "95%"]} ref={bottomSheetModalRef}>
+			<BottomSheet snapPoints={["65%"]} ref={bottomSheetModalEditRef}>
 				<FormItem
 					itemId={itemId}
 					bottomSheetModalRef={bottomSheetModalEditRef}

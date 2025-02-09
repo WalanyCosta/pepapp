@@ -1,8 +1,8 @@
 import { View, Text } from "react-native";
 import { Clock } from "phosphor-react-native";
 import {
-	IconOptionDelete,
-	OptionDelete,
+	IconOptionAction,
+	OptionAction,
 	OptionRoot,
 } from "@/components/layout/options/Option";
 import { OptionViewSchedule } from "@/components/screen/schedules/option-view";
@@ -13,19 +13,18 @@ import { OrderStatus, type Order } from "@/models/order";
 import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
 import { formatItems } from "@/utils/fomat-Items";
 import { formatTime } from "@/utils/format-time";
-import { supabase } from "@/lib/supabase";
 
 type CardScheduleProps = {
 	order: Order;
 	orderItems: OrderItem[];
-	onRemove: () => void;
+	onAction: () => void;
 	onEdit: () => void;
 };
 
 export function CardSchedule({
 	order,
 	orderItems,
-	onRemove,
+	onAction,
 	onEdit,
 }: CardScheduleProps) {
 	const renderItems = useMemo(() => {
@@ -44,15 +43,15 @@ export function CardSchedule({
 						{(order.status === OrderStatus.PENDING ||
 							order.status === OrderStatus.CANCEL) && (
 							<Fragment>
-								<OptionDelete
+								<OptionAction
 									title="Cancelar"
-									icon={IconOptionDelete.CANCEL}
-									onRemove={onRemove}
+									icon={IconOptionAction.CANCEL}
+									onAction={onAction}
 								/>
-								<OptionDelete
+								<OptionAction
 									title="editar"
-									icon={IconOptionDelete.EDIT}
-									onRemove={onEdit}
+									icon={IconOptionAction.EDIT}
+									onAction={onEdit}
 								/>
 							</Fragment>
 						)}

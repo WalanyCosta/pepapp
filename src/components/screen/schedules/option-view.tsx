@@ -34,7 +34,7 @@ export function OptionViewSchedule({ order }: OptionViewScheduleProps) {
 						<Text className="text-xl font-heading">Items solicitados</Text>
 
 						<FlatList
-							className="gap-2 mb-3 h-32"
+							className="gap-2 mb-3 h-64"
 							keyExtractor={(item) => item.id.toString()}
 							data={order.order_items}
 							renderItem={({ item }) => (
@@ -44,7 +44,7 @@ export function OptionViewSchedule({ order }: OptionViewScheduleProps) {
 										source={require("@/assets/fotos-uniformes.jpg")}
 									/>
 
-									<View className="gap-1 w-60 pb-2 pr-4">
+									<View className="gap-1 w-80 pb-2 pr-4">
 										<Text className="text-base font-heading">
 											{item.items.name}
 										</Text>

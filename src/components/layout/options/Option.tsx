@@ -93,7 +93,7 @@ function OptionEditar({ children }: { children: React.ReactNode }) {
 	);
 }
 
-export enum IconOptionDelete {
+export enum IconOptionAction {
 	CANCEL = "XCircle",
 	REMOVE = "Trash",
 	DENY = "Prohibit",
@@ -101,17 +101,17 @@ export enum IconOptionDelete {
 	EDIT = "PencilLine",
 }
 
-type OptionDeleteProps = {
-	icon: IconOptionDelete;
+type OptionActionProps = {
+	icon: IconOptionAction;
 	title: string;
-	onRemove: () => void;
+	onAction: () => void;
 };
 
-function OptionDelete({ title, icon, onRemove }: OptionDeleteProps) {
+function OptionAction({ title, icon, onAction }: OptionActionProps) {
 	const { setOpen } = useDropdown();
 
 	function handleRemove() {
-		onRemove();
+		onAction();
 		setOpen(false);
 	}
 
@@ -128,4 +128,4 @@ function OptionDelete({ title, icon, onRemove }: OptionDeleteProps) {
 	);
 }
 
-export { OptionRoot, OptionView, OptionDelete };
+export { OptionRoot, OptionView, OptionAction };

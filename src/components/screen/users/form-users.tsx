@@ -30,15 +30,15 @@ type UserFormData = z.infer<typeof UserFormDataSchema>;
 type Props = {
 	bottomSheetModalRef: any;
 	userId: string | null;
-	refresh: boolean;
-	setRefresh: (refresh: boolean) => void;
+	users: User[];
+	setUsers: (users: User[]) => void;
 };
 
 export function FormUsers({
 	bottomSheetModalRef,
 	userId,
-	refresh,
-	setRefresh,
+	users,
+	setUsers,
 }: Props) {
 	const {
 		control,
@@ -53,6 +53,18 @@ export function FormUsers({
 	const { visible, setVisible, error, setError } = useError();
 	const [loading, setLoading] = useState(false);
 	const emailRef = useRef<TextInput>(null);
+
+	const getUsers = async () => {
+		const { data, error } = await supabase.from("users").select("*");
+
+		if (error) {
+			setVisible(true);
+			setError(null);
+			return null;
+		}
+
+		return data;
+	};
 
 	async function onSubmitItem(data: any) {
 		setLoading(true);
@@ -80,11 +92,12 @@ export function FormUsers({
 			}
 			setError(null);
 			setVisible(true);
-			console.log("api", response.error);
 			return;
 		}
 
-		setRefresh(!refresh);
+		const users = await getUsers();
+
+		setUsers(users ?? []);
 		setLoading(false);
 		resetField("name");
 		resetField("email");
@@ -106,7 +119,9 @@ export function FormUsers({
 			return;
 		}
 
-		setRefresh(!refresh);
+		const users = await getUsers();
+
+		setUsers(users ?? []);
 		setLoading(false);
 		bottomSheetModalRef.current?.close();
 	}

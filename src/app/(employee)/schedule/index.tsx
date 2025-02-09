@@ -160,7 +160,7 @@ export default function Schedule() {
 								<CardSchedule
 									order={item}
 									orderItems={item.order_items}
-									onRemove={() => handleCancelOrder(item)}
+									onAction={() => handleCancelOrder(item)}
 									onEdit={() => handleEdit(item.id)}
 								/>
 							)}

@@ -108,7 +108,12 @@ export function FormItem({
 
 		const response = await supabase
 			.from("items")
-			.update({ name: data.name, role: data.role })
+			.update({
+				name: data.name,
+				category: data.category,
+				description: data.description,
+				image: data.image,
+			})
 			.eq("id", itemId);
 
 		if (response.error) {
@@ -178,6 +183,7 @@ export function FormItem({
 							control: control as any,
 						}}
 						inputProps={{
+							keyboardType: "default",
 							label: "Nome",
 							placeholder: "exemplo t-shirt, botas",
 							onSubmitEditing: () => descriptionRef.current?.focus(),
@@ -194,6 +200,7 @@ export function FormItem({
 							control: control as any,
 						}}
 						inputProps={{
+							keyboardType: "default",
 							label: "Descrição",
 							placeholder: "Descrição do item",
 							multiline: true,

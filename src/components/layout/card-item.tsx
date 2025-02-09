@@ -28,7 +28,7 @@ export function CardItem({
 	return (
 		<TouchableOpacity
 			onPress={onPress}
-			className="flex-row items-center gap-4 mb-2 px-2 py-3 border border-input rounded-md"
+			className="flex-row items-center gap-4 mb-2 px-3 py-5 border border-input rounded-md"
 		>
 			<Image className="w-16 h-16" source={verifyImageUri(image)} />
 			<View className="gap-1 w-80">

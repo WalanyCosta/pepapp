@@ -2,8 +2,8 @@ import { Container } from "@/components/layout";
 import { CardItemEmpty } from "@/components/layout/card-item-empty";
 import { HeaderBack } from "@/components/layout/header-back";
 import {
-	IconOptionDelete,
-	OptionDelete,
+	IconOptionAction,
+	OptionAction,
 	OptionRoot,
 } from "@/components/layout/options/Option";
 import { FormUsers } from "@/components/screen/users/form-users";
@@ -104,8 +104,6 @@ export default function Users() {
 		bottomSheetModalEditRef.current?.present();
 	}
 
-	handleEditUser;
-
 	useEffect(() => {
 		fetchUsers();
 	}, [deferredQuery, filterStatus, refresh]);
@@ -171,17 +169,17 @@ export default function Users() {
 										</View>
 
 										<OptionRoot>
-											<OptionDelete
+											<OptionAction
 												title="Remover"
-												icon={IconOptionDelete.REMOVE}
-												onRemove={() => {
+												icon={IconOptionAction.REMOVE}
+												onAction={() => {
 													handleRemoveUser(item.id);
 												}}
 											/>
-											<OptionDelete
+											<OptionAction
 												title="Editar"
-												icon={IconOptionDelete.EDIT}
-												onRemove={() => {
+												icon={IconOptionAction.EDIT}
+												onAction={() => {
 													handleEditUser(item.id);
 												}}
 											/>
@@ -226,21 +224,21 @@ export default function Users() {
 				</TouchableOpacity>
 			</Container>
 
-			<BottomSheet snapPoints={["50%", "75%"]} ref={bottomSheetModalRef}>
+			<BottomSheet snapPoints={["50%"]} ref={bottomSheetModalRef}>
 				<FormUsers
 					bottomSheetModalRef={bottomSheetModalRef}
 					userId={null}
-					refresh={refresh}
-					setRefresh={setRefresh}
+					users={users}
+					setUsers={setUsers}
 				/>
 			</BottomSheet>
 
-			<BottomSheet snapPoints={["50%", "75%"]} ref={bottomSheetModalEditRef}>
+			<BottomSheet snapPoints={["50%"]} ref={bottomSheetModalEditRef}>
 				<FormUsers
 					bottomSheetModalRef={bottomSheetModalEditRef}
 					userId={userId}
-					refresh={refresh}
-					setRefresh={setRefresh}
+					users={users}
+					setUsers={setUsers}
 				/>
 			</BottomSheet>
 		</Fragment>

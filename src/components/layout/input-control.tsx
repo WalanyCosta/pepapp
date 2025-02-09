@@ -15,13 +15,13 @@ type InputControlProps = {
 export const InputControl = forwardRef<TextInput, InputControlProps>(
 	({ formProps, inputProps, error, inputClassName }, ref) => {
 		return (
-			<View className="gap-2 justify-center">
+			<View className="w-full gap-2">
 				<Controller
 					render={({ field }) => (
 						<Input
 							onChangeText={field.onChange}
 							labelClasses="text-base font-heading text-gray-800"
-							inputClasses={`text-base text-gray-800 	${clsx(
+							inputClasses={`text-base text-gray-800 w-full ${clsx(
 								{
 									["border-border-red"]: error.length > 0,
 									["border-primary"]: error.length === 0 && field.value,
