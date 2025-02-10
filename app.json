@@ -2,7 +2,7 @@
   "expo": {
     "name": "pepapp",
     "slug": "pepapp",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "fa1cc60e-60d4-4237-a365-28e4beda13bf"
+      }
+    },
+    "owner": "walanycosta"
   }
 }
