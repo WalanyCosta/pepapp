@@ -1,10 +1,7 @@
 import * as Icons from "phosphor-react-native";
 
 export type IconName =
-	| "Sun"
-	| "Moon"
 	| "Star"
-	| "Heart"
 	| "XCircle"
 	| "Prohibit"
 	| "Trash"
@@ -14,7 +11,8 @@ export type IconName =
 	| "HardHat"
 	| "ShirtFolded"
 	| "ArrowsInCardinal"
-	| "PencilLine";
+	| "PencilLine"
+	| "Toolbox";
 
 type IconProps = {
 	name: IconName;

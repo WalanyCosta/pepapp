@@ -19,7 +19,20 @@ const IconPicker: React.FC<{
 	setValue: (value: any) => void;
 	selectedIcon: string;
 }> = ({ setValue, selectedIcon }) => {
-	const iconNames = ["Sun", "Moon", "Star", "Heart"];
+	const iconNames = [
+		"Star",
+		"XCircle",
+		"Prohibit",
+		"Trash",
+		"TrendUp",
+		"TrendDown",
+		"Boot",
+		"HardHat",
+		"ShirtFolded",
+		"ArrowsInCardinal",
+		"PencilLine",
+		"Toolbox",
+	];
 
 	return (
 		<View className="w-full h-32 p-2 border border-input rounded-md mb-4">
@@ -35,11 +48,7 @@ const IconPicker: React.FC<{
 						/>
 					</TouchableOpacity>
 				)}
-				contentContainerStyle={{
-					flexDirection: "row",
-					flexWrap: "wrap",
-					gap: 5,
-				}}
+				contentContainerClassName="flex-row flex-wrap gap-6 justify-center items-center"
 			/>
 		</View>
 	);
@@ -118,7 +127,7 @@ export function DialogCategory({ setRefreshCategory, refreshCategory }: Props) {
 					<Text className="font-heading text-xl mt-3 mb-4">
 						Cadastrar categoria
 					</Text>
-					<Form>
+					<Form className="gap-3">
 						<InputControl
 							formProps={{
 								name: "name",
@@ -157,7 +166,7 @@ export function DialogCategory({ setRefreshCategory, refreshCategory }: Props) {
 								name="icon"
 								render={({ field }) => (
 									<View>
-										<Text className="font-heading text-sm text-gray-800">
+										<Text className="font-heading text-base text-gray-800">
 											Icones
 										</Text>
 										<View>
