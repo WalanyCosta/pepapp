@@ -2,20 +2,18 @@
   "expo": {
     "name": "pepapp",
     "slug": "pepapp",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#7C3AED"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundlerIdentifier": "com.pepapp.app"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -34,9 +32,6 @@
       "expo-font",
       "expo-secure-store"
     ],
-    "experiments": {
-      "typedRoutes": true
-    },
     "extra": {
       "router": {
         "origin": false
