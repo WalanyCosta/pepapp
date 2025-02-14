@@ -47,7 +47,12 @@ function OptionRoot(props: Props) {
 	);
 }
 
-function OptionView({ children }: { children: React.ReactNode }) {
+type OptionViewProps = {
+	children: React.ReactNode;
+	className?: string;
+};
+
+function OptionView({ children, className }: OptionViewProps) {
 	const { setOpen } = useDropdown();
 
 	return (
@@ -65,29 +70,7 @@ function OptionView({ children }: { children: React.ReactNode }) {
 					</TouchableOpacity>
 				</DialogTrigger>
 
-				<DialogContent>{children}</DialogContent>
-			</Dialog>
-		</DropDownItem>
-	);
-}
-
-function OptionEditar({ children }: { children: React.ReactNode }) {
-	const { setOpen } = useDropdown();
-
-	return (
-		<DropDownItem className="border border-input gap-1">
-			<Dialog>
-				<DialogTrigger>
-					<TouchableOpacity
-						className="flex-row item-center gap-2"
-						onPress={() => setOpen(false)}
-					>
-						<PencilLine color="#4B5563" size={16} />
-						<Text className="text-xs ">Editar</Text>
-					</TouchableOpacity>
-				</DialogTrigger>
-
-				<DialogContent className="w-96">{children}</DialogContent>
+				<DialogContent className={className}>{children}</DialogContent>
 			</Dialog>
 		</DropDownItem>
 	);

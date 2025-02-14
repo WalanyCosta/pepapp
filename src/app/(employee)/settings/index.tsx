@@ -118,16 +118,17 @@ export default function Settings() {
 						<CaretRight color="#4B5563" size={18} />
 					</TouchableOpacity>
 
-					<Link href="/(auth)/reset-password">
-						<View className="w-full flex-row item-center justify-between border-b border-input py-2">
+					<Link href="/(auth)/reset-password" asChild>
+						<TouchableOpacity className="flex-1 flex-row item-center justify-between border-b border-input py-2">
 							<View className="flex-row gap-2 items-center">
 								<Lock color="#4B5563" size={24} />
 								<Text className="text-base text-gray-600">Alterar senha</Text>
 							</View>
 
 							<CaretRight color="#4B5563" size={18} />
-						</View>
+						</TouchableOpacity>
 					</Link>
+
 					<View className="flex-row item-center justify-between">
 						<View className="flex-row gap-2 items-center">
 							<PaintRoller color="#4B5563" size={24} />
