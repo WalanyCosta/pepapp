@@ -17,14 +17,25 @@ import { useEffect, useState } from "react";
 import { useImage } from "@/hooks/use-image";
 import { Link } from "expo-router";
 import { useError } from "@/hooks/use-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 
 export default function Settings() {
 	const { user, setAuth } = useAuth();
 	const { uploadImage, url, setUrl } = useImage("files");
 	const [isEnabled, setIsEnabled] = useState(false);
 	const { visible, setVisible, error, setError } = useError();
+	const isOnline = useOnlineStatus();
 
 	async function fetch() {
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			return;
+		}
+
 		const { data, error } = await supabase
 			.from("users")
 			.select("*")
@@ -45,6 +56,15 @@ export default function Settings() {
 	}, [url]);
 
 	async function signOut() {
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			return;
+		}
+
 		setAuth(null);
 		await supabase.auth.signOut();
 	}
@@ -64,6 +84,15 @@ export default function Settings() {
 	}
 
 	async function handleUpdateImage() {
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			return;
+		}
+
 		await uploadImage();
 	}
 

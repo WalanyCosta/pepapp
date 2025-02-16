@@ -17,6 +17,8 @@ import { FlatList } from "react-native";
 import { verifyImageUri } from "@/utils/verify-image-uri";
 import { HeaderBack } from "@/components/layout/header-back";
 import { useError } from "@/hooks/use-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
+import { NetworkingError } from "@/components/layout/networking-error";
 
 export default function Items() {
 	const [featchItems, setFeatchItems] = useState(false);
@@ -25,9 +27,21 @@ export default function Items() {
 	const [itemId, setItemId] = useState<string | null>(null);
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 	const bottomSheetModalEditRef = useRef<BottomSheetModal>(null);
+	const isOnline = useOnlineStatus();
+	const [reload, setReload] = useState(false);
 
 	const fetchItems = async () => {
 		setFeatchItems(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setFeatchItems(false);
+			return;
+		}
 
 		const { data, error } = await supabase.from("items").select("*");
 
@@ -45,6 +59,16 @@ export default function Items() {
 			.from("items")
 			.delete()
 			.eq("id", id);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setFeatchItems(false);
+			return;
+		}
 
 		if (errorDelete) {
 			Alert.alert("Error do sistema", errorDelete.message);
@@ -78,7 +102,7 @@ export default function Items() {
 
 	useEffect(() => {
 		fetchItems();
-	}, []);
+	}, [reload]);
 
 	return (
 		<View className="flex-1 relative">
@@ -130,12 +154,16 @@ export default function Items() {
 							showsVerticalScrollIndicator={false}
 						/>
 					)}
-					{!featchItems && items.length === 0 && (
+					{!featchItems && isOnline && items.length === 0 && (
 						<View className="gap-2 h-[322px] pb-[100px] items-center justify-center">
 							<Text className="text-gray-400 text-sm">
 								Não existe items cadastrados
 							</Text>
 						</View>
+					)}
+
+					{!featchItems && !isOnline && items.length === 0 && (
+						<NetworkingError setReload={setReload} reload={reload} />
 					)}
 				</View>
 

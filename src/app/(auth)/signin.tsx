@@ -20,6 +20,7 @@ import {
 	PopoversError,
 	type StatusCode,
 } from "@/components/layout/popovers/popovers-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 
 const loginUserFormSchema = z.object({
 	email: z.string({ required_error: "Campo e-mail é obrigatório" }).email({
@@ -50,9 +51,21 @@ export default function SignIn() {
 		title: string;
 	} | null>(null);
 	const passwordRef = useRef<TextInput>(null);
+	const isOnline = useOnlineStatus();
 
 	const onSignin = async (data: any) => {
 		setLoading(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoading(false);
+			return;
+		}
+
 		const { data: result, error: loginError } =
 			await supabase.auth.signInWithPassword({
 				email: data.email,
@@ -60,10 +73,17 @@ export default function SignIn() {
 			});
 
 		if (loginError) {
-			setError({
-				code: "UNAUTHORIZED",
-				title: "E-mail ou senha estão incorrecta",
-			});
+			console.log(loginError.status);
+			if (loginError.status === 401) {
+				setError({
+					code: "UNAUTHORIZED",
+					title: "E-mail ou senha estão incorrecta",
+				});
+				setVisible(true);
+				setLoading(false);
+				return;
+			}
+			setError(null);
 			setVisible(true);
 			setLoading(false);
 			return;
@@ -77,6 +97,14 @@ export default function SignIn() {
 				.neq("status", UserStatus.DESACTIVED)
 				.single();
 
+			if (error) {
+				console.log(error);
+				setError(null);
+				setVisible(true);
+				setLoading(false);
+				return;
+			}
+
 			const { error: errorUpdate } = await supabase
 				.from("users")
 				.update({
@@ -85,13 +113,6 @@ export default function SignIn() {
 				.eq("id", result.user.id);
 
 			if (errorUpdate) {
-				setError(null);
-				setVisible(true);
-				setLoading(false);
-				return;
-			}
-
-			if (error) {
 				setError(null);
 				setVisible(true);
 				setLoading(false);

@@ -1,6 +1,7 @@
 import { Container } from "@/components/layout";
 import { Header } from "@/components/layout/header";
 import { Icon } from "@/components/layout/icon-component";
+import { NetworkingError } from "@/components/layout/networking-error";
 import {
 	IconOptionAction,
 	OptionAction,
@@ -15,7 +16,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useAuth } from "@/context/auth-context";
+import { useError } from "@/hooks/use-error";
 import { useImage } from "@/hooks/use-image";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 import { supabase } from "@/lib/supabase";
 import { type Order, OrderStatus } from "@/models/order";
 import { UserStatus } from "@/models/user";
@@ -23,7 +26,7 @@ import { formatItems } from "@/utils/fomat-Items";
 import { formatTime } from "@/utils/format-time";
 import { router } from "expo-router";
 import { BagSimple, Clock, QrCode, UsersThree } from "phosphor-react-native";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { FlatList, ScrollView } from "react-native";
 import { Alert } from "react-native";
 import { View, Text } from "react-native";
@@ -37,16 +40,32 @@ export default function Dasboard() {
 	const [loadingUsers, setLoadingUsers] = useState(false);
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [visible, setVisible] = useState(false);
-	const [visibleError, setVisibleError] = useState(false);
+	const {
+		visible: visibleError,
+		setVisible: setVisibleError,
+		error,
+		setError,
+	} = useError();
 	const { url, setUrl } = useImage("files");
 	const [totalOrder, setTotalOrder] = useState(0);
 	const [totalItems, setTotalItems] = useState(0);
 	const [totalUsers, setTotalUsers] = useState(0);
 	const [isActiveTab, setIsActiveTab] = useState("Gauge");
+	const isOnline = useOnlineStatus();
 
 	const fetchItems = async () => {
 		let response: any;
 		setLoading(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoading(false);
+			return;
+		}
 
 		response = await supabase
 			.from("orders")
@@ -66,6 +85,16 @@ export default function Dasboard() {
 
 	async function getWeeklyOrders() {
 		setLoadingOrder(false);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoadingOrder(false);
+			return;
+		}
 		const today = new Date();
 
 		const firstDayOfWeek = new Date(
@@ -90,6 +119,17 @@ export default function Dasboard() {
 
 	async function getTotalItem() {
 		setLoadingItems(false);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoadingOrder(false);
+			return;
+		}
+
 		const { error, count } = await supabase
 			.from("items")
 			.select("*", { count: "exact", head: true }); // Contagem exata
@@ -105,6 +145,17 @@ export default function Dasboard() {
 
 	async function getTotalUsers() {
 		setLoadingUsers(false);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoadingOrder(false);
+			return;
+		}
+
 		const { error, count } = await supabase
 			.from("users")
 			.select("*", { count: "exact", head: true })
@@ -123,6 +174,16 @@ export default function Dasboard() {
 		orderId: number | string,
 		orderStatus: OrderStatus,
 	) {
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoadingOrder(false);
+			return;
+		}
+
 		const orderExists = orders.find((order) => order.id === orderId);
 
 		if (!orderExists) {
@@ -161,62 +222,72 @@ export default function Dasboard() {
 	}, [refresh]);
 
 	return (
-		<Container visible={visibleError} setVisible={setVisibleError}>
+		<Container
+			visible={visibleError}
+			setVisible={setVisibleError}
+			error={error}
+		>
 			<Header url={url} />
 
-			<ScrollView
-				horizontal={true}
-				showsHorizontalScrollIndicator={false}
-				className="mb-5 -mt-3"
-				contentContainerClassName="gap-3 items-center pr-8"
-			>
-				{!loadingOrder &&
-					!loadingItems &&
-					!loadingUsers &&
-					Array.from({ length: 3 }).map((_, index) => (
-						<Skeleton key={index.toString()} className="w-64 h-44" />
-					))}
+			{!loadingOrder && !isOnline && orders.length === 0 ? (
+				<NetworkingError setReload={setRefresh} reload={refresh} />
+			) : (
+				<Fragment>
+					<ScrollView
+						horizontal={true}
+						showsHorizontalScrollIndicator={false}
+						className="mb-5 -mt-3"
+						contentContainerClassName="gap-3 items-center pr-8"
+					>
+						{!loadingOrder &&
+							!loadingItems &&
+							!loadingUsers &&
+							Array.from({ length: 3 }).map((_, index) => (
+								<Skeleton key={index.toString()} className="w-64 h-44" />
+							))}
 
-				{loadingOrder && loadingItems && loadingUsers && (
-					<StatisticCards
-						totalItems={totalItems}
-						totalUsers={totalUsers}
-						totalOrder={totalOrder}
-					/>
-				)}
-			</ScrollView>
-
-			<View className="h-[50vh]">
-				<Text className="text-gray-400 text-base ml-3 mb-4">
-					Pedidos recentes
-				</Text>
-
-				{loading && <CardScheduleEmpty />}
-
-				{!loading && orders.length > 0 && (
-					<FlatList
-						className="gap-3 h-[322px]"
-						keyExtractor={(item) => item.id.toString()}
-						data={orders}
-						renderItem={({ item }) => (
-							<CardOrder
-								item={item}
-								handleUpdateOrdersStatus={handleUpdateOrdersStatus}
+						{loadingOrder && loadingItems && loadingUsers && (
+							<StatisticCards
+								totalItems={totalItems}
+								totalUsers={totalUsers}
+								totalOrder={totalOrder}
 							/>
 						)}
-						contentContainerClassName="pb-40"
-						showsVerticalScrollIndicator={false}
-					/>
-				)}
+					</ScrollView>
 
-				{!loading && orders.length === 0 && (
-					<View className="gap-2 flex-1 pb-[100px] items-center justify-center">
-						<Text className="text-gray-400 text-sm">
-							Não existe nenhum pedido feitos
+					<View className="h-[50vh]">
+						<Text className="text-gray-400 text-base ml-3 mb-4">
+							Pedidos recentes
 						</Text>
+
+						{loading && <CardScheduleEmpty />}
+
+						{!loading && orders.length > 0 && (
+							<FlatList
+								className="gap-3 h-[322px]"
+								keyExtractor={(item) => item.id.toString()}
+								data={orders}
+								renderItem={({ item }) => (
+									<CardOrder
+										item={item}
+										handleUpdateOrdersStatus={handleUpdateOrdersStatus}
+									/>
+								)}
+								contentContainerClassName="pb-40"
+								showsVerticalScrollIndicator={false}
+							/>
+						)}
+
+						{!loading && orders.length === 0 && (
+							<View className="gap-2 flex-1 pb-[100px] items-center justify-center">
+								<Text className="text-gray-400 text-sm">
+									Não existe nenhum pedido feitos
+								</Text>
+							</View>
+						)}
 					</View>
-				)}
-			</View>
+				</Fragment>
+			)}
 
 			<Tab className="">
 				<TabScreen

@@ -28,6 +28,7 @@ import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
 import { HeaderBack } from "@/components/layout/header-back";
 import dayjs from "dayjs";
 import type { StatusCode } from "@/components/layout/popovers/popovers-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 
 const loginUserFormSchema = z.object({
 	ranson: z
@@ -57,6 +58,7 @@ export default function Order() {
 		title: string;
 	} | null>(null);
 	const ransonRef = useRef<TextInput>(null);
+	const isOnline = useOnlineStatus();
 
 	const {
 		control,
@@ -74,6 +76,15 @@ export default function Order() {
 	}
 
 	async function handleAddOrders(data: any) {
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisibleError(true);
+			setLoading(false);
+			return;
+		}
 		if (getItemSize() <= 0) {
 			clearItems();
 			setError({
@@ -127,6 +138,16 @@ export default function Order() {
 	}
 
 	async function handleEditOrders(data: any) {
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisibleError(true);
+			setLoading(false);
+			return;
+		}
+
 		if (getItemSize() <= 0) {
 			clearItems();
 			setError({
@@ -176,7 +197,7 @@ export default function Order() {
 		} catch (error: any) {
 			clearItems();
 			setError(null);
-			setVisible(true);
+			setVisibleError(true);
 			setLoading(false);
 			return;
 		}

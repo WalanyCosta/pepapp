@@ -13,6 +13,7 @@ import { PopoverDualButton } from "@/components/layout/popovers/dual-button";
 import { useAuth } from "@/context/auth-context";
 import type { StatusCode } from "@/components/layout/popovers/popovers-error";
 import { useError } from "@/hooks/use-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 
 const loginUserFormSchema = z
 	.object({
@@ -44,9 +45,20 @@ export default function ResetPassword() {
 	const { visible, setVisible, error, setError } = useError();
 	const [loading, setLoading] = useState(false);
 	const confirmPasswordRef = useRef<TextInput>(null);
+	const isOnline = useOnlineStatus();
 
 	const onResetPasswond = async (data: any) => {
 		setLoading(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoading(false);
+			return;
+		}
 
 		if (user?.email) {
 			const { error: userError } = await supabase

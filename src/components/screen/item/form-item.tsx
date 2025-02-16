@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabase";
 import type { Category } from "@/models/category";
 import { useError } from "@/hooks/use-error";
 import { PopoversError } from "@/components/layout/popovers/popovers-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 
 const ItemFormDataSchema = z.object({
 	name: z
@@ -64,6 +65,7 @@ export function FormItem({
 	const { visible, setVisible, error, setError } = useError();
 	const [refreshCategory, setRefreshCategory] = useState(false);
 	const [categories, setCategories] = useState<Category[]>();
+	const isOnline = useOnlineStatus();
 
 	const getItems = async () => {
 		const { data, error } = await supabase.from("items").select("*");
@@ -79,6 +81,16 @@ export function FormItem({
 
 	async function onSubmitItem(data: any) {
 		setLoading(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoading(false);
+			return;
+		}
 
 		const { error } = await supabase.from("items").insert({
 			name: data.name,
@@ -105,6 +117,16 @@ export function FormItem({
 
 	async function onEditItem(data: any) {
 		setLoading(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoading(false);
+			return;
+		}
 
 		const response = await supabase
 			.from("items")

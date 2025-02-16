@@ -9,19 +9,20 @@ import { OrderStatus, type Order } from "@/models/order";
 import { FlatList } from "react-native-gesture-handler";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
 import { HeaderBack } from "@/components/layout/header-back";
-import { PopoversError } from "@/components/layout/popovers/popovers-error";
 import dayjs from "dayjs";
 import { useError } from "@/hooks/use-error";
 import { useItem } from "@/context/item-context";
 import { router } from "expo-router";
+import { useOnlineStatus } from "@/hooks/use-online-status";
+import { NetworkingError } from "@/components/layout/networking-error";
 
 export default function Schedule() {
 	const { user } = useAuth();
 	const [refresh, setRefresh] = useState(false);
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState(false);
-	const [visible, setVisible] = useState(false);
 	const { setOrder, setItems, order, items } = useItem();
+	const isOnline = useOnlineStatus();
 	const {
 		visible: visibleError,
 		setVisible: setVisibleError,
@@ -33,6 +34,16 @@ export default function Schedule() {
 	const fetchItems = async () => {
 		let response: any;
 		setLoading(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisibleError(true);
+			setLoading(false);
+			return;
+		}
 
 		if (saveDate === null) {
 			response = await supabase
@@ -174,6 +185,9 @@ export default function Schedule() {
 								Não existe nenhum pedido feitos
 							</Text>
 						</View>
+					)}
+					{!loading && !isOnline && orders.length === 0 && (
+						<NetworkingError setReload={setRefresh} reload={refresh} />
 					)}
 				</View>
 			</View>

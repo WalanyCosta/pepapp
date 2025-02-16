@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout";
 import { router } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Tab, TabScreen, TabScreenRoute } from "@/components/layout/tab";
 import { supabase } from "@/lib/supabase";
 import type { Item } from "@/models/item";
@@ -11,6 +11,12 @@ import { useItem } from "@/context/item-context";
 import { Header } from "@/components/layout/header";
 import { useError } from "@/hooks/use-error";
 import type { Href } from "expo-router";
+import { useOnlineStatus } from "@/hooks/use-online-status";
+import { View } from "react-native";
+import { Text } from "react-native";
+import { WifiX } from "phosphor-react-native";
+import { Button } from "@/components/ui";
+import { NetworkingError } from "@/components/layout/networking-error";
 
 const categoryDefault = {
 	id: "any_id",
@@ -28,6 +34,8 @@ export default function Home() {
 	const [isActive, setIsActive] = useState("ArrowsInCardinal");
 	const [isActiveTab, setIsActiveTab] = useState("House");
 	const { getItemSize, order } = useItem();
+	const isOnline = useOnlineStatus();
+	const [reload, setReload] = useState(false);
 
 	function handleChangeScreenToOrder() {
 		if (getItemSize() <= 0) {
@@ -77,6 +85,16 @@ export default function Home() {
 		let response: any;
 		setIsLoadingItem(true);
 
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setIsLoadingItem(false);
+			return;
+		}
+
 		if (isActive === "ArrowsInCardinal") {
 			response = await supabase.from("items").select("*");
 		} else {
@@ -99,24 +117,30 @@ export default function Home() {
 
 	useEffect(() => {
 		fetchCategory();
-	}, []);
+	}, [reload]);
 
 	useEffect(() => {
 		fetchItems();
-	}, [isActive]);
+	}, [isActive, reload]);
 
 	return (
 		<Container visible={visible} setVisible={setVisible} error={error}>
 			<Header />
 
-			<Categories
-				isLoadingCategory={isLoadingCategory}
-				categories={categories}
-				isActive={isActive}
-				setIsActive={setIsActive}
-			/>
+			{!isLoadingItem && !isOnline && items.length === 0 ? (
+				<NetworkingError setReload={setReload} reload={reload} />
+			) : (
+				<Fragment>
+					<Categories
+						isLoadingCategory={isLoadingCategory}
+						categories={categories}
+						isActive={isActive}
+						setIsActive={setIsActive}
+					/>
 
-			<Items items={items} isLoadingItem={isLoadingItem} />
+					<Items items={items} isLoadingItem={isLoadingItem} />
+				</Fragment>
+			)}
 
 			<Tab className="bottom-28">
 				<TabScreenRoute

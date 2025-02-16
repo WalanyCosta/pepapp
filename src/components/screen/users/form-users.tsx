@@ -11,6 +11,8 @@ import { type User, UserRole, UserStatus } from "@/models/user";
 import { useError } from "@/hooks/use-error";
 import { PopoversError } from "@/components/layout/popovers/popovers-error";
 import { createUser } from "@/lib/create-user";
+import { useOnlineStatus } from "@/hooks/use-online-status";
+import { useAuth } from "@/context/auth-context";
 
 const UserFormDataSchema = z.object({
 	name: z
@@ -30,6 +32,7 @@ type UserFormData = z.infer<typeof UserFormDataSchema>;
 type Props = {
 	bottomSheetModalRef: any;
 	userId: string | null;
+	filterStatus: string;
 	users: User[];
 	setUsers: (users: User[]) => void;
 };
@@ -38,6 +41,7 @@ export function FormUsers({
 	bottomSheetModalRef,
 	userId,
 	users,
+	filterStatus,
 	setUsers,
 }: Props) {
 	const {
@@ -50,12 +54,18 @@ export function FormUsers({
 		mode: "all",
 		resolver: zodResolver(UserFormDataSchema),
 	});
+	const { user } = useAuth();
 	const { visible, setVisible, error, setError } = useError();
 	const [loading, setLoading] = useState(false);
 	const emailRef = useRef<TextInput>(null);
+	const isOnline = useOnlineStatus();
 
 	const getUsers = async () => {
-		const { data, error } = await supabase.from("users").select("*");
+		const { data, error } = await supabase
+			.from("users")
+			.select("*")
+			.neq("id", user?.id)
+			.eq("status", filterStatus);
 
 		if (error) {
 			setVisible(true);
@@ -68,6 +78,15 @@ export function FormUsers({
 
 	async function onSubmitItem(data: any) {
 		setLoading(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			return;
+		}
 
 		const response = await createUser({
 			email: data.email,
@@ -105,6 +124,15 @@ export function FormUsers({
 
 	async function onEditUser(data: any) {
 		setLoading(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			return;
+		}
 
 		const response = await supabase
 			.from("users")

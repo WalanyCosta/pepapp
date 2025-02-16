@@ -1,6 +1,7 @@
 import { Container } from "@/components/layout";
 import { CardItemEmpty } from "@/components/layout/card-item-empty";
 import { HeaderBack } from "@/components/layout/header-back";
+import { NetworkingError } from "@/components/layout/networking-error";
 import {
 	IconOptionAction,
 	OptionAction,
@@ -13,6 +14,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Search } from "@/components/ui/search";
 import { useAuth } from "@/context/auth-context";
 import { useError } from "@/hooks/use-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 import { supabase } from "@/lib/supabase";
 import { UserStatus, type User } from "@/models/user";
 import { convertDateOtherFormat } from "@/utils/convert-date-other-format";
@@ -37,7 +39,8 @@ export default function Users() {
 	const [filterStatus, setFilterStatus] = useState<string>(UserStatus.ACTIVED);
 	const { visible, setVisible, error, setError } = useError();
 	const [featchUsers, setFeatchUsers] = useState(false);
-	const [refresh, setRefresh] = useState(false);
+	const isOnline = useOnlineStatus();
+	const [reload, setReload] = useState(false);
 
 	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 	const bottomSheetModalEditRef = useRef<BottomSheetModal>(null);
@@ -48,6 +51,17 @@ export default function Users() {
 
 	const fetchUsers = async () => {
 		setFeatchUsers(true);
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setFeatchUsers(false);
+			return;
+		}
+
 		let response: any;
 
 		if (deferredQuery.trim() !== "") {
@@ -77,6 +91,15 @@ export default function Users() {
 	};
 
 	async function handleRemoveUser(userId: string) {
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			return;
+		}
+
 		const response = await supabase
 			.from("users")
 			.update({ status: UserStatus.DESACTIVED })
@@ -106,7 +129,7 @@ export default function Users() {
 
 	useEffect(() => {
 		fetchUsers();
-	}, [deferredQuery, filterStatus, refresh]);
+	}, [deferredQuery, filterStatus, reload]);
 
 	return (
 		<Fragment>
@@ -207,12 +230,16 @@ export default function Users() {
 							contentContainerClassName="gap-3 justify-start pb-8"
 						/>
 					)}
-					{!featchUsers && users.length === 0 && (
+					{!featchUsers && isOnline && users.length === 0 && (
 						<View className="gap-2 h-[322px] pb-[100px] items-center justify-center">
 							<Text className="text-gray-400 text-base">
 								Não existe usuarios cadastrados
 							</Text>
 						</View>
+					)}
+
+					{!featchUsers && !isOnline && users.length === 0 && (
+						<NetworkingError setReload={setReload} reload={reload} />
 					)}
 				</View>
 
@@ -228,6 +255,7 @@ export default function Users() {
 				<FormUsers
 					bottomSheetModalRef={bottomSheetModalRef}
 					userId={null}
+					filterStatus={filterStatus}
 					users={users}
 					setUsers={setUsers}
 				/>
@@ -237,6 +265,7 @@ export default function Users() {
 				<FormUsers
 					bottomSheetModalRef={bottomSheetModalEditRef}
 					userId={userId}
+					filterStatus={filterStatus}
 					users={users}
 					setUsers={setUsers}
 				/>

@@ -13,6 +13,7 @@ type Props = {
 
 export function Items({ items, isLoadingItem }: Props) {
 	const { addItem } = useItem();
+
 	return (
 		<View className="h-[65vh]">
 			{isLoadingItem && <CardItemEmpty />}
@@ -42,6 +43,7 @@ export function Items({ items, isLoadingItem }: Props) {
 					</Text>
 				</View>
 			)}
+
 		</View>
 	);
 }

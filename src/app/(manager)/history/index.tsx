@@ -1,11 +1,13 @@
 import { Container } from "@/components/layout";
 import { HeaderBack } from "@/components/layout/header-back";
+import { NetworkingError } from "@/components/layout/networking-error";
 import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
 import { CardOrder } from "@/components/screen/card-order";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Search } from "@/components/ui/search";
 import { useError } from "@/hooks/use-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 import { supabase } from "@/lib/supabase";
 import { type Order, OrderStatus } from "@/models/order";
 
@@ -17,7 +19,9 @@ export default function History() {
 	const [orders, setOrders] = useState<Order[]>([]);
 	const [filterStatus, setFilterStatus] = useState<string>(OrderStatus.PENDING);
 	const [fetchOrders, setFetchOrders] = useState(false);
+	const [reload, setReload] = useState(false);
 	const deferredQuery = useDeferredValue(query);
+	const isOnline = useOnlineStatus();
 	const {
 		visible: visibleError,
 		setVisible: setVisibleError,
@@ -30,6 +34,16 @@ export default function History() {
 		orderId: number | string,
 		orderStatus: OrderStatus,
 	) {
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisibleError(true);
+			setFetchOrders(false);
+			return;
+		}
+
 		const orderExists = orders.find((order) => order.id === orderId);
 
 		if (!orderExists) {
@@ -91,7 +105,7 @@ export default function History() {
 
 	useEffect(() => {
 		getOrders();
-	}, [deferredQuery, filterStatus]);
+	}, [deferredQuery, filterStatus, reload]);
 
 	return (
 		<Container
@@ -149,6 +163,10 @@ export default function History() {
 						Não existe nenhum pedido feitos
 					</Text>
 				</View>
+			)}
+
+			{!fetchOrders && !isOnline && orders.length === 0 && (
+				<NetworkingError setReload={setReload} reload={reload} />
 			)}
 
 			<PopoversSuccess visible={visible} setVisible={setVisible} />

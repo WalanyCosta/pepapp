@@ -12,6 +12,7 @@ import { PopoverDualButton } from "@/components/layout/popovers/dual-button";
 import { UserStatus } from "@/models/user";
 import { useError } from "@/hooks/use-error";
 import type { StatusCode } from "@/components/layout/popovers/popovers-error";
+import { useOnlineStatus } from "@/hooks/use-online-status";
 
 const loginUserFormSchema = z.object({
 	email: z.string({ required_error: "Campo email é obrigatório" }).email({
@@ -33,9 +34,20 @@ export default function ForgoutPassword() {
 
 	const { visible, setVisible, error, setError } = useError();
 	const [loading, setLoading] = useState(false);
+	const isOnline = useOnlineStatus();
 
 	async function onSendEmail(data: any) {
 		setLoading(true);
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
+			setLoading(false);
+			return;
+		}
+
 		const { error: userError, data: userFound } = await supabase
 			.from("user_profiles")
 			.select("*")
@@ -63,6 +75,16 @@ export default function ForgoutPassword() {
 				code: "INTERNAL_SERVER",
 				title: "Usuario não authorizado!",
 			});
+			setLoading(false);
+			return;
+		}
+
+		if (!isOnline) {
+			setError({
+				code: "INFO",
+				title: "Ligue a sua internet",
+			});
+			setVisible(true);
 			setLoading(false);
 			return;
 		}
