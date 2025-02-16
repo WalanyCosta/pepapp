@@ -25,7 +25,7 @@ export function Search({ children, query, setQuery }: Props) {
 			</TouchableOpacity>
 			<TextInput
 				ref={searchRef}
-				className="text-base flex-1 text-nowrap text-gray-400"
+				className="text-base flex-1 text-nowrap text-gray-400 py-2.5"
 				placeholder="Pesquisar"
 				onChangeText={setQuery}
 			/>

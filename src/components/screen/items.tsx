@@ -1,17 +1,18 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import type { Item } from "@/models/item";
 import { CardItemEmpty } from "../layout/card-item-empty";
 import { CardItem } from "../layout/card-item";
 import { FlatList } from "react-native-gesture-handler";
-import { View, Text } from "react-native";
+import { View, Text, Button, RefreshControl } from "react-native";
 import { useItem } from "@/context/item-context";
 
 type Props = {
 	items: Item[];
 	isLoadingItem: boolean;
+	fetchItems: () => void;
 };
 
-export function Items({ items, isLoadingItem }: Props) {
+export function Items({ items, isLoadingItem, fetchItems }: Props) {
 	const { addItem } = useItem();
 
 	return (
@@ -20,6 +21,12 @@ export function Items({ items, isLoadingItem }: Props) {
 
 			{!isLoadingItem && items.length > 0 && (
 				<FlatList
+					refreshControl={
+						<RefreshControl
+							refreshing={isLoadingItem}
+							onRefresh={() => fetchItems()}
+						/>
+					}
 					className="gap-2"
 					keyExtractor={(item) => item.id}
 					data={items}
@@ -43,7 +50,6 @@ export function Items({ items, isLoadingItem }: Props) {
 					</Text>
 				</View>
 			)}
-
 		</View>
 	);
 }

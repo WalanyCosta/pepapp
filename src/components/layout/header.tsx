@@ -36,6 +36,7 @@ export function Header({ url }: Props) {
 						) : (
 							<AvatarFallback textClassname="text-xl">pq</AvatarFallback>
 						)}
+						{}
 					</Avatar>
 				</View>
 			</View>

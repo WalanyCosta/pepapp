@@ -21,7 +21,7 @@ import { useOnlineStatus } from "@/hooks/use-online-status";
 
 export default function Settings() {
 	const { user, setAuth } = useAuth();
-	const { uploadImage, url, setUrl } = useImage("files");
+	const { uploadImage, url, setUrl, isLoadingDownload } = useImage("files");
 	const [isEnabled, setIsEnabled] = useState(false);
 	const { visible, setVisible, error, setError } = useError();
 	const isOnline = useOnlineStatus();
@@ -111,14 +111,20 @@ export default function Settings() {
 
 			<View className="gap-3 justify-center items-center">
 				<Avatar className="w-28 h-28">
-					{user?.image ? (
+					{!isLoadingDownload && user?.image && (
 						<AvatarImage
 							source={{
 								uri: user?.image,
 							}}
 						/>
-					) : (
+					)}
+					{!isLoadingDownload && !user?.image && (
 						<AvatarFallback textClassname="text-2xl">pq</AvatarFallback>
+					)}
+					{isLoadingDownload && (
+						<View className="w-28 h-28 rounded-full justify-center items-center bg-violet-500/5">
+							<Text className="text-xs">Carregando...</Text>
+						</View>
 					)}
 				</Avatar>
 

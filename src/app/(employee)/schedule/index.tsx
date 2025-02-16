@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Calendar } from "@/components/layout/calendar";
 import { CardSchedule } from "@/components/screen/schedules/card-schedule";
 import { OrderStatus, type Order } from "@/models/order";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, RefreshControl } from "react-native-gesture-handler";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
 import { HeaderBack } from "@/components/layout/header-back";
 import dayjs from "dayjs";
@@ -167,6 +167,12 @@ export default function Schedule() {
 							className="gap-2 flex-1"
 							keyExtractor={(item) => item.id}
 							data={orders}
+							refreshControl={
+								<RefreshControl
+									refreshing={loading}
+									onRefresh={() => fetchItems()}
+								/>
+							}
 							renderItem={({ item }) => (
 								<CardSchedule
 									order={item}

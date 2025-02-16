@@ -7,12 +7,14 @@ export function useImage(folderPath: string){
   const [error, setError] = useState<string | null>(null)
   const [url, setUrl] = useState<string | null>(null)
   const [image, setImage] = useState<string | null>(null)
+  const [isLoadingDownload, setIsLoadingDownload] = useState(false)
 
   useEffect(()=> {
     if (image) downloadImage(folderPath, image)
   }, [image])
 
   async function downloadImage(folder: string, path: string){
+    setIsLoadingDownload(true)
     try {
       const {data, error} = await supabase.storage.from(folder).download(path)
 
@@ -30,6 +32,9 @@ export function useImage(folderPath: string){
       if(error instanceof Error){
         setError(error.message)
       }
+      setIsLoadingDownload(false)
+    }finally{
+      setIsLoadingDownload(false)
     }
   }
 
@@ -61,5 +66,5 @@ export function useImage(folderPath: string){
     }
   }
 
-  return {url, uploading, setUrl, uploadImage, error}
+  return {url, uploading, setUrl, uploadImage, error, setIsLoadingDownload, isLoadingDownload}
 }

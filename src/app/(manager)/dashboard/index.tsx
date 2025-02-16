@@ -1,19 +1,12 @@
 import { Container } from "@/components/layout";
 import { Header } from "@/components/layout/header";
-import { Icon } from "@/components/layout/icon-component";
 import { NetworkingError } from "@/components/layout/networking-error";
-import {
-	IconOptionAction,
-	OptionAction,
-	OptionRoot,
-} from "@/components/layout/options/Option";
+
 import { PopoversSuccess } from "@/components/layout/popovers/popovers-success";
 import { Tab, TabScreen, TabScreenRoute } from "@/components/layout/tab";
 import { CardOrder } from "@/components/screen/card-order";
 import { StatisticCards } from "@/components/screen/dashboard/statistic-cards";
 import { CardScheduleEmpty } from "@/components/screen/schedules/card-schedule-empty";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useAuth } from "@/context/auth-context";
 import { useError } from "@/hooks/use-error";
@@ -22,12 +15,9 @@ import { useOnlineStatus } from "@/hooks/use-online-status";
 import { supabase } from "@/lib/supabase";
 import { type Order, OrderStatus } from "@/models/order";
 import { UserStatus } from "@/models/user";
-import { formatItems } from "@/utils/fomat-Items";
-import { formatTime } from "@/utils/format-time";
-import { router } from "expo-router";
-import { BagSimple, Clock, QrCode, UsersThree } from "phosphor-react-native";
+
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { FlatList, ScrollView } from "react-native";
+import { FlatList, RefreshControl, ScrollView } from "react-native";
 import { Alert } from "react-native";
 import { View, Text } from "react-native";
 
@@ -267,6 +257,12 @@ export default function Dasboard() {
 								className="gap-3 h-[322px]"
 								keyExtractor={(item) => item.id.toString()}
 								data={orders}
+								refreshControl={
+									<RefreshControl
+										refreshing={loading}
+										onRefresh={() => fetchItems()}
+									/>
+								}
 								renderItem={({ item }) => (
 									<CardOrder
 										item={item}

@@ -21,7 +21,7 @@ export function Upload({
 	value,
 	onChange,
 }: Props) {
-	const { uploadImage, url } = useImage("files");
+	const { uploadImage, url, isLoadingDownload } = useImage("files");
 
 	function handleUploadImage() {
 		uploadImage();
@@ -41,7 +41,13 @@ export function Upload({
 			>
 				{value ? (
 					<TouchableOpacity onPress={handleUploadImage}>
-						<Image className="w-48 h-36" source={{ uri: value }} />
+						{isLoadingDownload && !value ? (
+							<View className="w-48 h-48 rounded-full justify-center items-center bg-violet-500/5">
+								<Text className="text-xs">Carregando...</Text>
+							</View>
+						) : (
+							<Image className="w-48 h-36" source={{ uri: value }} />
+						)}
 					</TouchableOpacity>
 				) : (
 					<Fragment>

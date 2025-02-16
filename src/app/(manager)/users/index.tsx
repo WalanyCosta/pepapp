@@ -29,6 +29,7 @@ import {
 	useState,
 } from "react";
 import { Text, TouchableOpacity, View, FlatList } from "react-native";
+import { RefreshControl } from "react-native-gesture-handler";
 
 export default function Users() {
 	const { user } = useAuth();
@@ -162,6 +163,12 @@ export default function Users() {
 							className="flex-1"
 							keyExtractor={(item) => item.id}
 							data={users}
+							refreshControl={
+								<RefreshControl
+									refreshing={featchUsers}
+									onRefresh={() => fetchUsers()}
+								/>
+							}
 							renderItem={({ item }) => (
 								<View className="p-3 border border-input rounded-md">
 									<View className="w-full flex-row justify-between items-start mb-4">
@@ -245,7 +252,7 @@ export default function Users() {
 
 				<TouchableOpacity
 					onPress={handlePresentModalPress}
-					className="fixed left-[22rem] bottom-24 bg-violet-600 rounded items-center justify-center p-4 w-16 h-16 shadow-md"
+					className="fixed left-[80%] bottom-24 bg-violet-600 rounded items-center justify-center p-4 w-16 h-16 shadow-md"
 				>
 					<Plus size={20} color="#fff" />
 				</TouchableOpacity>

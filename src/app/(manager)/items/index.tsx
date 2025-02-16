@@ -19,6 +19,7 @@ import { HeaderBack } from "@/components/layout/header-back";
 import { useError } from "@/hooks/use-error";
 import { useOnlineStatus } from "@/hooks/use-online-status";
 import { NetworkingError } from "@/components/layout/networking-error";
+import { RefreshControl } from "react-native-gesture-handler";
 
 export default function Items() {
 	const [featchItems, setFeatchItems] = useState(false);
@@ -120,6 +121,12 @@ export default function Items() {
 							className="flex-1"
 							keyExtractor={(item) => item.id}
 							data={items}
+							refreshControl={
+								<RefreshControl
+									refreshing={featchItems}
+									onRefresh={() => fetchItems()}
+								/>
+							}
 							renderItem={({ item }) => (
 								<View className="flex-row gap-4 justify-center items-center mb-2 px-3 py-5 border border-input rounded-md relative">
 									<Image
@@ -169,7 +176,7 @@ export default function Items() {
 
 				<TouchableOpacity
 					onPress={handlePresentModalPress}
-					className="fixed left-[22rem] bottom-12 bg-violet-600 rounded items-center justify-center p-4 w-16 h-16 shadow-md"
+					className="fixed left-[80%] bottom-12 bg-violet-600 rounded items-center justify-center p-4 w-16 h-16 shadow-md"
 				>
 					<Plus size={20} color="#fff" />
 				</TouchableOpacity>

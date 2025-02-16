@@ -138,7 +138,11 @@ export default function Home() {
 						setIsActive={setIsActive}
 					/>
 
-					<Items items={items} isLoadingItem={isLoadingItem} />
+					<Items
+						fetchItems={fetchItems}
+						items={items}
+						isLoadingItem={isLoadingItem}
+					/>
 				</Fragment>
 			)}
 

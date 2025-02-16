@@ -13,6 +13,7 @@ import { type Order, OrderStatus } from "@/models/order";
 
 import { useDeferredValue, useEffect, useState } from "react";
 import { Alert, FlatList, Text, View } from "react-native";
+import { RefreshControl } from "react-native-gesture-handler";
 
 export default function History() {
 	const [query, setQuery] = useState("");
@@ -146,6 +147,12 @@ export default function History() {
 					className="gap-2 h-[75vh]"
 					keyExtractor={(item) => item.id.toString()}
 					data={orders}
+					refreshControl={
+						<RefreshControl
+							refreshing={fetchOrders}
+							onRefresh={() => getOrders()}
+						/>
+					}
 					renderItem={({ item }) => (
 						<CardOrder
 							item={item}
