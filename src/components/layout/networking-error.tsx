@@ -10,8 +10,8 @@ type Props = {
 export function NetworkingError({ reload, setReload }: Props) {
 	return (
 		<View className="gap-2 h-[65vh] pb-[100px] items-center justify-center">
-			<WifiX color="#7c3aed" size={64} />
-			<Text className="text-gray-800 text-xl font-heading">
+			<WifiX color="#f87171" size={64} />
+			<Text className="text-gray-800 text-xl bg-red-400 font-heading">
 				Algo deu errado
 			</Text>
 			<Text className="text-gray-400 text-sm text-center">

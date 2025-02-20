@@ -10,7 +10,7 @@ function Tab({
 	return (
 		<View
 			className={clsx(
-				"fixed bottom-20 gap-6 bg-violet-600 py-1 px-2 flex-row items-center justify-center z-50 rounded-md",
+				"fixed bottom-20 gap-6 bg-red-500 py-1 px-2 flex-row items-center justify-center z-50 rounded-md",
 				className,
 			)}
 		>
@@ -51,7 +51,7 @@ function TabScreenRoute({
 			{badge && badgeNumber > 0 && (
 				<View className="bg-white w-7 h-7 py-2 overflow-hidden flex-row justify-center items-center absolute rounded-full top-1 left-8 z-10">
 					<View className="mx-auto flex-row justify-center items-center">
-						<Text className="text-xs text-violet-600 flex-row justify-center items-center">
+						<Text className="text-xs text-primary flex-row justify-center items-center">
 							{badgeNumber}
 						</Text>
 					</View>
@@ -62,7 +62,7 @@ function TabScreenRoute({
 				icon={icon}
 				size={32}
 				color="#fff"
-				colorActive="#7c3aed"
+				colorActive="#dc2626"
 				active={active}
 			/>
 		</TouchableOpacity>
@@ -96,7 +96,7 @@ function TabScreen({
 				{badge && badgeNumber > 0 && (
 					<View className="bg-white w-7 h-7 py-2 overflow-hidden flex-row justify-center items-center absolute rounded-full top-1 left-8 z-10">
 						<View className="mx-auto flex-row justify-center items-center">
-							<Text className="text-xs text-violet-600 flex-row justify-center items-center">
+							<Text className="text-xs text-red-600 flex-row justify-center items-center">
 								{badgeNumber}
 							</Text>
 						</View>
@@ -107,7 +107,7 @@ function TabScreen({
 					icon={icon}
 					size={32}
 					color="#fff"
-					colorActive="#7c3aed"
+					colorActive="#dc2626"
 					active={active}
 				/>
 			</View>

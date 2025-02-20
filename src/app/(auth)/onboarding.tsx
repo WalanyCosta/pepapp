@@ -6,11 +6,14 @@ import { Container } from "@/components/layout/container";
 export default function Onboarding() {
 	return (
 		<Container>
-			<Image className="mt-5 mr-5" source={require("@/assets/mini-logo.png")} />
+			<Image
+				className="mt-5 mr-5"
+				source={require("@/assets/roger-technology-mini.png")}
+			/>
 
 			<Image
-				className="self-center mt-16"
-				source={require("@/assets/ilustration.png")}
+				className="self-center mt-16 w-80 h-80"
+				source={require("@/assets/wishes-amico.png")}
 			/>
 
 			<View className="justify-center items-center gap-4 mt-24">

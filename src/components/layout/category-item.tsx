@@ -16,7 +16,7 @@ export function CategoryItem({ icon, name, isActive, setIsActive }: Props) {
 	return (
 		<TouchableOpacity
 			onPress={handleCategoryItem}
-			className={`mr-2 px-4 py-3 flex-row gap-2 rounded-md justify-center items-center ${isActive === icon ? "bg-violet-600" : "border border-input"} `}
+			className={`mr-2 px-4 py-3 flex-row gap-2 rounded-md justify-center items-center ${isActive === icon ? "bg-primary" : "border border-input"} `}
 		>
 			<Icon
 				name={icon}

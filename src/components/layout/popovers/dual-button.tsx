@@ -19,7 +19,7 @@ export function PopoverDualButton({
 		<View className="justify-center item-center">
 			<Image
 				className="self-center w-36 h-36 mb-6"
-				source={require("@/assets/Cancel.png")}
+				source={require("@/assets/Cancel-red.png")}
 			/>
 			<View className="gap-2 justify-center items-center ">
 				<Text className="font-heading text-2xl text-center">{title}</Text>

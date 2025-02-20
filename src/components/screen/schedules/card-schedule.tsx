@@ -60,7 +60,7 @@ export function CardSchedule({
 				<Text className="text-base text-gray-400">{renderItems}</Text>
 			</View>
 
-			<View className="bg-violet-200 rounded-md border-l-2 border-violet-600 flex-row items-center justify-between p-2">
+			<View className="bg-red-200 rounded-md border-l-2 border-primary flex-row items-center justify-between p-2">
 				<View className="flex-row gap-1 items-center">
 					<Clock color="#4B5563" size={20} />
 					<Text className="text-base text-gray-600">

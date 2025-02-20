@@ -14,7 +14,7 @@ export function Header({ url }: Props) {
 		<Fragment>
 			<Image
 				className="mt-6 mb-10"
-				source={require("@/assets/mini-logo.png")}
+				source={require("@/assets/roger-technology-mini.png")}
 			/>
 			<View className="flex-row mb-12 justify-between items-center">
 				<View className="gap-2 flex-1 justify-center">

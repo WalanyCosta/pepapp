@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout";
+import { ButtonAdd } from "@/components/layout/button-add";
 import { CardItemEmpty } from "@/components/layout/card-item-empty";
 import { HeaderBack } from "@/components/layout/header-back";
 import { NetworkingError } from "@/components/layout/networking-error";
@@ -252,7 +253,7 @@ export default function Users() {
 
 				<TouchableOpacity
 					onPress={handlePresentModalPress}
-					className="fixed left-[80%] bottom-24 bg-violet-600 rounded items-center justify-center p-4 w-16 h-16 shadow-md"
+					className="fixed left-[80%] bottom-24 bg-primary rounded items-center justify-center p-4 w-16 h-16 shadow-md"
 				>
 					<Plus size={20} color="#fff" />
 				</TouchableOpacity>

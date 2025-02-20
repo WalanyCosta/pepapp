@@ -2,11 +2,14 @@ import { View, Image, ActivityIndicator } from "react-native";
 
 export function LoadingComponent() {
 	return (
-		<View className="bg-violet-600 h-full items-center">
+		<View className="bg-background h-full items-center">
 			<View className="h-[40rem] mt-80">
-				<Image className="mb-96" source={require("@/assets/logo-white.png")} />
+				<Image
+					className="mb-96"
+					source={require("@/assets/roger-technology.png")}
+				/>
 
-				<ActivityIndicator className="" color="#fff" size={32} />
+				<ActivityIndicator className="" color="#f87171" size={32} />
 			</View>
 		</View>
 	);

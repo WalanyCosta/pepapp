@@ -12,15 +12,15 @@ export type StatusCodeProps = { code: StatusCode; source: ImageSourcePropType };
 const statusCodes: StatusCodeProps[] = [
 	{
 		code: "UNAUTHORIZED",
-		source: require("@/assets/unauthorized-error.png"),
+		source: require("@/assets/unauthorized-error-red.png"),
 	},
 	{
 		code: "INFO",
-		source: require("@/assets/info.png"),
+		source: require("@/assets/info-red.png"),
 	},
 	{
 		code: "INTERNAL_SERVER",
-		source: require("@/assets/internal-server-error.png"),
+		source: require("@/assets/internal-server-error-red.png"),
 	},
 ];
 

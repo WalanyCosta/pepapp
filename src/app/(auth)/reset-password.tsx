@@ -115,7 +115,7 @@ export default function ResetPassword() {
 		<Container visible={visible} setVisible={setVisible} error={error}>
 			<Image
 				className="self-center mt-14 mb-12"
-				source={require("@/assets/logo.png")}
+				source={require("@/assets/logo-mini.png")}
 			/>
 
 			<View className="justify-center items-center mb-16 gap-3">
@@ -165,7 +165,7 @@ export default function ResetPassword() {
 				</View>
 			</Form>
 
-			<View className="mt-56 mb-12 gap-2">
+			<View className="mt-56 mb-12 gap-2 bg-red-400">
 				<Button
 					label="Continuar"
 					isLoading={loading}

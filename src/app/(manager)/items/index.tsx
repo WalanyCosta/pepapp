@@ -176,7 +176,7 @@ export default function Items() {
 
 				<TouchableOpacity
 					onPress={handlePresentModalPress}
-					className="fixed left-[80%] bottom-12 bg-violet-600 rounded items-center justify-center p-4 w-16 h-16 shadow-md"
+					className="fixed left-[80%] bottom-12 bg-primary rounded items-center justify-center p-4 w-16 h-16 shadow-md"
 				>
 					<Plus size={20} color="#fff" />
 				</TouchableOpacity>

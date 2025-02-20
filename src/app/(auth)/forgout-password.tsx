@@ -101,7 +101,7 @@ export default function ForgoutPassword() {
 		<Container visible={visible} setVisible={setVisible} error={error}>
 			<Image
 				className="self-center mt-14 mb-12"
-				source={require("@/assets/logo.png")}
+				source={require("@/assets/logo-mini.png")}
 			/>
 
 			<View className="justify-center items-center mb-16 gap-3">
@@ -115,7 +115,7 @@ export default function ForgoutPassword() {
 
 			<Image
 				className="self-center w-56 h-40 mb-4"
-				source={require("@/assets/sent-message-bro.png")}
+				source={require("@/assets/Sent-message-bro-red.png")}
 			/>
 
 			<Form>

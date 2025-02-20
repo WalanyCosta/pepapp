@@ -138,7 +138,7 @@ export default function SignIn() {
 		<Container visible={visible} setVisible={setVisible} error={error}>
 			<Image
 				className="self-center mt-14 mb-12"
-				source={require("@/assets/logo.png")}
+				source={require("@/assets/logo-mini.png")}
 			/>
 
 			<View className="justify-center items-center mb-16">

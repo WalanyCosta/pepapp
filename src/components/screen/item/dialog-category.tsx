@@ -44,7 +44,7 @@ const IconPicker: React.FC<{
 						<Icon
 							name={item as IconName}
 							size={32}
-							color={selectedIcon === item ? "#7c3aed" : "#9ca3af"}
+							color={selectedIcon === item ? "#ef4444" : "#9ca3af"}
 						/>
 					</TouchableOpacity>
 				)}
@@ -118,7 +118,7 @@ export function DialogCategory({ setRefreshCategory, refreshCategory }: Props) {
 	return (
 		<Dialog>
 			<DialogTrigger>
-				<TouchableOpacity className="p-2 bg-violet-600 rounded-md mt-3">
+				<TouchableOpacity className="p-2 bg-primary rounded-md mt-3">
 					<Text className="text-white text-center">Adicionar categoria</Text>
 				</TouchableOpacity>
 			</DialogTrigger>

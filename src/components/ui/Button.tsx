@@ -9,7 +9,7 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				default: "bg-primary",
-				secondary: "bg-violet-100",
+				secondary: "bg-red-100",
 				destructive: "bg-destructive",
 				ghost: "bg-white",
 				link: "text-primary underline-offset-4",
@@ -31,9 +31,9 @@ const buttonTextVariants = cva("text-center font-medium", {
 	variants: {
 		variant: {
 			default: "text-primary-foreground",
-			secondary: "text-violet-600",
-			destructive: "text-destructive-foreground",
-			ghost: "text-violet-600",
+			secondary: "text-red-500",
+			destructive: "text-red-500",
+			ghost: "text-red-500",
 			link: "text-primary-foreground underline",
 		},
 		size: {
@@ -66,7 +66,7 @@ function Button({
 }: ButtonProps) {
 	return (
 		<TouchableOpacity
-      disabled={isLoading ?? false}
+			disabled={isLoading ?? false}
 			className={cn(buttonVariants({ variant, size, className }))}
 			{...props}
 		>

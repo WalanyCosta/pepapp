@@ -54,9 +54,7 @@ export function Upload({
 						<UploadSimple color="#9ca3af" size={24} />
 						<Text className="mt-3 text-sm">
 							{labelTypeFile}{" "}
-							<Text className="text-violet-600 font-heading">
-								{sizeFile} MB
-							</Text>
+							<Text className="text-primary font-heading">{sizeFile} MB</Text>
 						</Text>
 						<TouchableOpacity
 							onPress={uploadImage}

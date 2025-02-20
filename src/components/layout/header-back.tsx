@@ -21,7 +21,10 @@ export function HeaderBack({ title, backRoute }: Props) {
 			</TouchableOpacity>
 
 			<View className="justify-center mb-5">
-				<Image className="mb-5" source={require("@/assets/mini-logo.png")} />
+				<Image
+					className="mb-5"
+					source={require("@/assets/roger-technology-mini.png")}
+				/>
 				<Text className="font-heading text-2xl flex-1">{title}</Text>
 			</View>
 		</Fragment>
